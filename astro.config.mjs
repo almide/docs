@@ -25,7 +25,6 @@ export default defineConfig({
 			},
 			title: 'Almide',
 			social: [
-				{ icon: 'external', label: 'Playground', href: 'https://almide.github.io/playground/' },
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/almide/almide' },
 			],
 			pagefind: false,

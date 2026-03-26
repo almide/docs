@@ -10,35 +10,45 @@ const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABBCAYAA
   </span>
   <span class="label" translate="no">{siteTitle}</span>
 </a>
+<a href="https://almide.github.io/playground/" target="_blank" rel="noopener" class="nav-link">Playground</a>
 
 <style>
-  @layer starlight.core {
-    .site-title {
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      white-space: nowrap;
-      min-width: 0;
-      view-transition-name: site-title;
-    }
-    .mark-wrap {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .mark {
-      width: 28px;
-      height: 28px;
-      display: block;
-    }
-    .label {
-      font-size: 17px;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      overflow: hidden;
-    }
+  .site-title {
+    align-items: center;
+    gap: 10px !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+    min-width: 0;
+    view-transition-name: site-title;
+  }
+  .mark-wrap {
+    position: relative;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .mark {
+    width: 28px !important;
+    height: 28px !important;
+    display: block;
+  }
+  .label {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+    overflow: hidden;
+  }
+  .nav-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    margin-left: 1rem;
+    transition: color 0.2s;
+  }
+  .nav-link:hover {
+    color: var(--sl-color-accent);
   }
 </style>
