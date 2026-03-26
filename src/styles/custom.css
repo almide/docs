@@ -44,6 +44,20 @@
 	color: #1a1a1f !important;
 }
 
+/* Heading spacing */
+.sl-markdown-content h2 {
+	margin-top: 2.5rem;
+	margin-bottom: 1rem;
+}
+.sl-markdown-content h3 {
+	margin-top: 2rem;
+	margin-bottom: 0.75rem;
+}
+.sl-markdown-content h4 {
+	margin-top: 1.5rem;
+	margin-bottom: 0.5rem;
+}
+
 /* Code blocks */
 pre {
 	border-radius: 8px;
