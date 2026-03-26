@@ -6,6 +6,23 @@ import { ClientRouter } from 'astro:transitions';
 
 <Default {...Astro.props}><slot /></Default>
 <ClientRouter fallback="none" />
+<style is:inline>
+  .sl-markdown-content h2,
+  .sl-markdown-content .sl-heading-wrapper.level-h2 {
+    margin-top: 2.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  .sl-markdown-content h3,
+  .sl-markdown-content .sl-heading-wrapper.level-h3 {
+    margin-top: 2rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  .sl-markdown-content h4,
+  .sl-markdown-content .sl-heading-wrapper.level-h4 {
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+</style>
 <style is:global>
   /* Keep header stable during view transitions */
   header {
