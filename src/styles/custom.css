@@ -70,9 +70,6 @@
 	66%  { background: rgba(150, 80, 180, 0.5); }
 	100% { background: rgba(124, 92, 191, 0.5); }
 }
-.site-title {
-	gap: 0.4rem !important;
-}
 .site-title,
 .site-title span {
 	color: #ededeb !important;
