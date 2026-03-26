@@ -44,16 +44,19 @@
 	color: #1a1a1f !important;
 }
 
-/* Heading spacing — override Starlight defaults */
-.sl-markdown-content :is(h2) {
+/* Heading spacing — target both bare headings and Starlight wrappers */
+.sl-markdown-content :is(h2),
+.sl-markdown-content .sl-heading-wrapper.level-h2 {
 	margin-top: 2.5rem !important;
 	margin-bottom: 1rem !important;
 }
-.sl-markdown-content :is(h3) {
+.sl-markdown-content :is(h3),
+.sl-markdown-content .sl-heading-wrapper.level-h3 {
 	margin-top: 2rem !important;
 	margin-bottom: 0.75rem !important;
 }
-.sl-markdown-content :is(h4) {
+.sl-markdown-content :is(h4),
+.sl-markdown-content .sl-heading-wrapper.level-h4 {
 	margin-top: 1.5rem !important;
 	margin-bottom: 0.5rem !important;
 }

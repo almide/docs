@@ -44,7 +44,7 @@ export default defineConfig({
 				},
 				{
 					tag: 'style',
-					content: `.sl-markdown-content h2{margin-top:2.5rem!important;margin-bottom:1rem!important}.sl-markdown-content h3{margin-top:2rem!important;margin-bottom:.75rem!important}.sl-markdown-content h4{margin-top:1.5rem!important;margin-bottom:.5rem!important}`,
+					content: `.sl-markdown-content h2,.sl-markdown-content .sl-heading-wrapper.level-h2{margin-top:2.5rem!important;margin-bottom:1rem!important}.sl-markdown-content h3,.sl-markdown-content .sl-heading-wrapper.level-h3{margin-top:2rem!important;margin-bottom:.75rem!important}.sl-markdown-content h4,.sl-markdown-content .sl-heading-wrapper.level-h4{margin-top:1.5rem!important;margin-bottom:.5rem!important}`,
 				},
 			],
 			sidebar: [
