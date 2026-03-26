@@ -1,0 +1,105 @@
+/* Almide docs theme — based on playground color palette */
+
+:root {
+	--sl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--sl-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+	/* Purple accent from playground: #7c5cbf / #9b7de0 */
+	--sl-color-accent-low: #1e1630;
+	--sl-color-accent: #9b7de0;
+	--sl-color-accent-high: #d4c4f5;
+
+	/* Dark palette from playground */
+	--sl-color-white: #ededeb;
+	--sl-color-gray-1: #a0a0ab;
+	--sl-color-gray-2: #6b6b78;
+	--sl-color-gray-3: #505060;
+	--sl-color-gray-4: #383842;
+	--sl-color-gray-5: #28282f;
+	--sl-color-gray-6: #1a1a1f;
+	--sl-color-black: #131316;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #ede5fb;
+	--sl-color-accent: #6b3fad;
+	--sl-color-accent-high: #3a1d6e;
+
+	--sl-color-white: #131316;
+	--sl-color-gray-1: #1a1a1f;
+	--sl-color-gray-2: #383842;
+	--sl-color-gray-3: #6b6b78;
+	--sl-color-gray-4: #a0a0ab;
+	--sl-color-gray-5: #d8d8dc;
+	--sl-color-gray-6: #f0f0f2;
+	--sl-color-gray-7: #f8f8fa;
+	--sl-color-black: #ffffff;
+}
+
+/* Logo & site title — match playground header */
+.site-title img {
+	height: 2rem;
+}
+
+/* Logo shimmer — same as playground */
+.site-title {
+	position: relative;
+}
+.site-title img {
+	position: relative;
+	z-index: 1;
+	filter: grayscale(0.3) contrast(1.1) brightness(0.95);
+}
+.site-title::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 2rem;
+	height: 2rem;
+	border-radius: 6px;
+	animation: logo-shimmer 6s ease-in-out infinite;
+	mix-blend-mode: color;
+	pointer-events: none;
+	z-index: 2;
+}
+@keyframes logo-shimmer {
+	0%   { background: rgba(124, 92, 191, 0.5); }
+	33%  { background: rgba(90, 120, 220, 0.55); }
+	66%  { background: rgba(150, 80, 180, 0.5); }
+	100% { background: rgba(124, 92, 191, 0.5); }
+}
+.site-title {
+	gap: 0.4rem !important;
+}
+.site-title,
+.site-title span {
+	color: #ededeb !important;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+}
+:root[data-theme='light'] .site-title,
+:root[data-theme='light'] .site-title span {
+	color: #1a1a1f !important;
+}
+
+/* Code blocks */
+pre {
+	border-radius: 8px;
+}
+
+/* Selection color matching playground */
+::selection {
+	background: rgba(124, 92, 191, 0.4);
+}
+
+/* Card styling */
+.card-grid {
+	gap: 1rem;
+}
+
+/* Sidebar active link accent */
+nav .sidebar-content a[aria-current="page"] {
+	border-color: var(--sl-color-accent);
+}

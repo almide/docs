@@ -1,0 +1,78 @@
+---
+title: Almide Documentation
+description: The language LLMs can write most accurately.
+template: splash
+hero:
+  tagline: The language LLMs can write most accurately. Every design decision serves one metric — modification survival rate.
+  image:
+    file: ../../assets/almide-logo-hero.png
+  actions:
+    - text: Get Started
+      link: /docs/getting-started/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/almide/almide
+      icon: external
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Why Almide?
+
+<CardGrid stagger>
+  <Card title="One way to write it" icon="pencil">
+    Canonical syntax with no synonyms. LLMs converge on the correct output faster because there's only one valid way to express each concept.
+  </Card>
+  <Card title="Multi-target" icon="setting">
+    Write once, compile to **Rust**, **TypeScript**, or **WASM**. Same semantics, same types, every target.
+  </Card>
+  <Card title="Repair-first compiler" icon="approve-check">
+    Every error includes file:line, context, and an actionable hint. The compiler is a repair tool, not a rejection tool.
+  </Card>
+  <Card title="Effect tracking" icon="warning">
+    Side effects are visible in the type signature. `effect fn` marks functions that touch the outside world.
+  </Card>
+</CardGrid>
+
+## Quick taste
+
+```almide
+fn greet(name: String) -> String =
+  "Hello, ${name}!"
+
+fn factorial(n: Int) -> Int =
+  if n <= 1 then 1
+  else n * factorial(n - 1)
+
+effect fn main() -> Result[Unit, String] = {
+  let message = greet("world")
+  println(message)
+  ok(())
+}
+```
+
+## Explore
+
+<CardGrid>
+  <Card title="Language Guide" icon="open-book">
+    Learn the fundamentals — types, functions, control flow, and more.
+
+    [Start learning →](/docs/guide/types/)
+  </Card>
+  <Card title="Standard Library" icon="list-format">
+    22 modules, 381 functions. Everything from strings to HTTP.
+
+    [Browse stdlib →](/docs/stdlib/overview/)
+  </Card>
+  <Card title="Reference" icon="document">
+    Formal grammar, operator precedence, CLI usage.
+
+    [View reference →](/docs/reference/grammar/)
+  </Card>
+  <Card title="Playground" icon="laptop">
+    Try Almide in the browser — no installation required.
+
+    [Open playground →](https://almide.github.io/playground/)
+  </Card>
+</CardGrid>
