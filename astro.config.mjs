@@ -24,10 +24,6 @@ export default defineConfig({
 				},
 			},
 			title: 'Almide',
-			logo: {
-				src: './src/assets/almide-logo-sm.svg',
-				replacesTitle: false,
-			},
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/almide/almide' },
 			],
