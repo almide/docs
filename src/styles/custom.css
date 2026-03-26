@@ -36,48 +36,11 @@
 	--sl-color-black: #ffffff;
 }
 
-/* Logo & site title — match playground header */
-.site-title img {
-	height: 2rem;
-}
-
-/* Logo shimmer — same as playground */
-.site-title {
-	position: relative;
-}
-.site-title img {
-	position: relative;
-	z-index: 1;
-	filter: grayscale(0.3) contrast(1.1) brightness(0.95);
-}
-.site-title::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 2rem;
-	height: 2rem;
-	border-radius: 6px;
-	animation: logo-shimmer 6s ease-in-out infinite;
-	mix-blend-mode: color;
-	pointer-events: none;
-	z-index: 2;
-}
-@keyframes logo-shimmer {
-	0%   { background: rgba(124, 92, 191, 0.5); }
-	33%  { background: rgba(90, 120, 220, 0.55); }
-	66%  { background: rgba(150, 80, 180, 0.5); }
-	100% { background: rgba(124, 92, 191, 0.5); }
-}
-.site-title,
-.site-title span {
+/* Site title label color — match playground */
+.site-title .label {
 	color: #ededeb !important;
-	font-weight: 600;
-	letter-spacing: 0.04em;
 }
-:root[data-theme='light'] .site-title,
-:root[data-theme='light'] .site-title span {
+:root[data-theme='light'] .site-title .label {
 	color: #1a1a1f !important;
 }
 

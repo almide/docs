@@ -5,34 +5,55 @@ const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABBCAYAA
 ---
 
 <a href={siteTitleHref} class="site-title sl-flex">
-  <img alt="Almide" src={logoDataUri} width="64" height="65" />
-  <span class:list={{ 'sr-only': config.logo?.replacesTitle }} translate="no">
-    {siteTitle}
+  <span class="mark-wrap">
+    <img class="mark" alt="A" src={logoDataUri} width="28" height="28" />
   </span>
+  <span class="label" translate="no">{siteTitle}</span>
 </a>
 
 <style>
   @layer starlight.core {
     .site-title {
       align-items: center;
-      gap: 0.4rem;
-      font-size: var(--sl-text-h4);
-      font-weight: 600;
-      color: var(--sl-color-text-accent);
+      gap: 10px;
       text-decoration: none;
       white-space: nowrap;
       min-width: 0;
       view-transition-name: site-title;
     }
-    span {
+    .mark-wrap {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .mark {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+    .mark-wrap::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      animation: logo-shimmer 6s ease-in-out infinite;
+      mix-blend-mode: color;
+      pointer-events: none;
+    }
+    .label {
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       overflow: hidden;
     }
-    img {
-      height: calc(var(--sl-nav-height) - 2 * var(--sl-nav-pad-y));
-      width: auto;
-      max-width: 100%;
-      object-fit: contain;
-      object-position: 0 50%;
-    }
+  }
+  @keyframes logo-shimmer {
+    0%   { background: rgba(124, 92, 191, 0.5); }
+    33%  { background: rgba(90, 120, 220, 0.55); }
+    66%  { background: rgba(150, 80, 180, 0.5); }
+    100% { background: rgba(124, 92, 191, 0.5); }
   }
 </style>
