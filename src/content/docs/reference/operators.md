@@ -13,7 +13,7 @@ Operators are listed from highest precedence (binds tightest) to lowest.
 | 2 | `not` `-` (unary) | Right | Boolean negation, numeric negation |
 | 3 | `^` | Right | Exponentiation (power) |
 | 4 | `*` `/` `%` | Left | Multiplication, division, modulo |
-| 5 | `+` `-` `++` | Left | Addition/concatenation, subtraction, string concat |
+| 5 | `+` `-` `++` | Left | Addition/concatenation, subtraction, concat (legacy) |
 | 6 | `..` `..=` | None | Exclusive range, inclusive range |
 | 7 | `==` `!=` `<` `>` `<=` `>=` | None | Comparison (non-associative) |
 | 8 | `and` | Left | Logical AND (short-circuit) |

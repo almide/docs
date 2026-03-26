@@ -6,16 +6,12 @@ description: Complete reference for the Almide command-line interface including 
 ## Installation
 
 ```bash
-cargo install almide
-```
-
-Or build from source:
-
-```bash
 git clone https://github.com/almide/almide
 cd almide
 cargo build --release
 ```
+
+See [Installation](/docs/getting-started/installation/) for details.
 
 ## Commands
 
@@ -77,10 +73,20 @@ Type-check source files without generating code or running.
 
 ```bash
 almide check app.almd
-almide check src/
+almide check app.almd --deny-warnings
+almide check app.almd --json
+almide check --explain E001
+almide check app.almd --effects
 ```
 
 Reports type errors, undefined references, and other static analysis issues. Faster than `almide run` since it skips code generation and compilation.
+
+| Flag | Description |
+|------|-------------|
+| `--deny-warnings` | Treat warnings as errors |
+| `--json` | Output diagnostics as JSON |
+| `--explain E001` | Explain an error code |
+| `--effects` | Show effect/capability analysis |
 
 ### `almide fmt`
 
@@ -101,7 +107,38 @@ Clear the dependency cache and build artifacts.
 almide clean
 ```
 
-Removes cached git dependencies and generated files.
+### `almide init`
+
+Create a new Almide project with `almide.toml` and `src/main.almd`.
+
+```bash
+almide init
+```
+
+### `almide add`
+
+Add a dependency to `almide.toml`.
+
+```bash
+almide add my-lib --git https://github.com/user/my-lib --tag v1.0.0
+```
+
+### `almide deps`
+
+List project dependencies.
+
+```bash
+almide deps
+```
+
+## Common Flags
+
+| Flag | Commands | Description |
+|------|----------|-------------|
+| `--no-check` | run, build, test | Skip type checking |
+| `--fast` | build | Maximum performance: native CPU, opt-level=3, LTO |
+| `--release` | build | Optimize for performance (opt-level=2) |
+| `--json` | test, check | Output results as JSON |
 
 ## Code Emission
 

@@ -28,7 +28,7 @@ The `result` module provides combinators:
 ```almide
 let doubled = result.map(int.parse("42"), (n) => n * 2)
 let fallback = result.unwrap_or(int.parse("bad"), 0)
-let chained = result.and_then(int.parse("42"), (n) =>
+let chained = result.flat_map(int.parse("42"), (n) =>
   if n > 0 then ok(n) else err("must be positive")
 )
 ```
@@ -47,7 +47,7 @@ Common operations:
 ```almide
 let name = option.unwrap_or(map.get(config, "name"), "default")
 let upper = option.map(map.get(config, "name"), (s) => string.to_upper(s))
-let result = option.ok_or(map.get(config, "name"), "name is required")
+let result = option.to_result(map.get(config, "name"), "name is required")
 ```
 
 ## effect fn and auto-propagation
@@ -168,7 +168,7 @@ When each step can fail and depends on the previous:
 
 ```almide
 let config = int.parse(port_str)
-  |> result.and_then(_, (port) =>
+  |> result.flat_map(_, (port) =>
     if port > 0 and port < 65536
     then ok(port)
     else err("port out of range")

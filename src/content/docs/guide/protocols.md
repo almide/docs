@@ -132,16 +132,13 @@ See [Error Handling](/docs/guide/error-handling/) for details on error propagati
 For more complex type-class patterns, Almide supports `protocol` and `impl` blocks:
 
 ```almide
-protocol Iterable[T] {
-  fn map[U](self, f: Fn(T) -> U) -> Self[U]
-  fn filter(self, f: Fn(T) -> Bool) -> Self[T]
-  fn fold[U](self, init: U, f: Fn(U, T) -> U) -> U
+protocol Showable {
+  fn show(a: Self) -> String
 }
 
-impl Iterable[T] for List[T] {
-  fn map[U](self, f: Fn(T) -> U) -> List[U] = _
-  fn filter(self, f: Fn(T) -> Bool) -> List[T] = _
-  fn fold[U](self, init: U, f: Fn(U, T) -> U) -> U = _
+impl Showable for Point {
+  fn show(a: Point) -> String =
+    "(${float.to_string(a.x)}, ${float.to_string(a.y)})"
 }
 ```
 

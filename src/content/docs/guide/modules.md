@@ -88,11 +88,8 @@ These are implemented in Almide itself and imported the same way:
 |--------|-------------|
 | `args` | Command-line argument parsing |
 | `path` | File path manipulation |
-| `time` | Time/duration utilities |
-| `encoding` | Base64, hex encoding |
-| `hash` | Hashing (SHA-256, etc.) |
-| `url` | URL parsing and building |
-| `csv` | CSV parsing and writing |
+| `option` | Option[T] utilities |
+| `result` | Result[T, E] utilities |
 
 ## Aliased imports
 
