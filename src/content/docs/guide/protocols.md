@@ -127,12 +127,12 @@ effect fn load(path: String) -> Result[Config, AppError] = {
 
 See [Error Handling](/docs/guide/error-handling/) for details on error propagation.
 
-## Traits and impl blocks
+## Protocols and impl blocks
 
-For more complex type-class patterns, Almide supports `trait` and `impl` blocks:
+For more complex type-class patterns, Almide supports `protocol` and `impl` blocks:
 
 ```almide
-trait Iterable[T] {
+protocol Iterable[T] {
   fn map[U](self, f: Fn(T) -> U) -> Self[U]
   fn filter(self, f: Fn(T) -> Bool) -> Self[T]
   fn fold[U](self, init: U, f: Fn(U, T) -> U) -> U

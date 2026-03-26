@@ -197,13 +197,14 @@ Comparison operators are non-associative: `a < b < c` is a compile error. Use `a
 |-------|-----------|
 | Highest | `.` `()` `[]` |
 | | `not` `-` (unary) |
-| | `^` (power) |
+| | `^` (power, right-assoc) |
 | | `*` `/` `%` |
-| | `+` `-` |
-| | `==` `!=` `<` `>` `<=` `>=` |
+| | `+` `-` `++` |
+| | `..` `..=` (range, non-assoc) |
+| | `==` `!=` `<` `>` `<=` `>=` (non-assoc) |
 | | `and` |
 | | `or` |
-| Lowest | `\|>` (pipe) |
+| Lowest | `\|>` (pipe) `>>` (compose) |
 
 ## Next steps
 

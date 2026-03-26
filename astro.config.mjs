@@ -86,7 +86,6 @@ export default defineConfig({
 						{ label: 'regex', slug: 'stdlib/regex' },
 						{ label: 'datetime', slug: 'stdlib/datetime' },
 						{ label: 'set', slug: 'stdlib/set' },
-						{ label: 'crypto', slug: 'stdlib/crypto' },
 						{ label: 'http', slug: 'stdlib/http' },
 					],
 				},

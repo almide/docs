@@ -42,13 +42,20 @@ These modules must be explicitly imported with `import <module>`:
 | [json](/stdlib/json/) | JSON parsing, building, path-based access | No |
 | [regex](/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
 | [datetime](/stdlib/datetime/) | Date/time: parse, format, arithmetic | Mixed |
-| [crypto](/stdlib/crypto/) | Cryptographic hashing: SHA-256, MD5 | No |
+| bytes | Binary data: encode, decode, slice, hex | No |
+| random | Random number generation | Yes |
 
 ### Networking
 
 | Module | Description | Effect |
 |---|---|---|
 | [http](/stdlib/http/) | HTTP client and server | Yes |
+
+### Numeric / Scientific
+
+| Module | Description | Effect |
+|---|---|---|
+| matrix | Matrix operations: create, multiply, transpose | No |
 
 ### Development
 

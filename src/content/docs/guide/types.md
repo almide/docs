@@ -15,6 +15,7 @@ Almide is statically typed with full type inference. Every value has a known typ
 | `Bool` | Boolean | `true`, `false` |
 | `Unit` | No meaningful value | `()` |
 | `Path` | File system path | Used by `fs` module functions |
+| `Bytes` | Byte sequence | Used by `crypto`, `fs` for binary data |
 
 Numeric literals support `_` as a visual separator: `1_000_000`, `0xFF_FF`.
 
@@ -28,7 +29,7 @@ let msg = "hello ${name}, 1+1=${1 + 1}"    // "hello world, 1+1=2"
 let escaped = "line1\nline2"
 ```
 
-Single-quoted strings support escapes (`\'`, `\\`, `\n`, `\t`, `\r`) and interpolation:
+Single-quoted strings support escapes (`\'`, `\\`, `\n`, `\t`, `\r`) but **no interpolation**:
 
 ```almide
 let s = 'it\'s a string'
@@ -315,18 +316,22 @@ Used with higher-order functions:
 fn apply(f: Fn(Int) -> Int, x: Int) -> Int = f(x)
 ```
 
-## deriving From
+## Deriving conventions
 
-Variant types can derive `From` to enable automatic error conversion:
+Types can derive built-in conventions using `:` after the type name:
 
 ```almide
-type AppError =
+type AppError: From =
   | Io(IoError)
   | Parse(ParseError)
-  deriving From
+
+type Color: Eq =
+  | Red
+  | Green
+  | Blue
 ```
 
-This generates `From` implementations for each case, enabling auto-conversion in `effect fn`. See [Error Handling](/docs/guide/error-handling/) for details.
+This generates implementations automatically. Available conventions: `Eq`, `Repr`, `Ord`, `Hash`, `Codec`, `From`. See [Error Handling](/docs/guide/error-handling/) and [Protocols](/docs/guide/protocols/) for details.
 
 ## Built-in protocols
 
