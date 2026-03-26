@@ -42,6 +42,10 @@ export default defineConfig({
 					tag: 'meta',
 					attrs: { name: 'og:image', content: '/docs/og.png' },
 				},
+				{
+					tag: 'style',
+					content: `.sl-markdown-content h2{margin-top:2.5rem!important;margin-bottom:1rem!important}.sl-markdown-content h3{margin-top:2rem!important;margin-bottom:.75rem!important}.sl-markdown-content h4{margin-top:1.5rem!important;margin-bottom:.5rem!important}`,
+				},
 			],
 			sidebar: [
 				{
