@@ -28,6 +28,7 @@ export default defineConfig({
 				{ icon: 'external', label: 'Playground', href: 'https://almide.github.io/playground/' },
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/almide/almide' },
 			],
+			pagefind: false,
 			components: {
 				SiteTitle: './src/components/SiteTitle.astro',
 				Head: './src/components/Head.astro',
