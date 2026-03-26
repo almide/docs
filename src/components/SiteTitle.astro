@@ -34,26 +34,11 @@ const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABBCAYAA
       height: 28px;
       display: block;
     }
-    .mark-wrap::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 6px;
-      animation: logo-shimmer 6s ease-in-out infinite;
-      mix-blend-mode: color;
-      pointer-events: none;
-    }
     .label {
       font-size: 17px;
       font-weight: 600;
       letter-spacing: 0.04em;
       overflow: hidden;
     }
-  }
-  @keyframes logo-shimmer {
-    0%   { background: rgba(124, 92, 191, 0.5); }
-    33%  { background: rgba(90, 120, 220, 0.55); }
-    66%  { background: rgba(150, 80, 180, 0.5); }
-    100% { background: rgba(124, 92, 191, 0.5); }
   }
 </style>
