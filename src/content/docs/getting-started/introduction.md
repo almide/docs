@@ -60,7 +60,7 @@ fn area(s: Shape) -> Float =
 
 // Effect function — can fail, can do I/O
 effect fn read_config(path: String) -> Result[String, String] = {
-  let content = fs.read_text(path)
+  let content = fs.read_text(path)!
   ok(content)
 }
 ```

@@ -9,7 +9,7 @@ Operators are listed from highest precedence (binds tightest) to lowest.
 
 | Precedence | Operators | Associativity | Description |
 |:---:|---|---|---|
-| 1 | `. ()` `[]` | Left | Member access, function call, index |
+| 1 | `. ()` `[]` `!` `??` `?` | Left | Member access, call, index, unwrap ops |
 | 2 | `not` `-` (unary) | Right | Boolean negation, numeric negation |
 | 3 | `^` | Right | Exponentiation (power) |
 | 4 | `*` `/` `%` | Left | Multiplication, division, modulo |
@@ -22,7 +22,7 @@ Operators are listed from highest precedence (binds tightest) to lowest.
 
 ## Detailed Reference
 
-### Member Access and Calls (`. ()` `[]`)
+### Member Access, Calls, and Unwrap (`. ()` `[]` `!` `??` `?`)
 
 ```almd
 user.name                      // field access
@@ -31,6 +31,24 @@ xs[0]                          // index read
 xs[i] = value                  // index write (var only)
 ```
 
+#### Unwrap operators
+
+Three postfix operators for unwrapping `Result` and `Option` values:
+
+```almd
+fs.read_text(path)!            // unwrap or propagate error (effect fn only)
+int.parse(s) ?? 0              // unwrap with fallback value
+int.parse(s)?                  // convert Result to Option (discard error)
+```
+
+| Operator | On Result | On Option | Valid in |
+|----------|-----------|-----------|----------|
+| `expr!` | `ok(v)` -> `v`, `err(e)` -> propagate | `some(v)` -> `v`, `none` -> propagate | `effect fn` only |
+| `expr ?? fallback` | `ok(v)` -> `v`, `err(_)` -> `fallback` | `some(v)` -> `v`, `none` -> `fallback` | Anywhere |
+| `expr?` | `ok(v)` -> `some(v)`, `err(_)` -> `none` | Passthrough | Anywhere |
+
+See [Error Handling](/docs/guide/error-handling/) for detailed examples.
+
 ### Unary Operators (`not`, `-`)
 
 ```almd
@@ -38,7 +56,7 @@ not active                     // boolean negation
 -x                             // numeric negation
 ```
 
-There is no `!` operator. Use `not` for boolean negation.
+There is no boolean `!` operator. Use `not` for boolean negation. The postfix `!` is the unwrap/propagate operator.
 
 ### Exponentiation (`^`)
 

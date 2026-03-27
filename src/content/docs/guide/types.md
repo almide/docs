@@ -63,7 +63,7 @@ let b = true or false     // true
 let c = not true          // false
 ```
 
-There is no `!`, `&&`, or `||`. The compiler rejects them with helpful hints.
+There is no `&&` or `||`. Use `and`, `or`, and `not` for boolean logic. (The postfix `!` is the unwrap operator, not boolean negation.)
 
 ## Unit
 
@@ -199,7 +199,7 @@ match int.parse(input) {
 }
 ```
 
-See [Error Handling](/docs/guide/error-handling/) for `effect fn` auto-propagation and `guard`.
+See [Error Handling](/docs/guide/error-handling/) for `effect fn`, unwrap operators (`!`, `??`, `?`), and `guard`.
 
 ## Record types
 
@@ -321,17 +321,13 @@ fn apply(f: Fn(Int) -> Int, x: Int) -> Int = f(x)
 Types can derive built-in conventions using `:` after the type name:
 
 ```almide
-type AppError: From =
-  | Io(IoError)
-  | Parse(ParseError)
-
 type Color: Eq =
   | Red
   | Green
   | Blue
 ```
 
-This generates implementations automatically. Available conventions: `Eq`, `Repr`, `Ord`, `Hash`, `Codec`, `From`. See [Error Handling](/docs/guide/error-handling/) and [Protocols](/docs/guide/protocols/) for details.
+This generates implementations automatically. Available conventions: `Eq`, `Repr`, `Ord`, `Hash`, `Codec`. See [Protocols](/docs/guide/protocols/) for details.
 
 ## Built-in protocols
 

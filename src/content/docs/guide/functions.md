@@ -38,7 +38,7 @@ Functions with side effects (I/O, network, randomness) must be marked `effect fn
 
 ```almide
 effect fn save(path: String, content: String) -> Result[Unit, String] = {
-  fs.write(path, content)
+  fs.write(path, content)!
   ok(())
 }
 ```
@@ -47,7 +47,7 @@ The `effect` modifier enforces a strict boundary:
 
 - Calling an `effect fn` from a non-effect function is a **compile error**
 - `effect fn` typically returns `Result[T, E]`
-- Inside `effect fn`, `Result` values are automatically unwrapped and errors propagate
+- Use the `!` operator to unwrap `Result` values and propagate errors explicitly
 
 ```almide
 fn pure() -> String =
@@ -57,7 +57,7 @@ effect fn safe() -> Result[String, String] =
   fs.read_text("file.txt")    // OK: effect fn calling effect fn
 ```
 
-See [Error Handling](/docs/guide/error-handling/) for auto-propagation details.
+See [Error Handling](/docs/guide/error-handling/) for the `!`, `??`, and `?` operators.
 
 ## Parameters
 
@@ -227,5 +227,5 @@ list.get(args, 1) |> match {
 ## Next steps
 
 - [Control Flow](/docs/guide/control-flow/) — if, for, while, guard
-- [Error Handling](/docs/guide/error-handling/) — Result, Option, effect fn propagation
+- [Error Handling](/docs/guide/error-handling/) — Result, Option, unwrap operators, effect fn
 - [Modules & Imports](/docs/guide/modules/) — organizing code across files

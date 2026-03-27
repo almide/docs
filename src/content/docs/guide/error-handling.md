@@ -1,9 +1,9 @@
 ---
 title: Error Handling
-description: Result, Option, effect fn auto-propagation, guard, and deriving From for error conversion.
+description: Result, Option, unwrap operators (!, ??, ?), effect fn, and guard for safe error handling.
 ---
 
-Almide has no exceptions. All errors are values, represented by `Result[T, E]` and `Option[T]`. The `effect fn` system automates error propagation, making error handling both safe and concise.
+Almide has no exceptions. All errors are values, represented by `Result[T, E]` and `Option[T]`. Three postfix operators -- `!`, `??`, and `?` -- provide concise, explicit control over unwrapping.
 
 ## Result
 
@@ -50,21 +50,90 @@ let upper = option.map(map.get(config, "name"), (s) => string.to_upper(s))
 let result = option.to_result(map.get(config, "name"), "name is required")
 ```
 
-## effect fn and auto-propagation
+## Unwrap operators: `!`, `??`, `?`
 
-The key to ergonomic error handling in Almide is `effect fn`. Inside an `effect fn`, expressions returning `Result[T, E]` are automatically unwrapped:
+Almide provides three postfix operators for unwrapping `Result` and `Option` values. These are the primary way to work with fallible values.
+
+### `!` — propagate error
+
+`expr!` unwraps a `Result` or `Option`. If the value is `err(e)` or `none`, the enclosing `effect fn` immediately returns the error. Only valid inside `effect fn`.
 
 ```almide
 effect fn load_config(path: String) -> Result[String, String] = {
-  let text = fs.read_text(path)     // Result auto-unwrapped; error propagates
-  let trimmed = string.trim(text)   // text is String, not Result
+  let text = fs.read_text(path)!      // unwrap or propagate error
+  let trimmed = string.trim(text)
   ok(trimmed)
 }
 ```
 
-Without `effect fn`, you would need to manually match on every `Result`. The compiler inserts error propagation automatically.
+On `Option`:
 
-The rule is simple: if any expression in an `effect fn` body evaluates to `err(e)`, the entire function immediately returns that error.
+```almide
+effect fn first_name(users: List[User]) -> Result[String, String] = {
+  let user = list.first(users)!       // none becomes err, propagated
+  ok(user.name)
+}
+```
+
+### `??` — fallback value
+
+`expr ?? fallback` unwraps with a default. If the value is `err(_)` or `none`, the fallback is used instead. Valid anywhere (not limited to `effect fn`).
+
+```almide
+let port = int.parse(port_str) ?? 8080
+let name = map.get(env, "USER") ?? "anonymous"
+```
+
+### `?` — convert to Option
+
+`expr?` converts a `Result[T, E]` to `Option[T]`, discarding the error. On `Option`, it is a passthrough. Valid anywhere.
+
+```almide
+let parsed = int.parse(input)?        // Result[Int, String] -> Option[Int]
+let found = map.get(config, "key")?   // Option[String] -> Option[String] (passthrough)
+```
+
+### Summary table
+
+| Operator | On Result | On Option | Valid in |
+|----------|-----------|-----------|----------|
+| `expr!` | `ok(v)` -> `v`, `err(e)` -> propagate | `some(v)` -> `v`, `none` -> propagate | `effect fn` only |
+| `expr ?? fallback` | `ok(v)` -> `v`, `err(_)` -> `fallback` | `some(v)` -> `v`, `none` -> `fallback` | Anywhere |
+| `expr?` | `ok(v)` -> `some(v)`, `err(_)` -> `none` | Passthrough | Anywhere |
+
+## effect fn
+
+Functions with side effects use `effect fn`. The `!` operator is the standard way to propagate errors inside an `effect fn`:
+
+```almide
+effect fn process(path: String) -> Result[String, String] = {
+  let text = fs.read_text(path)!          // propagate on error
+  let data = json.parse(text)!            // propagate on error
+  ok(data)
+}
+```
+
+Without `!`, you would need to manually match on every `Result`.
+
+## Error type conversion with map_err
+
+When different functions return different error types, use `result.map_err` combined with `!` to convert errors:
+
+```almide
+type AppError =
+  | Io(String)
+  | Parse(String)
+
+effect fn load(path: String) -> Result[Config, AppError] = {
+  let text = fs.read_text(path)
+    |> result.map_err(_, (e) => Io(e))!
+  let raw = json.parse(text)
+    |> result.map_err(_, (e) => Parse(e))!
+  ok(parse_config(raw))
+}
+```
+
+This pattern replaces the former `From` convention with explicit, visible error conversion.
 
 ## guard
 
@@ -88,34 +157,11 @@ effect fn process(path: String) -> Result[Unit, String] = {
     println("file not found, skipping")
     ok(())
   }
-  let content = fs.read_text(path)
+  let content = fs.read_text(path)!
   println(content)
   ok(())
 }
 ```
-
-## Error types with deriving From
-
-For applications with multiple error sources, define a variant error type with `deriving From`:
-
-```almide
-type AppError =
-  | Io(IoError)
-  | Parse(ParseError)
-  deriving From
-```
-
-`deriving From` generates automatic conversions from each inner error type to the variant. This enables seamless error propagation across different error types:
-
-```almide
-effect fn load(path: String) -> Result[Config, AppError] = {
-  let text = fs.read_text(path)       // IoError -> AppError::Io (automatic)
-  let raw = json.parse(text)          // ParseError -> AppError::Parse (automatic)
-  ok(parse_config(raw))
-}
-```
-
-Without `deriving From`, you would need to manually wrap each error.
 
 ## Three-layer error strategy
 
@@ -153,16 +199,16 @@ effect fn create_user(name: String, age: Int) -> Result[User, String] = {
 }
 ```
 
-### unwrap_or for defaults
+### `??` for defaults
 
 When a missing value has a sensible default:
 
 ```almide
-let port = result.unwrap_or(int.parse(port_str), 8080)
-let name = option.unwrap_or(map.get(env, "USER"), "anonymous")
+let port = int.parse(port_str) ?? 8080
+let name = map.get(env, "USER") ?? "anonymous"
 ```
 
-### and_then for chaining
+### flat_map for chaining
 
 When each step can fail and depends on the previous:
 

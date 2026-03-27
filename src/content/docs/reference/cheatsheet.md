@@ -22,7 +22,6 @@ type Name = Type                                     // type alias
 type Handler = (String) -> String                    // function type alias
 type ConfigError =
   | Io(IoError) | Parse(ParseError)
-  deriving From                                      // auto From conversion
 ```
 
 **Built-in types:** `Int`, `Float`, `String`, `Bool`, `Unit`, `Path`, `List[T]`, `Map[K, V]`, `Set[T]`, `Result[T, E]`, `Option[T]`
@@ -124,9 +123,33 @@ test "description" {
 
 No `print` function. Use `println` for all output.
 
+## Unwrap Operators
+
+```almd
+expr!                          // propagate error (effect fn only)
+expr ?? fallback               // unwrap with default
+expr?                          // Result -> Option (discard error)
+```
+
+```almd
+effect fn load(path: String) -> Result[String, String] = {
+  let text = fs.read_text(path)!        // propagate on err
+  ok(text)
+}
+let port = int.parse(s) ?? 8080         // fallback
+let name = map.get(env, "USER") ?? "anonymous"
+let parsed = int.parse(input)?          // Option[Int]
+```
+
+Error type conversion (replaces `From`):
+
+```almd
+fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
+```
+
 ## Operators (precedence high to low)
 
-`. ()` > `not -` > `^` > `* / %` > `+ -` > `.. ..=` > `== != < > <= >=` > `and` > `or` > `|> >>`
+`. () [] ! ?? ?` > `not -` > `^` > `* / %` > `+ -` > `.. ..=` > `== != < > <= >=` > `and` > `or` > `|> >>`
 
 ## Stdlib Modules
 
@@ -139,7 +162,8 @@ No `print` function. Use `println` for all output.
 - Newline = statement separator (no semicolons needed)
 - `[]` for generics, NOT `<>`
 - `effect fn` for side effects, NOT `fn name!()`
-- `?` suffix is for Bool predicates only
+- `fn name?()` suffix is for Bool predicates only
+- Postfix `!` / `??` / `?` are unwrap operators (see above)
 - No exceptions -- use `Result[T, E]`
 - No null -- use `Option[T]`
 - No inheritance, no macros, no operator overloading, no implicit conversions
@@ -166,7 +190,7 @@ No `print` function. Use `println` for all output.
 effect fn main(args: List[String]) -> Result[Unit, AppError] = {
   let cmd = list.get(args, 1)
   match cmd {
-    some("run") => do_something(),
+    some("run") => do_something()!,
     some(other) => err(UnknownCommand(other)),
     none => err(NoCommand),
   }
