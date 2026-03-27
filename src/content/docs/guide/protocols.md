@@ -96,37 +96,6 @@ let same = Red == Red          // true, just works
 let diff = Red != Blue         // true, just works
 ```
 
-## deriving From
-
-`deriving From` is the only explicit deriving directive. It generates `From` implementations for variant types, enabling automatic error conversion:
-
-```almide
-type AppError =
-  | Io(IoError)
-  | Parse(ParseError)
-  | Validation(String)
-  deriving From
-```
-
-This generates:
-
-```almide
-// impl From[IoError] for AppError    -> Io(e)
-// impl From[ParseError] for AppError -> Parse(e)
-```
-
-Used with `effect fn` for seamless error propagation:
-
-```almide
-effect fn load(path: String) -> Result[Config, AppError] = {
-  let text = fs.read_text(path)    // IoError auto-converts to AppError
-  let raw = json.parse(text)       // ParseError auto-converts to AppError
-  ok(decode(raw))
-}
-```
-
-See [Error Handling](/docs/guide/error-handling/) for details on error propagation.
-
 ## Protocols and impl blocks
 
 For more complex type-class patterns, Almide supports `protocol` and `impl` blocks:
@@ -153,4 +122,4 @@ impl Showable for Point {
 
 - [Generics](/docs/guide/generics/) — type parameters and bounds
 - [Types & Values](/docs/guide/types/) — records, variants, and deriving
-- [Error Handling](/docs/guide/error-handling/) — deriving From for error types
+- [Error Handling](/docs/guide/error-handling/) — unwrap operators and error propagation
