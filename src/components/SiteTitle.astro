@@ -40,25 +40,17 @@ const logoDataUri = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABBCAYAA
     width: 28px !important;
     height: 28px !important;
     display: block;
-    filter: grayscale(1) contrast(1.2) brightness(0.9);
-  }
-  .mark-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 6px;
     animation: logo-shimmer 6s ease-in-out infinite;
-    mix-blend-mode: color;
-    pointer-events: none;
   }
-  :global(:root[data-theme='light']) .mark-wrap::after {
-    display: none;
+  :global(:root[data-theme='light']) .mark {
+    filter: grayscale(1) contrast(1.2) brightness(0.9);
+    animation: none;
   }
   @keyframes logo-shimmer {
-    0%   { background: rgba(124, 92, 191, 0.5); }
-    33%  { background: rgba(90, 120, 220, 0.55); }
-    66%  { background: rgba(150, 80, 180, 0.5); }
-    100% { background: rgba(124, 92, 191, 0.5); }
+    0%   { filter: grayscale(0.6) contrast(1.2) brightness(0.9) saturate(1.2); }
+    33%  { filter: grayscale(0.2) contrast(1.3) brightness(1.1) saturate(1.8); }
+    66%  { filter: grayscale(0.4) contrast(1.2) brightness(1.0) saturate(1.5); }
+    100% { filter: grayscale(0.6) contrast(1.2) brightness(0.9) saturate(1.2); }
   }
   .label {
     font-size: 17px !important;
