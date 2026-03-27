@@ -73,6 +73,9 @@ pre {
 ::selection {
 	background: rgba(124, 92, 191, 0.4);
 }
+:root[data-theme='light'] ::selection {
+	background: rgba(107, 63, 173, 0.25);
+}
 
 /* Card styling */
 .card-grid {
