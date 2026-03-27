@@ -76,7 +76,29 @@ pre {
 	gap: 1rem;
 }
 
+/* Hide default social icons (GitHub icon is in SiteTitle now) */
+.social-icons {
+	display: none !important;
+}
+.social-icons::after {
+	display: none !important;
+}
+
 /* Sidebar active link accent */
 nav .sidebar-content a[aria-current="page"] {
 	border-color: var(--sl-color-accent);
+}
+
+/* ── Header: match playground layout (padding: 14px 24px, 28px logo) ── */
+:root {
+	--sl-nav-height: 3.5rem;
+	--sl-nav-pad-x: 24px;
+	--sl-nav-pad-y: 14px;
+	--sl-nav-gap: 20px;
+}
+@media (min-width: 50rem) {
+	:root {
+		--sl-nav-height: 3.5rem;
+		--sl-nav-pad-x: 24px;
+	}
 }
