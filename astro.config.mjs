@@ -26,7 +26,6 @@ export default defineConfig({
 			title: 'Almide',
 			favicon: '/favicon.png',
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/almide/almide' },
 				{ icon: 'external', label: 'Playground', href: 'https://almide.github.io/playground/' },
 			],
 			pagefind: false,
