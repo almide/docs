@@ -20,6 +20,7 @@ export default defineConfig({
 		starlight({
 			expressiveCode: {
 				themes: ['tokyo-night', 'github-light'],
+				frames: false,
 				shiki: {
 					langs: [almideLang],
 				},
