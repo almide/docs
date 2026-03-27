@@ -19,6 +19,7 @@ export default defineConfig({
 		astroMermaid(),
 		starlight({
 			expressiveCode: {
+				themes: ['tokyo-night'],
 				shiki: {
 					langs: [almideLang],
 				},
