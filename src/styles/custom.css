@@ -55,6 +55,7 @@
 .sl-markdown-content .sl-heading-wrapper.level-h3 {
 	margin-top: 2rem !important;
 	margin-bottom: 0.75rem !important;
+	font-size: 1.1rem !important;
 }
 .sl-markdown-content :is(h4),
 .sl-markdown-content .sl-heading-wrapper.level-h4 {
