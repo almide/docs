@@ -76,14 +76,6 @@ pre {
 	gap: 1rem;
 }
 
-/* Hide default social icons (GitHub icon is in SiteTitle now) */
-.social-icons {
-	display: none !important;
-}
-.social-icons::after {
-	display: none !important;
-}
-
 /* Sidebar active link accent */
 nav .sidebar-content a[aria-current="page"] {
 	border-color: var(--sl-color-accent);
