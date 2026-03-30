@@ -440,16 +440,6 @@ Group elements by a key function into a map.
 list.group_by(["hi", "hey", "bye"], (s) => string.get(s, 0))
 ```
 
-## Iteration
-
-### `list.each(xs: List[A], f: Fn[A] -> Unit) -> Unit`
-
-Execute a function for each element (side effects only).
-
-```almd
-list.each([1, 2, 3], (x) => println(int.to_string(x)))
-```
-
 ## Construction
 
 ### `list.range(start: Int, end: Int) -> List[Int]`

@@ -30,7 +30,6 @@ Map literals use brackets: `["a": 1, "b": 2]`. Empty map: `[:]` (requires type a
 | `any` | `(Map[K, V], Fn[K, V] -> Bool) -> Bool` | Any entry matches |
 | `all` | `(Map[K, V], Fn[K, V] -> Bool) -> Bool` | All entries match |
 | `count` | `(Map[K, V], Fn[K, V] -> Bool) -> Int` | Count matching entries |
-| `each` | `(Map[K, V], Fn[K, V] -> Unit) -> Unit` | Side effect per entry |
 | `find` | `(Map[K, V], Fn[K, V] -> Bool) -> Option[(K, V)]` | Find first matching entry |
 | `update` | `(Map[K, V], K, Fn[V] -> V) -> Map[K, V]` | Update value at key with function |
 

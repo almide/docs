@@ -176,7 +176,7 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 | Wrong | Correct | Why |
 |---|---|---|
 | `list[1, 2, 3]` | `[1, 2, 3]` | `list` is a module |
-| `each(xs, f)` | `list.each(xs, f)` | Always use module prefix |
+| `each(xs, f)` | `for x in xs { f(x) }` | Use `for` loop for side effects |
 | `List.new()` | `[]` | No `new()` for List |
 | `{"a": 1}` | `["a": 1]` | Braces are for records, brackets for maps |
 | `string.length(s)` | `string.len(s)` | No synonyms |

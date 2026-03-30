@@ -48,7 +48,6 @@ The `set` module provides functions for working with `Set[A]` collections of uni
 | `filter` | `(Set[A], Fn[A] -> Bool) -> Set[A]` | Keep matching elements |
 | `map` | `(Set[A], Fn[A] -> B) -> Set[B]` | Transform elements |
 | `fold` | `(Set[A], B, Fn[B, A] -> B) -> B` | Accumulate over elements |
-| `each` | `(Set[A], Fn[A] -> Unit) -> Unit` | Side effect per element |
 | `any` | `(Set[A], Fn[A] -> Bool) -> Bool` | Any element matches |
 | `all` | `(Set[A], Fn[A] -> Bool) -> Bool` | All elements match |
 

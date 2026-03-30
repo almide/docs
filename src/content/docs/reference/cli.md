@@ -67,6 +67,40 @@ test "addition works" {
 }
 ```
 
+### `almide compile`
+
+Compile source to a module interface — the language-agnostic intermediate representation of a module's public API (types, functions, constants).
+
+```bash
+almide compile                         # project module interface
+almide compile parser                  # specific module by name
+almide compile src/parser.almd         # specific module by file path
+almide compile --json                  # machine-readable JSON output
+almide compile parser --json           # combine module + JSON
+```
+
+The module interface is the bridge between Almide source and external targets. It captures the public contract (exported types, function signatures, constants) without any target-specific details.
+
+**Default output** is human-readable:
+
+```text
+module parser
+
+  type Token
+    | Ident(String)
+    | Number(Int)
+    | Symbol(String)
+
+  fn parse(input: String) -> List[Token]
+  fn tokenize(input: String) -> List[Token]
+```
+
+**JSON output** (`--json`) is designed for tooling: binding generators, documentation tools, and IDE integration.
+
+| Flag | Description |
+|------|-------------|
+| `--json` | Output as machine-readable JSON |
+
 ### `almide check`
 
 Type-check source files without generating code or running.
@@ -138,7 +172,7 @@ almide deps
 | `--no-check` | run, build, test | Skip type checking |
 | `--fast` | build | Maximum performance: native CPU, opt-level=3, LTO |
 | `--release` | build | Optimize for performance (opt-level=2) |
-| `--json` | test, check | Output results as JSON |
+| `--json` | compile, test, check | Output results as JSON |
 
 ## Code Emission
 
@@ -148,7 +182,6 @@ Emit generated source code for a specific target language.
 
 ```bash
 almide app.almd --target rust          # emit Rust source
-almide app.almd --target ts            # emit TypeScript source
 ```
 
 Outputs the generated source code to stdout. Useful for inspecting what the compiler produces.
