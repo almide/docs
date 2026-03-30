@@ -1,79 +1,195 @@
 ---
 title: http
-description: HTTP client and server functions in the Almide standard library. Requires import.
+description: HTTP client and server. Requires `import http`.
 ---
-
-The `http` module provides an HTTP client for making requests and a server for handling them. **Requires `import http`.** Client functions are `effect fn`.
-
-## Function Reference
-
-### Server
-
-| Function | Signature | Description |
-|---|---|---|
-| `serve` | `(Int, Fn[Request] -> Response) -> Unit` | Start HTTP server on port (effect) |
-
-### Response Builders
-
-| Function | Signature | Description |
-|---|---|---|
-| `response` | `(Int, String) -> Response` | Plain text response with status |
-| `json` | `(Int, String) -> Response` | JSON response with status |
-| `with_headers` | `(Int, String, Map[String, String]) -> Response` | Response with custom headers |
-| `redirect` | `(String) -> Response` | 302 redirect |
-
-### Response Accessors
-
-| Function | Signature | Description |
-|---|---|---|
-| `status` | `(Response, Int) -> Response` | Set status code |
-| `body` | `(Response) -> String` | Get body string |
-| `set_header` | `(Response, String, String) -> Response` | Set header |
-| `get_header` | `(Response, String) -> Option[String]` | Get header value |
-
-### Request Accessors
-
-| Function | Signature | Description |
-|---|---|---|
-| `req_method` | `(Request) -> String` | HTTP method (GET, POST, etc.) |
-| `req_path` | `(Request) -> String` | URL path |
-| `req_body` | `(Request) -> String` | Request body |
-| `req_header` | `(Request, String) -> Option[String]` | Get request header |
-| `query_params` | `(Request) -> Map[String, String]` | Query parameters as map |
-
-### HTTP Client (effect)
-
-| Function | Signature | Description |
-|---|---|---|
-| `get` | `(String) -> Result[String, String]` | Send GET request |
-| `post` | `(String, String) -> Result[String, String]` | Send POST with body |
-| `put` | `(String, String) -> Result[String, String]` | Send PUT with body |
-| `patch` | `(String, String) -> Result[String, String]` | Send PATCH with body |
-| `delete` | `(String) -> Result[String, String]` | Send DELETE request |
-| `request` | `(String, String, String, Map[String, String]) -> Result[String, String]` | Custom request (method, url, body, headers) |
-
-## Examples
 
 ```almd
 import http
-import json
+```
 
-// HTTP server
-effect fn main(args: List[String]) -> Result[Unit, String] = {
-  http.serve(3000, (req) => {
-    let method = http.req_method(req)
-    let path = http.req_path(req)
-    match path {
-      "/" => http.response(200, "Hello!"),
-      "/api/data" => http.json(200, json.stringify(data)),
-      _ => http.response(404, "Not found"),
-    }
-  })
-}
+## Functions
 
-// HTTP client
-effect fn fetch_data() -> Result[String, String] = {
-  let body = http.get("https://api.example.com/data")
-  ok(body)
-}
+| Function | Signature | Description |
+|---|---|---|
+| `serve` | `(Int, Fn[Unknown] -> Unknown) -> Unit` | Start an HTTP server on the given port with a request handler |
+| `response` | `(Int, String) -> Response` | Create a plain text HTTP response with status code |
+| `json` | `(Int, String) -> Response` | Create a JSON HTTP response with status code |
+| `with_headers` | `(Int, String, Map[String, String]) -> Response` | Create a response with custom headers |
+| `redirect` | `(String) -> Response` | Create a 302 temporary redirect response |
+| `status` | `(Response, Int) -> Response` | Set the status code on a response |
+| `body` | `(Response) -> String` | Get the body string from a response |
+| `set_header` | `(Response, String, String) -> Response` | Set a header on a response |
+| `get_header` | `(Response, String) -> Option[String]` | Get a header value from a response |
+| `req_method` | `(Request) -> String` | Get the HTTP method of a request (GET, POST, etc.) |
+| `req_path` | `(Request) -> String` | Get the URL path of a request |
+| `req_body` | `(Request) -> String` | Get the body string of a request |
+| `req_header` | `(Request, String) -> Option[String]` | Get a header value from a request |
+| `query_params` | `(Request) -> Map[String, String]` | Get all query parameters from a request as a map |
+| `get` | `(String) -> Result[String, String]` | Send an HTTP GET request and return the response body |
+| `post` | `(String, String) -> Result[String, String]` | Send an HTTP POST request with a body string |
+| `put` | `(String, String) -> Result[String, String]` | Send an HTTP PUT request |
+| `patch` | `(String, String) -> Result[String, String]` | Send an HTTP PATCH request |
+| `delete` | `(String) -> Result[String, String]` | Send an HTTP DELETE request |
+| `request` | `(String, String, String, Map[String, String]) -> Result[String, String]` | Send a custom HTTP request with method, URL, body, and headers |
+
+## Reference
+
+### `http.serve(port: Int, f: Fn[Unknown] -> Unknown) -> Unit`
+
+Start an HTTP server on the given port with a request handler
+
+```almd
+http.serve(3000, (req) => http.response(200, "ok"))
+```
+
+### `http.response(status: Int, body: String) -> Response`
+
+Create a plain text HTTP response with status code
+
+```almd
+http.response(200, "Hello!")
+```
+
+### `http.json(status: Int, body: String) -> Response`
+
+Create a JSON HTTP response with status code
+
+```almd
+http.json(200, json.stringify(data))
+```
+
+### `http.with_headers(status: Int, body: String, headers: Map[String, String]) -> Response`
+
+Create a response with custom headers
+
+```almd
+http.with_headers(200, body, {"Content-Type": "text/html"})
+```
+
+### `http.redirect(url: String) -> Response`
+
+Create a 302 temporary redirect response
+
+```almd
+http.redirect("/new-path")
+```
+
+### `http.status(resp: Response, code: Int) -> Response`
+
+Set the status code on a response
+
+```almd
+http.status(resp, 201)
+```
+
+### `http.body(resp: Response) -> String`
+
+Get the body string from a response
+
+```almd
+let text = http.body(resp)
+```
+
+### `http.set_header(resp: Response, key: String, value: String) -> Response`
+
+Set a header on a response
+
+```almd
+http.set_header(resp, "X-Custom", "value")
+```
+
+### `http.get_header(resp: Response, key: String) -> Option[String]`
+
+Get a header value from a response
+
+```almd
+let ct = http.get_header(resp, "Content-Type")
+```
+
+### `http.req_method(req: Request) -> String`
+
+Get the HTTP method of a request (GET, POST, etc.)
+
+```almd
+let method = http.req_method(req)
+```
+
+### `http.req_path(req: Request) -> String`
+
+Get the URL path of a request
+
+```almd
+let path = http.req_path(req)
+```
+
+### `http.req_body(req: Request) -> String`
+
+Get the body string of a request
+
+```almd
+let body = http.req_body(req)
+```
+
+### `http.req_header(req: Request, key: String) -> Option[String]`
+
+Get a header value from a request
+
+```almd
+let auth = http.req_header(req, "Authorization")
+```
+
+### `http.query_params(req: Request) -> Map[String, String]`
+
+Get all query parameters from a request as a map
+
+```almd
+let params = http.query_params(req) // {"page": "1", "q": "test"}
+```
+
+### `http.get(url: String) -> Result[String, String]`
+
+Send an HTTP GET request and return the response body
+
+```almd
+let html = http.get("https://example.com")
+```
+
+### `http.post(url: String, body: String) -> Result[String, String]`
+
+Send an HTTP POST request with a body string
+
+```almd
+let resp = http.post("https://api.example.com", body)
+```
+
+### `http.put(url: String, body: String) -> Result[String, String]`
+
+Send an HTTP PUT request
+
+```almd
+let resp = http.put(url, body)
+```
+
+### `http.patch(url: String, body: String) -> Result[String, String]`
+
+Send an HTTP PATCH request
+
+```almd
+let resp = http.patch(url, body)
+```
+
+### `http.delete(url: String) -> Result[String, String]`
+
+Send an HTTP DELETE request
+
+```almd
+let resp = http.delete(url)
+```
+
+### `http.request(method: String, url: String, body: String, headers: Map[String, String]) -> Result[String, String]`
+
+Send a custom HTTP request with method, URL, body, and headers
+
+```almd
+let resp = http.request("PUT", url, body, headers)
 ```

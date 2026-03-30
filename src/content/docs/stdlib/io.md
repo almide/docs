@@ -1,35 +1,60 @@
 ---
 title: io
-description: Console I/O functions in the Almide standard library. Requires import.
+description: Standard I/O operations. Requires `import io`.
 ---
-
-The `io` module provides console input/output functions. **Requires `import io`.** All functions are `effect fn`.
-
-## Function Reference
-
-| Function | Signature | Description |
-|---|---|---|
-| `read_line` | `() -> String` | Read a single line from stdin |
-| `print` | `(String) -> Unit` | Print to stdout without trailing newline |
-| `read_all` | `() -> String` | Read all of stdin as a single string |
-
-## Examples
 
 ```almd
 import io
-
-effect fn prompt(msg: String) -> Result[String, String] = {
-  io.print(msg)
-  let answer = io.read_line()
-  ok(answer)
-}
-
-effect fn main(args: List[String]) -> Result[Unit, String] = {
-  io.print("Enter your name: ")
-  let name = io.read_line()
-  println("Hello, " + name + "!")
-  ok(())
-}
 ```
 
-Note: `println` is a built-in function (no import needed) and always appends a newline. Use `io.print` when you need output without a trailing newline, such as prompts.
+## Functions
+
+| Function | Signature | Description |
+|---|---|---|
+| `read_line` | `() -> String` | Read a single line from standard input |
+| `print` | `(String) -> Unit` | Print a string to stdout without a trailing newline |
+| `read_all` | `() -> String` | Read all of standard input as a single string |
+| `write_bytes` | `(List[Int]) -> Unit` | Write raw bytes to stdout (no UTF-8 conversion) |
+| `write` | `(Bytes) -> Unit` | Write a Bytes buffer to stdout (zero-copy, buffered) |
+
+## Reference
+
+### `io.read_line() -> String`
+
+Read a single line from standard input
+
+```almd
+let name = io.read_line()
+```
+
+### `io.print(s: String) -> Unit`
+
+Print a string to stdout without a trailing newline
+
+```almd
+io.print("Enter name: ")
+```
+
+### `io.read_all() -> String`
+
+Read all of standard input as a single string
+
+```almd
+let input = io.read_all()
+```
+
+### `io.write_bytes(data: List[Int]) -> Unit`
+
+Write raw bytes to stdout (no UTF-8 conversion)
+
+```almd
+io.write_bytes([0x50, 0x34, 0x0A])
+```
+
+### `io.write(data: Bytes) -> Unit`
+
+Write a Bytes buffer to stdout (zero-copy, buffered)
+
+```almd
+io.write(buf)
+```

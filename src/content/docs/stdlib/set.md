@@ -1,65 +1,184 @@
 ---
 title: set
-description: Set operations in the Almide standard library. Auto-imported.
+description: Set operations — unique element collections. Auto-imported.
 ---
 
-The `set` module provides functions for working with `Set[A]` collections of unique values. It is **auto-imported** -- no `import` statement needed.
+The `set` module is **auto-imported** — no `import` statement needed.
 
-## Function Reference
-
-### Construction
+## Functions
 
 | Function | Signature | Description |
 |---|---|---|
-| `new` | `() -> Set[A]` | Create an empty set |
-| `from_list` | `(List[A]) -> Set[A]` | Create set from list |
+| `new` | `() -> Set[A]` | Create an empty set. |
+| `from_list` | `(List[A]) -> Set[A]` | Create a set from a list of values. |
+| `insert` | `(Set[A], A) -> Set[A]` | Add a value to the set. Returns a new set. |
+| `remove` | `(Set[A], A) -> Set[A]` | Remove a value from the set. Returns a new set. |
+| `contains` | `(Set[A], A) -> Bool` | Check if a value is in the set. |
+| `len` | `(Set[A]) -> Int` | Return the number of elements. |
+| `is_empty` | `(Set[A]) -> Bool` | Check if the set has no elements. |
+| `to_list` | `(Set[A]) -> List[A]` | Convert a set to a list. |
+| `union` | `(Set[A], Set[A]) -> Set[A]` | Return the union of two sets. |
+| `intersection` | `(Set[A], Set[A]) -> Set[A]` | Return the intersection of two sets. |
+| `difference` | `(Set[A], Set[A]) -> Set[A]` | Return elements in a that are not in b. |
+| `symmetric_difference` | `(Set[A], Set[A]) -> Set[A]` | Return elements in either set but not both. |
+| `is_subset` | `(Set[A], Set[A]) -> Bool` | Check if all elements of a are in b. |
+| `is_disjoint` | `(Set[A], Set[A]) -> Bool` | Check if two sets have no elements in common. |
+| `filter` | `(Set[A], Fn[A] -> Bool) -> Set[A]` | Keep elements that satisfy a predicate. |
+| `map` | `(Set[A], Fn[A] -> B) -> Set[B]` | Apply a function to each element, returning a new set. |
+| `fold` | `(Set[A], B, Fn[B, A] -> B) -> B` | Reduce a set with an initial accumulator. |
+| `any` | `(Set[A], Fn[A] -> Bool) -> Bool` | Check if any element satisfies a predicate. |
+| `all` | `(Set[A], Fn[A] -> Bool) -> Bool` | Check if all elements satisfy a predicate. |
 
-### Access
+## Reference
 
-| Function | Signature | Description |
-|---|---|---|
-| `contains` | `(Set[A], A) -> Bool` | Check membership |
-| `len` | `(Set[A]) -> Int` | Number of elements |
-| `is_empty` | `(Set[A]) -> Bool` | Empty check |
-| `to_list` | `(Set[A]) -> List[A]` | Convert to list |
+### `set.new() -> Set[A]`
 
-### Modification (immutable)
-
-| Function | Signature | Description |
-|---|---|---|
-| `insert` | `(Set[A], A) -> Set[A]` | Add value (returns new set) |
-| `remove` | `(Set[A], A) -> Set[A]` | Remove value (returns new set) |
-
-### Set Operations
-
-| Function | Signature | Description |
-|---|---|---|
-| `union` | `(Set[A], Set[A]) -> Set[A]` | Union of two sets |
-| `intersection` | `(Set[A], Set[A]) -> Set[A]` | Intersection |
-| `difference` | `(Set[A], Set[A]) -> Set[A]` | Elements in a not in b |
-| `symmetric_difference` | `(Set[A], Set[A]) -> Set[A]` | Elements in either but not both |
-| `is_subset` | `(Set[A], Set[A]) -> Bool` | Check if a is subset of b |
-| `is_disjoint` | `(Set[A], Set[A]) -> Bool` | Check if no common elements |
-
-### Higher-Order
-
-| Function | Signature | Description |
-|---|---|---|
-| `filter` | `(Set[A], Fn[A] -> Bool) -> Set[A]` | Keep matching elements |
-| `map` | `(Set[A], Fn[A] -> B) -> Set[B]` | Transform elements |
-| `fold` | `(Set[A], B, Fn[B, A] -> B) -> B` | Accumulate over elements |
-| `any` | `(Set[A], Fn[A] -> Bool) -> Bool` | Any element matches |
-| `all` | `(Set[A], Fn[A] -> Bool) -> Bool` | All elements match |
-
-## Examples
+Create an empty set.
 
 ```almd
-let a = set.from_list([1, 2, 3])
-let b = set.from_list([2, 3, 4])
+set.new()
+```
 
-set.union(a, b)           // {1, 2, 3, 4}
-set.intersection(a, b)    // {2, 3}
-set.difference(a, b)      // {1}
-set.contains(a, 2)        // => true
-set.is_subset(a, b)       // => false
+### `set.from_list(xs: List[A]) -> Set[A]`
+
+Create a set from a list of values.
+
+```almd
+set.from_list([1, 2, 3])
+```
+
+### `set.insert(s: Set[A], value: A) -> Set[A]`
+
+Add a value to the set. Returns a new set.
+
+```almd
+set.insert(s, 42)
+```
+
+### `set.remove(s: Set[A], value: A) -> Set[A]`
+
+Remove a value from the set. Returns a new set.
+
+```almd
+set.remove(s, 42)
+```
+
+### `set.contains(s: Set[A], value: A) -> Bool`
+
+Check if a value is in the set.
+
+```almd
+set.contains(s, 42)
+```
+
+### `set.len(s: Set[A]) -> Int`
+
+Return the number of elements.
+
+```almd
+set.len(s)
+```
+
+### `set.is_empty(s: Set[A]) -> Bool`
+
+Check if the set has no elements.
+
+```almd
+set.is_empty(s)
+```
+
+### `set.to_list(s: Set[A]) -> List[A]`
+
+Convert a set to a list.
+
+```almd
+set.to_list(s)
+```
+
+### `set.union(a: Set[A], b: Set[A]) -> Set[A]`
+
+Return the union of two sets.
+
+```almd
+set.union(a, b)
+```
+
+### `set.intersection(a: Set[A], b: Set[A]) -> Set[A]`
+
+Return the intersection of two sets.
+
+```almd
+set.intersection(a, b)
+```
+
+### `set.difference(a: Set[A], b: Set[A]) -> Set[A]`
+
+Return elements in a that are not in b.
+
+```almd
+set.difference(a, b)
+```
+
+### `set.symmetric_difference(a: Set[A], b: Set[A]) -> Set[A]`
+
+Return elements in either set but not both.
+
+```almd
+set.symmetric_difference(a, b)
+```
+
+### `set.is_subset(a: Set[A], b: Set[A]) -> Bool`
+
+Check if all elements of a are in b.
+
+```almd
+set.is_subset(a, b)
+```
+
+### `set.is_disjoint(a: Set[A], b: Set[A]) -> Bool`
+
+Check if two sets have no elements in common.
+
+```almd
+set.is_disjoint(a, b)
+```
+
+### `set.filter(s: Set[A], f: Fn[A] -> Bool) -> Set[A]`
+
+Keep elements that satisfy a predicate.
+
+```almd
+set.filter(s, fn(x) => x > 2)
+```
+
+### `set.map(s: Set[A], f: Fn[A] -> B) -> Set[B]`
+
+Apply a function to each element, returning a new set.
+
+```almd
+set.map(s, fn(x) => x * 2)
+```
+
+### `set.fold(s: Set[A], init: B, f: Fn[B, A] -> B) -> B`
+
+Reduce a set with an initial accumulator.
+
+```almd
+set.fold(s, 0, fn(acc, x) => acc + x)
+```
+
+### `set.any(s: Set[A], f: Fn[A] -> Bool) -> Bool`
+
+Check if any element satisfies a predicate.
+
+```almd
+set.any(s, fn(x) => x > 2)
+```
+
+### `set.all(s: Set[A], f: Fn[A] -> Bool) -> Bool`
+
+Check if all elements satisfy a predicate.
+
+```almd
+set.all(s, fn(x) => x > 0)
 ```

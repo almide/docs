@@ -1,68 +1,204 @@
 ---
 title: datetime
-description: Date and time operations in the Almide standard library. Requires import.
+description: Date and time operations. Requires `import datetime`.
 ---
-
-The `datetime` module provides date/time creation, formatting, and arithmetic. **Requires `import datetime`.** DateTime is represented as `Int` (Unix timestamp in seconds, UTC).
-
-## Function Reference
-
-### Construction
-
-| Function | Signature | Description |
-|---|---|---|
-| `now` | `() -> Int` | Current time as Unix timestamp (effect) |
-| `from_parts` | `(Int, Int, Int, Int, Int, Int) -> Int` | Create from year, month, day, hour, minute, second |
-| `parse_iso` | `(String) -> Result[Int, String]` | Parse ISO 8601 string |
-| `from_unix` | `(Int) -> Int` | Identity (documentation clarity) |
-
-### Formatting
-
-| Function | Signature | Description |
-|---|---|---|
-| `format` | `(Int, String) -> String` | Format with pattern string |
-| `to_iso` | `(Int) -> String` | Format as ISO 8601 |
-| `to_unix` | `(Int) -> Int` | Get Unix timestamp (identity) |
-
-### Part Access
-
-| Function | Signature | Description |
-|---|---|---|
-| `year` | `(Int) -> Int` | Extract year |
-| `month` | `(Int) -> Int` | Extract month (1-12) |
-| `day` | `(Int) -> Int` | Extract day (1-31) |
-| `hour` | `(Int) -> Int` | Extract hour (0-23) |
-| `minute` | `(Int) -> Int` | Extract minute (0-59) |
-| `second` | `(Int) -> Int` | Extract second (0-59) |
-| `weekday` | `(Int) -> String` | Day of week (Monday-Sunday) |
-
-### Arithmetic
-
-| Function | Signature | Description |
-|---|---|---|
-| `add_days` | `(Int, Int) -> Int` | Add n days |
-| `add_hours` | `(Int, Int) -> Int` | Add n hours |
-| `add_minutes` | `(Int, Int) -> Int` | Add n minutes |
-| `add_seconds` | `(Int, Int) -> Int` | Add n seconds |
-| `diff_seconds` | `(Int, Int) -> Int` | Difference in seconds |
-
-### Comparison
-
-| Function | Signature | Description |
-|---|---|---|
-| `is_before` | `(Int, Int) -> Bool` | Check if a is before b |
-| `is_after` | `(Int, Int) -> Bool` | Check if a is after b |
-
-## Examples
 
 ```almd
 import datetime
+```
 
-let ts = datetime.from_parts(2024, 1, 15, 12, 0, 0)
-datetime.format(ts, "%Y-%m-%d")          // => "2024-01-15"
-datetime.to_iso(ts)                      // => "2024-01-15T12:00:00Z"
-datetime.year(ts)                        // => 2024
-datetime.weekday(ts)                     // => "Monday"
-datetime.add_days(ts, 7)                 // one week later
-datetime.diff_seconds(later, earlier)    // => 3600
+## Functions
+
+| Function | Signature | Description |
+|---|---|---|
+| `now` | `() -> Int` | Get the current time as a Unix timestamp (seconds, UTC). |
+| `from_parts` | `(Int, Int, Int, Int, Int, Int) -> Int` | Create a timestamp from year, month, day, hour, minute, second (UTC). |
+| `parse_iso` | `(String) -> Result[Int, String]` | Parse an ISO 8601 date string into a timestamp. |
+| `from_unix` | `(Int) -> Int` | Convert a Unix timestamp (identity function for documentation clarity). |
+| `format` | `(Int, String) -> String` | Format a timestamp using a pattern string. |
+| `to_iso` | `(Int) -> String` | Format a timestamp as ISO 8601 string. |
+| `to_unix` | `(Int) -> Int` | Get the Unix timestamp value (identity function). |
+| `year` | `(Int) -> Int` | Extract the year from a timestamp. |
+| `month` | `(Int) -> Int` | Extract the month (1-12) from a timestamp. |
+| `day` | `(Int) -> Int` | Extract the day of month (1-31) from a timestamp. |
+| `hour` | `(Int) -> Int` | Extract the hour (0-23) from a timestamp. |
+| `minute` | `(Int) -> Int` | Extract the minute (0-59) from a timestamp. |
+| `second` | `(Int) -> Int` | Extract the second (0-59) from a timestamp. |
+| `weekday` | `(Int) -> String` | Get the day of week as a string (Monday-Sunday). |
+| `add_days` | `(Int, Int) -> Int` | Add n days to a timestamp. |
+| `add_hours` | `(Int, Int) -> Int` | Add n hours to a timestamp. |
+| `add_minutes` | `(Int, Int) -> Int` | Add n minutes to a timestamp. |
+| `add_seconds` | `(Int, Int) -> Int` | Add n seconds to a timestamp. |
+| `diff_seconds` | `(Int, Int) -> Int` | Compute the difference in seconds between two timestamps. |
+| `is_before` | `(Int, Int) -> Bool` | Check if timestamp a is before timestamp b. |
+| `is_after` | `(Int, Int) -> Bool` | Check if timestamp a is after timestamp b. |
+
+## Reference
+
+### `datetime.now() -> Int`
+
+Get the current time as a Unix timestamp (seconds, UTC).
+
+```almd
+let ts = datetime.now()
+```
+
+### `datetime.from_parts(y: Int, m: Int, d: Int, h: Int, min: Int, s: Int) -> Int`
+
+Create a timestamp from year, month, day, hour, minute, second (UTC).
+
+```almd
+datetime.from_parts(2024, 1, 15, 12, 0, 0)
+```
+
+### `datetime.parse_iso(s: String) -> Result[Int, String]`
+
+Parse an ISO 8601 date string into a timestamp.
+
+```almd
+datetime.parse_iso("2024-01-15T12:00:00Z") // => ok(1705320000)
+```
+
+### `datetime.from_unix(seconds: Int) -> Int`
+
+Convert a Unix timestamp (identity function for documentation clarity).
+
+```almd
+datetime.from_unix(1705320000)
+```
+
+### `datetime.format(ts: Int, pattern: String) -> String`
+
+Format a timestamp using a pattern string.
+
+```almd
+datetime.format(ts, "%Y-%m-%d") // => "2024-01-15"
+```
+
+### `datetime.to_iso(ts: Int) -> String`
+
+Format a timestamp as ISO 8601 string.
+
+```almd
+datetime.to_iso(1705320000) // => "2024-01-15T12:00:00Z"
+```
+
+### `datetime.to_unix(ts: Int) -> Int`
+
+Get the Unix timestamp value (identity function).
+
+```almd
+datetime.to_unix(ts) // => 1705320000
+```
+
+### `datetime.year(ts: Int) -> Int`
+
+Extract the year from a timestamp.
+
+```almd
+datetime.year(ts) // => 2024
+```
+
+### `datetime.month(ts: Int) -> Int`
+
+Extract the month (1-12) from a timestamp.
+
+```almd
+datetime.month(ts) // => 1
+```
+
+### `datetime.day(ts: Int) -> Int`
+
+Extract the day of month (1-31) from a timestamp.
+
+```almd
+datetime.day(ts) // => 15
+```
+
+### `datetime.hour(ts: Int) -> Int`
+
+Extract the hour (0-23) from a timestamp.
+
+```almd
+datetime.hour(ts) // => 12
+```
+
+### `datetime.minute(ts: Int) -> Int`
+
+Extract the minute (0-59) from a timestamp.
+
+```almd
+datetime.minute(ts) // => 30
+```
+
+### `datetime.second(ts: Int) -> Int`
+
+Extract the second (0-59) from a timestamp.
+
+```almd
+datetime.second(ts) // => 45
+```
+
+### `datetime.weekday(ts: Int) -> String`
+
+Get the day of week as a string (Monday-Sunday).
+
+```almd
+datetime.weekday(ts) // => "Monday"
+```
+
+### `datetime.add_days(ts: Int, n: Int) -> Int`
+
+Add n days to a timestamp.
+
+```almd
+datetime.add_days(ts, 7) // one week later
+```
+
+### `datetime.add_hours(ts: Int, n: Int) -> Int`
+
+Add n hours to a timestamp.
+
+```almd
+datetime.add_hours(ts, 3)
+```
+
+### `datetime.add_minutes(ts: Int, n: Int) -> Int`
+
+Add n minutes to a timestamp.
+
+```almd
+datetime.add_minutes(ts, 30)
+```
+
+### `datetime.add_seconds(ts: Int, n: Int) -> Int`
+
+Add n seconds to a timestamp.
+
+```almd
+datetime.add_seconds(ts, 90)
+```
+
+### `datetime.diff_seconds(a: Int, b: Int) -> Int`
+
+Compute the difference in seconds between two timestamps.
+
+```almd
+datetime.diff_seconds(later, earlier) // => 3600
+```
+
+### `datetime.is_before(a: Int, b: Int) -> Bool`
+
+Check if timestamp a is before timestamp b.
+
+```almd
+datetime.is_before(earlier, later) // => true
+```
+
+### `datetime.is_after(a: Int, b: Int) -> Bool`
+
+Check if timestamp a is after timestamp b.
+
+```almd
+datetime.is_after(later, earlier) // => true
 ```
