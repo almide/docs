@@ -3,7 +3,7 @@ title: Standard Library Overview
 description: Overview of all Almide standard library modules, categorized by function and import requirements.
 ---
 
-The Almide standard library provides 22 modules covering data types, I/O, networking, and more. Modules are either auto-imported (available without an `import` statement) or require explicit import.
+The Almide standard library provides 23 modules with 430+ functions covering data types, I/O, networking, and more. Modules are either auto-imported (available without an `import` statement) or require explicit import.
 
 ## Auto-Imported Modules
 
@@ -32,8 +32,8 @@ These modules must be explicitly imported with `import <module>`:
 |---|---|---|
 | [fs](/stdlib/fs/) | File system: read, write, list directories | Yes |
 | [io](/stdlib/io/) | Console I/O: read_line, print (no newline), read_all | Yes |
-| env | Environment: args, env vars, timestamps, sleep | Yes |
-| process | Process execution: exec, exit, stdin | Yes |
+| [env](/stdlib/env/) | Environment: args, env vars, timestamps, sleep | Yes |
+| [process](/stdlib/process/) | Process execution, env vars, spawn/kill, signals | Yes |
 
 ### Data Formats
 
@@ -42,8 +42,8 @@ These modules must be explicitly imported with `import <module>`:
 | [json](/stdlib/json/) | JSON parsing, building, path-based access | No |
 | [regex](/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
 | [datetime](/stdlib/datetime/) | Date/time: parse, format, arithmetic | Mixed |
-| bytes | Binary data: encode, decode, slice, hex | No |
-| random | Random number generation | Yes |
+| [bytes](/stdlib/bytes/) | Binary data: read/write, encode, decode, slice, hex | No |
+| [random](/stdlib/random/) | Random number generation | Yes |
 
 ### Networking
 
@@ -55,15 +55,14 @@ These modules must be explicitly imported with `import <module>`:
 
 | Module | Description | Effect |
 |---|---|---|
-| matrix | Matrix operations: create, multiply, transpose | No |
+| [matrix](/stdlib/matrix/) | Matrix operations: create, multiply, transpose | No |
 
 ### Development
 
 | Module | Description | Effect |
 |---|---|---|
-| log | Structured logging | Yes |
-| testing | Test utilities | No |
-| error | Error type utilities | No |
+| [testing](/stdlib/testing/) | Test assertions: assert_eq, assert_approx, assert_throws | No |
+| [error](/stdlib/error/) | Error type construction and chaining | No |
 
 ## Module Categories
 

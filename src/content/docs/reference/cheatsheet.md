@@ -153,9 +153,9 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 
 ## Stdlib Modules
 
-**Auto-imported:** string, list, map, int, float, option, result, math, set, value
+**Auto-imported:** string, list, map, set, int, float, option, result, math, value
 
-**Import required:** json, fs, io, env, process, random, regex, datetime, http, log, testing, error, crypto
+**Import required:** json, bytes, matrix, fs, io, env, process, random, regex, datetime, http, testing, error
 
 ## Key Rules
 

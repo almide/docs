@@ -165,6 +165,17 @@ List project dependencies.
 almide deps
 ```
 
+### `almide self-update`
+
+Update the Almide compiler to the latest release, or pin to a specific version.
+
+```bash
+almide self-update          # update to latest
+almide self-update v0.13.1  # pin to a specific version
+```
+
+Downloads a prebuilt binary for your platform from GitHub Releases and verifies the SHA-256 checksum before replacing the current binary.
+
 ## Common Flags
 
 | Flag | Commands | Description |

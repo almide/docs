@@ -3,7 +3,32 @@ title: Installation
 description: How to install and set up Almide.
 ---
 
-## From source (recommended)
+## One-line installer (recommended)
+
+**macOS / Linux:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/almide/almide/main/tools/install.sh | sh
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/almide/almide/main/tools/install.ps1 | iex
+```
+
+Both scripts auto-detect your platform, download a prebuilt binary from GitHub Releases, and verify SHA-256 checksums.
+
+## Self-update
+
+Once installed, update Almide from itself:
+
+```bash
+almide self-update          # update to latest release
+almide self-update v0.13.1  # pin to a specific version
+```
+
+## From source
 
 Almide is written in Rust. You need `cargo` installed.
 
