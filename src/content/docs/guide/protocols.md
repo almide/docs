@@ -54,11 +54,12 @@ let s = Config.serialize(config)
 let s = config.serialize()          // equivalent via UFCS
 ```
 
-**This convention style is not checked against the protocol at its declaration
-site.** A mismatched signature (wrong arity, wrong parameter type) currently
-passes `almide check` and only fails later, at native codegen. Prefer `impl`
-blocks (below) when you want the compiler to catch a mismatch immediately,
-with a precise diagnostic.
+The checker validates the convention method against the protocol's declared
+signature (arity, parameter types, return type — `Self` substituted for the
+declaring type), and pins a diagnostic to the method on mismatch. There is no
+`impl Protocol for Type { ... }` block: convention methods are Almide's only
+way to attach a method to a type, protocol-bound or not — they stay flat,
+top-level functions with no extra nesting or indentation.
 
 ## Using protocols as bounds
 
@@ -102,34 +103,10 @@ let same = Red == Red          // true, just works
 let diff = Red != Blue         // true, just works
 ```
 
-## impl blocks
-
-An `impl` block is the other way to satisfy a protocol — it groups the methods
-under `impl ProtocolName for Type` instead of writing loose top-level
-functions:
-
-```almide
-protocol Showable {
-  fn show(a: Self) -> String
-}
-
-impl Showable for Point {
-  fn show(a: Point) -> String =
-    "(${float.to_string(a.x)}, ${float.to_string(a.y)})"
-}
-```
-
-Unlike convention style, the checker validates each `impl` method's signature
-against the protocol's declared signature right at the block — arity and
-parameter types — with a specific diagnostic on mismatch. **Prefer `impl`
-blocks** for that reason; reserve convention style for methods you are not
-tracking against a protocol at all.
-
-Name and type the first parameter explicitly (`a: Point`) in both convention
-methods and `impl` blocks. `self` as a bare, untyped parameter name only
-resolves inside a `protocol { ... }` declaration itself, where it is sugar for
-`self: Self` — writing bare `self` in an `impl` block or in a convention-style
-method currently fails to resolve.
+Name and type the first parameter explicitly (`a: Point`). `self` as a bare,
+untyped parameter name only resolves inside a `protocol { ... }` declaration
+itself, where it is sugar for `self: Self` — writing bare `self` on a
+convention method currently fails to resolve.
 
 ## Design principles
 
@@ -137,6 +114,7 @@ method currently fails to resolve.
 - **No implicit instance resolution** -- types explicitly declare protocol satisfaction
 - **No operator overloading** -- built-in operators have fixed semantics
 - **No inheritance** -- use composition and protocols instead
+- **No `impl` block** -- convention methods (`fn Type.method(...)`) are the only way to attach a method to a type; flat, top-level, no extra nesting
 
 ## Next steps
 

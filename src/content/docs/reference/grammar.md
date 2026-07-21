@@ -10,7 +10,7 @@ This page presents the formal grammar of Almide in Extended Backus-Naur Form (EB
 ```ebnf
 program     = import* decl*
 import      = "import" path ("as" IDENT)?                (* import json, import self as app *)
-decl        = type_decl | fn_decl | protocol_decl | impl_decl | top_let | strict_decl | test_decl
+decl        = type_decl | fn_decl | protocol_decl | top_let | strict_decl | test_decl
 ```
 
 ## Declarations
@@ -18,10 +18,8 @@ decl        = type_decl | fn_decl | protocol_decl | impl_decl | top_let | strict
 ```ebnf
 protocol_decl   = "protocol" IDENT "{" protocol_method* "}"
 protocol_method = "effect"? "fn" IDENT "(" params ")" "->" type
-
-impl_decl   = "impl" IDENT type_params? "for" IDENT ("[" type ("," type)* "]")? "{" fn_decl* "}"
-              (* satisfies a protocol; each method's signature is checked
-                 against the protocol's declaration right here *)
+                  (* satisfied by convention methods (fn Type.method), never
+                     an impl block -- there is no "impl Protocol for Type" *)
 
 type_decl   = "type" IDENT type_params? "=" type_body
 type_body   = record_body | variant_body | type
@@ -139,15 +137,14 @@ Name       ::= Identifier | Identifier "?"               (* ? suffix = Bool pred
 TypeName   ::= [A-Z][a-zA-Z0-9]*
 ```
 
-### Keywords (35)
+### Keywords (34)
 
 ```almide
-module  import  type    protocol impl    for     in      fn
-let     var     if      then     else    match   ok      err
-some    none    todo    true     false
-not     and     or      strict   pub     effect  test
-guard   break   continue while   local   mod
-fan
+module  import  type    protocol for     in      fn      let
+var     if      then    else     match   ok      err     some
+none    todo    true    false    not     and     or      strict
+pub     effect  test    guard    break   continue while   local
+mod     fan
 ```
 
 ### Operators and Delimiters

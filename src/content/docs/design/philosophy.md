@@ -54,7 +54,7 @@ The essence of language design for LLMs is not maximizing expressiveness, but **
 | Type inference | Local only -- annotations required on function signatures |
 | Overloading | None -- names do not participate in ad-hoc overload resolution |
 | Implicit conversions | None -- `int.to_string(n)`, never auto-coerce |
-| Trait lookup | Traits exist but all `impl` is explicit |
+| Protocol lookup | Explicit `: ProtocolName` declaration only -- no implicit/structural satisfaction, no `impl` block |
 | Method resolution | Module-qualified function form is canonical; UFCS is sugar |
 | Declaration order | Functions can reference each other freely |
 | Import style | `import module` or `import module as alias` -- no `from`, no `*` |
