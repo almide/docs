@@ -54,6 +54,12 @@ let s = Config.serialize(config)
 let s = config.serialize()          // equivalent via UFCS
 ```
 
+**This convention style is not checked against the protocol at its declaration
+site.** A mismatched signature (wrong arity, wrong parameter type) currently
+passes `almide check` and only fails later, at native codegen. Prefer `impl`
+blocks (below) when you want the compiler to catch a mismatch immediately,
+with a precise diagnostic.
+
 ## Using protocols as bounds
 
 Protocols constrain generic type parameters:
@@ -96,9 +102,11 @@ let same = Red == Red          // true, just works
 let diff = Red != Blue         // true, just works
 ```
 
-## Protocols and impl blocks
+## impl blocks
 
-For more complex type-class patterns, Almide supports `protocol` and `impl` blocks:
+An `impl` block is the other way to satisfy a protocol — it groups the methods
+under `impl ProtocolName for Type` instead of writing loose top-level
+functions:
 
 ```almide
 protocol Showable {
@@ -110,6 +118,18 @@ impl Showable for Point {
     "(${float.to_string(a.x)}, ${float.to_string(a.y)})"
 }
 ```
+
+Unlike convention style, the checker validates each `impl` method's signature
+against the protocol's declared signature right at the block — arity and
+parameter types — with a specific diagnostic on mismatch. **Prefer `impl`
+blocks** for that reason; reserve convention style for methods you are not
+tracking against a protocol at all.
+
+Name and type the first parameter explicitly (`a: Point`) in both convention
+methods and `impl` blocks. `self` as a bare, untyped parameter name only
+resolves inside a `protocol { ... }` declaration itself, where it is sugar for
+`self: Self` — writing bare `self` in an `impl` block or in a convention-style
+method currently fails to resolve.
 
 ## Design principles
 

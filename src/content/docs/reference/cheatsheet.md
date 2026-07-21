@@ -101,11 +101,21 @@ protocol Action {
   fn execute(a: Self, ctx: Context) -> Result[String, String]
 }
 
+// convention style (not checked against the protocol until used)
 type GreetAction: Action = { greeting: String }
 fn GreetAction.name(a: GreetAction) -> String = "greet"
 fn GreetAction.execute(a: GreetAction, ctx: Context) -> Result[String, String] =
   ok(a.greeting)
+
+// impl block (PREFER: checker validates each signature right here)
+type LogAction = { greeting: String }
+impl Action for LogAction {
+  fn name(a: LogAction) -> String = "log:" + a.greeting
+  fn execute(a: LogAction, ctx: Context) -> Result[String, String] = ok(a.greeting)
+}
 ```
+Name and type the first parameter explicitly (`a: Type`) in both styles — bare
+`self` only resolves inside the `protocol { ... }` declaration itself.
 
 ## Tests
 

@@ -10,7 +10,7 @@ This page presents the formal grammar of Almide in Extended Backus-Naur Form (EB
 ```ebnf
 program     = import* decl*
 import      = "import" path ("as" IDENT)?                (* import json, import self as app *)
-decl        = type_decl | fn_decl | protocol_decl | top_let | strict_decl | test_decl
+decl        = type_decl | fn_decl | protocol_decl | impl_decl | top_let | strict_decl | test_decl
 ```
 
 ## Declarations
@@ -19,7 +19,11 @@ decl        = type_decl | fn_decl | protocol_decl | top_let | strict_decl | test
 protocol_decl   = "protocol" IDENT "{" protocol_method* "}"
 protocol_method = "effect"? "fn" IDENT "(" params ")" "->" type
 
-type_decl   = "type" IDENT type_params? "=" type_body ("deriving" "From")?
+impl_decl   = "impl" IDENT type_params? "for" IDENT ("[" type ("," type)* "]")? "{" fn_decl* "}"
+              (* satisfies a protocol; each method's signature is checked
+                 against the protocol's declaration right here *)
+
+type_decl   = "type" IDENT type_params? "=" type_body
 type_body   = record_body | variant_body | type
 record_body = "{" field ("," field)* "}"
 variant_body= "|"? variant ("|" variant)*
@@ -135,14 +139,14 @@ Name       ::= Identifier | Identifier "?"               (* ? suffix = Bool pred
 TypeName   ::= [A-Z][a-zA-Z0-9]*
 ```
 
-### Keywords (42)
+### Keywords (35)
 
 ```almide
-module  import  type    trait   impl    for     in      fn
-let     var     if      then    else    match   ok      err
-some    none    todo    unsafe  true    false
-not     and     or      strict  pub     effect  deriving test
-guard   break   continue while  local   mod
+module  import  type    protocol impl    for     in      fn
+let     var     if      then     else    match   ok      err
+some    none    todo    true     false
+not     and     or      strict   pub     effect  test
+guard   break   continue while   local   mod
 fan
 ```
 
