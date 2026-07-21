@@ -103,10 +103,10 @@ let same = Red == Red          // true, just works
 let diff = Red != Blue         // true, just works
 ```
 
-Name and type the first parameter explicitly (`a: Point`). `self` as a bare,
-untyped parameter name only resolves inside a `protocol { ... }` declaration
-itself, where it is sugar for `self: Self` — writing bare `self` on a
-convention method currently fails to resolve.
+The first parameter can be named/typed explicitly (`a: Point`) or written as
+bare `self`, sugar for `self: Self` that resolves to the declaring type on a
+convention method the same way it does inside a `protocol { ... }` declaration
+itself.
 
 ## Design principles
 
