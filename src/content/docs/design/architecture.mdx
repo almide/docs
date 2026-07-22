@@ -61,7 +61,7 @@ graph TD
 ```
 
 <Steps>
-1. **Lexer** — Source text → token stream. Handles string interpolation, heredocs, 34 keywords.
+1. **Lexer** — Source text → token stream. Handles string interpolation, heredocs, 35 keywords.
 
 2. **Parser** — Recursive descent. Produces AST with span information. Error recovery with actionable hints.
 
@@ -205,7 +205,7 @@ Ty::Tuple(Vec<Ty>)
     │
     ├── almide-syntax/       Parsing
     │   ├── ast.rs           AST node types (serde-serializable)
-    │   ├── lexer.rs         Tokenizer (34 keywords, interpolation)
+    │   ├── lexer.rs         Tokenizer (35 keywords, interpolation)
     │   └── parser/          Recursive descent parser
     │       ├── entry.rs         Top-level: program, imports, declarations
     │       ├── declarations.rs  fn, type, protocol, test

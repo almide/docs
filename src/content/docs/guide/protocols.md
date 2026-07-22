@@ -94,7 +94,7 @@ Several protocols are built into the language:
 | `Ord` | Ordering (`<`, `<=`, `>`, `>=`) | Built-in convention |
 | `Codec` | Encode/decode | Built-in convention |
 
-`Eq` and `Hash` are compiler-derived from the type structure. No `deriving` is needed:
+`Eq` and `Hash` are compiler-derived from the type structure — no `: Eq, Hash` declaration needed:
 
 ```almide
 type Color = Red | Green | Blue

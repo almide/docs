@@ -137,14 +137,14 @@ Name       ::= Identifier | Identifier "?"               (* ? suffix = Bool pred
 TypeName   ::= [A-Z][a-zA-Z0-9]*
 ```
 
-### Keywords (34)
+### Keywords (35)
 
 ```almide
 module  import  type    protocol for     in      fn      let
-var     if      then    else     match   ok      err     some
-none    todo    true    false    not     and     or      strict
-pub     effect  test    guard    break   continue while   local
-mod     fan
+var     mut     if      then     else    match   ok      err
+some    none    todo    true     false   not     and     or
+strict  pub     effect  test     guard   break   continue while
+local   mod     fan
 ```
 
 ### Operators and Delimiters

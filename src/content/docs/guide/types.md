@@ -331,7 +331,7 @@ This generates implementations automatically. Available conventions: `Eq`, `Repr
 
 ## Built-in protocols
 
-`Eq` and `Hash` are automatically derived by the compiler for all value types (except function types). No explicit `deriving` is needed:
+`Eq` and `Hash` are automatically derived by the compiler for all value types (except function types) — no `: Eq, Hash` declaration needed:
 
 ```almide
 let same = color_a == color_b    // just works

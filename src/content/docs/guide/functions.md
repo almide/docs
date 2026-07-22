@@ -96,6 +96,29 @@ connect("localhost", secure: true)      // OK
 connect(secure: true, "localhost")      // Compile error
 ```
 
+### Mutable parameters
+
+`mut` on a parameter passes it by mutable reference: an assignment inside the
+function is visible to the caller after the call returns, in place — there's
+no return value carrying the new state back.
+
+```almide
+fn incr(mut x: Int) -> Unit = { x = x + 1 }
+
+fn main() -> Unit = {
+  var n = 5
+  incr(n)
+  println(int.to_string(n))   // 6
+}
+```
+
+The caller must pass a `var` binding — a `let` binding or a temporary
+expression is rejected (E007), since there's nothing to write the mutation
+back into. `mut` can appear on any parameter, not just the first. This is how
+in-place stdlib operations are written (`list.push`, `list.pop`,
+`list.clear`, …) — an ordinary parameter marked `mut`, not a hidden receiver
+convention.
+
 ## Predicate functions
 
 Functions ending in `?` must return `Bool`:
