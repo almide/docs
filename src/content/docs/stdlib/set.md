@@ -23,11 +23,11 @@ The `set` module is **auto-imported** — no `import` statement needed.
 | `symmetric_difference` | `(Set[A], Set[A]) -> Set[A]` | Return elements in either set but not both. |
 | `is_subset` | `(Set[A], Set[A]) -> Bool` | Check if all elements of a are in b. |
 | `is_disjoint` | `(Set[A], Set[A]) -> Bool` | Check if two sets have no elements in common. |
-| `filter` | `(Set[A], Fn[A] -> Bool) -> Set[A]` | Keep elements that satisfy a predicate. |
-| `map` | `(Set[A], Fn[A] -> B) -> Set[B]` | Apply a function to each element, returning a new set. |
-| `fold` | `(Set[A], B, Fn[B, A] -> B) -> B` | Reduce a set with an initial accumulator. |
-| `any` | `(Set[A], Fn[A] -> Bool) -> Bool` | Check if any element satisfies a predicate. |
-| `all` | `(Set[A], Fn[A] -> Bool) -> Bool` | Check if all elements satisfy a predicate. |
+| `filter` | `(Set[A], (A) -> Bool) -> Set[A]` | Keep elements that satisfy a predicate. |
+| `map` | `(Set[A], (A) -> B) -> Set[B]` | Apply a function to each element, returning a new set. |
+| `fold` | `(Set[A], B, (B, A) -> B) -> B` | Reduce a set with an initial accumulator. |
+| `any` | `(Set[A], (A) -> Bool) -> Bool` | Check if any element satisfies a predicate. |
+| `all` | `(Set[A], (A) -> Bool) -> Bool` | Check if all elements satisfy a predicate. |
 
 ## Reference
 
@@ -143,42 +143,42 @@ Check if two sets have no elements in common.
 set.is_disjoint(a, b)
 ```
 
-### `set.filter(s: Set[A], f: Fn[A] -> Bool) -> Set[A]`
+### `set.filter(s: Set[A], f: (A) -> Bool) -> Set[A]`
 
 Keep elements that satisfy a predicate.
 
 ```almd
-set.filter(s, fn(x) => x > 2)
+set.filter(s, (x) => x > 2)
 ```
 
-### `set.map(s: Set[A], f: Fn[A] -> B) -> Set[B]`
+### `set.map(s: Set[A], f: (A) -> B) -> Set[B]`
 
 Apply a function to each element, returning a new set.
 
 ```almd
-set.map(s, fn(x) => x * 2)
+set.map(s, (x) => x * 2)
 ```
 
-### `set.fold(s: Set[A], init: B, f: Fn[B, A] -> B) -> B`
+### `set.fold(s: Set[A], init: B, f: (B, A) -> B) -> B`
 
 Reduce a set with an initial accumulator.
 
 ```almd
-set.fold(s, 0, fn(acc, x) => acc + x)
+set.fold(s, 0, (acc, x) => acc + x)
 ```
 
-### `set.any(s: Set[A], f: Fn[A] -> Bool) -> Bool`
+### `set.any(s: Set[A], f: (A) -> Bool) -> Bool`
 
 Check if any element satisfies a predicate.
 
 ```almd
-set.any(s, fn(x) => x > 2)
+set.any(s, (x) => x > 2)
 ```
 
-### `set.all(s: Set[A], f: Fn[A] -> Bool) -> Bool`
+### `set.all(s: Set[A], f: (A) -> Bool) -> Bool`
 
 Check if all elements satisfy a predicate.
 
 ```almd
-set.all(s, fn(x) => x > 0)
+set.all(s, (x) => x > 0)
 ```

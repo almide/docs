@@ -11,14 +11,19 @@ Operators are listed from highest precedence (binds tightest) to lowest.
 |:---:|---|---|---|
 | 1 | `. ()` `[]` `!` `??` `?` | Left | Member access, call, index, unwrap ops |
 | 2 | `not` `-` (unary) | Right | Boolean negation, numeric negation |
-| 3 | `^` | Right | Exponentiation (power) |
-| 4 | `*` `/` `%` | Left | Multiplication, division, modulo |
-| 5 | `+` `-` `++` | Left | Addition/concatenation, subtraction, concat (legacy) |
-| 6 | `..` `..=` | None | Exclusive range, inclusive range |
-| 7 | `==` `!=` `<` `>` `<=` `>=` | None | Comparison (non-associative) |
-| 8 | `and` | Left | Logical AND (short-circuit) |
-| 9 | `or` | Left | Logical OR (short-circuit) |
-| 10 | `\|>` `>>` | Left | Pipe, function composition |
+| 3 | `>>` | Left | Function composition |
+| 4 | `^` | Right | Exponentiation (power) |
+| 5 | `*` `/` `%` | Left | Multiplication, division, modulo |
+| 6 | `+` `-` | Left | Addition/concatenation, subtraction |
+| 7 | `..` `..=` | None | Exclusive range, inclusive range |
+| 8 | `\|>` | Left | Pipe |
+| 9 | `==` `!=` `<` `>` `<=` `>=` | None | Comparison (non-associative) |
+| 10 | `and` | Left | Logical AND (short-circuit) |
+| 11 | `or` | Left | Logical OR (short-circuit) |
+
+Two of these commonly surprise people: `>>` binds **tighter** than everything
+except member access and unary, so `x |> f >> g` is `x |> (f >> g)`. And `|>`
+binds **tighter than comparison**, so `1 == 2 |> dbl` parses as `1 == dbl(2)`.
 
 ## Detailed Reference
 
@@ -126,11 +131,9 @@ There are no `&&` or `||` operators. Use `and` and `or`.
 ```almd
 text |> string.trim |> string.split(",")
 
-// with placeholder:
-xs |> filter(_, (x) => x > 0) // _ = placeholder for piped value
 ```
 
-The pipe operator passes the left-hand value as the first argument to the right-hand function. Use `_` as a placeholder to control argument position.
+The pipe operator passes the left-hand value as the first argument to the right-hand function. There is no `_` placeholder — when the value belongs in another position, call the function directly instead of piping.
 
 ### Function Composition (`>>`)
 

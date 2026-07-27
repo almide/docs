@@ -1,11 +1,7 @@
 ---
 title: math
-description: Mathematical functions and constants. Requires `import math`.
+description: Mathematical functions and constants. Auto-imported — no `import` needed.
 ---
-
-```almd
-import math
-```
 
 ## Functions
 
@@ -120,7 +116,7 @@ math.log(1.0) // => 0.0
 Return e raised to the given power.
 
 ```almd
-math.exp(1.0) // => 2.718281828459045
+math.exp(1.0) // => 2.7182818284590455
 ```
 
 ### `math.sqrt(x: Float) -> Float`

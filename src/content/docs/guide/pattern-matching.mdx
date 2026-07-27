@@ -65,14 +65,25 @@ match command {
 }
 ```
 
-Supports `Int`, `Float`, `String`, and `Bool` literals. Negative literals are supported:
+Supports `Int`, `Float`, `String`, and `Bool` literals.
 
 ```almide
 match n {
   0 => "zero",
   1 => "one",
-  -1 => "negative one",
   _ => "other",
+}
+```
+
+Negative literal patterns are not supported yet — the exhaustiveness checker
+treats `-1` as a wildcard ([#897](https://github.com/almide/almide/issues/897)).
+Use a guard instead:
+
+```almide
+match n {
+  0 => "zero",
+  n if n < 0 => "negative",
+  _ => "positive",
 }
 ```
 
@@ -128,7 +139,6 @@ Destructure record variant cases with field names:
 ```almide
 match shape {
   Rect{ width, height } => width * height,
-  Rect{ width, .. } => width,    // .. ignores remaining fields
   _ => 0.0,
 }
 ```

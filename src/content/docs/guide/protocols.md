@@ -88,13 +88,20 @@ Several protocols are built into the language:
 
 | Protocol | Description | Deriving |
 |----------|-------------|----------|
-| `Eq` | Equality comparison (`==`, `!=`) | Automatic for all value types |
-| `Hash` | Hash computation | Automatic for all value types |
-| `Repr` | String representation | Built-in convention |
-| `Ord` | Ordering (`<`, `<=`, `>`, `>=`) | Built-in convention |
-| `Codec` | Encode/decode | Built-in convention |
+| `Eq` | Equality (`==`, `!=`) | Structural, for the operators |
+| `Hash` | Hash computation — needed for `Map` keys | Structural, except types containing `Float` |
+| `Repr` | String representation, used by interpolation | Built-in convention |
+| `Ord` | `cmp(a, b) -> Int` | Built-in convention |
+| `Codec` / `Encode` / `Decode` | Serialization | Built-in convention |
+| `Numeric` | Arithmetic — satisfied by the built-in numeric types | Built-in convention |
 
-`Eq` and `Hash` are compiler-derived from the type structure — no `: Eq, Hash` declaration needed:
+`Ord` provides `cmp`, **not** the comparison operators: `<` / `<=` / `>` / `>=`
+stay limited to `Int`, `Float`, `String` and `Bool` even on a type declared
+`: Ord`.
+
+`Eq` and `Hash` work structurally for the *operators* — `==` on a record needs
+no declaration. Satisfying them as a generic **bound** (`[T: Eq]`) is a
+different thing and does require `: Eq` on the type declaration:
 
 ```almide
 type Color = Red | Green | Blue
@@ -112,7 +119,7 @@ itself.
 
 - **No dynamic dispatch** -- all protocol-bounded generics are monomorphized at compile time
 - **No implicit instance resolution** -- types explicitly declare protocol satisfaction
-- **No operator overloading** -- built-in operators have fixed semantics
+- **No arbitrary operator overloading** -- only `==` / `!=` and string interpolation dispatch to a type's `eq` / `repr` convention methods; every other operator has fixed semantics
 - **No inheritance** -- use composition and protocols instead
 - **No `impl` block** -- convention methods (`fn Type.method(...)`) are the only way to attach a method to a type; flat, top-level, no extra nesting
 

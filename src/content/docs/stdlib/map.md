@@ -15,21 +15,21 @@ The `map` module is **auto-imported** — no `import` statement needed.
 | `set` | `(Map[K, V], K, V) -> Map[K, V]` | Return a new map with the key set to value. Immutable — does not modify the original. |
 | `contains` | `(Map[K, V], K) -> Bool` | Check if a key exists in the map. |
 | `remove` | `(Map[K, V], K) -> Map[K, V]` | Return a new map with the key removed. Immutable — does not modify the original. |
-| `keys` | `(Map[K, V]) -> List[K]` | Get all keys as a sorted list. |
+| `keys` | `(Map[K, V]) -> List[K]` | Get all keys in insertion order. |
 | `values` | `(Map[K, V]) -> List[V]` | Get all values as a list. |
 | `len` | `(Map[K, V]) -> Int` | Get the number of key-value pairs in the map. |
-| `entries` | `(Map[K, V]) -> List[(K, V)]` | Get all key-value pairs as a list of tuples, sorted by key. |
+| `entries` | `(Map[K, V]) -> List[(K, V)]` | Get all key-value pairs as a list of tuples, in insertion order. |
 | `merge` | `(Map[K, V], Map[K, V]) -> Map[K, V]` | Merge two maps. Keys in the second map override keys in the first. |
 | `is_empty` | `(Map[K, V]) -> Bool` | Check if the map has no entries. |
 | `from_list` | `(List[(K, V)]) -> Map[K, V]` | Create a map from a list of (key, value) pairs. |
-| `map` | `(Map[K, V], Fn[V] -> B) -> Map[K, B]` | Transform all values in the map using a function, keeping keys unchanged. |
-| `filter` | `(Map[K, V], Fn[K, V] -> Bool) -> Map[K, V]` | Return a new map containing only entries where the predicate returns true. |
-| `fold` | `(Map[K, V], A, Fn[A, K, V] -> A) -> A` | Accumulate over all entries with an initial value. |
-| `any` | `(Map[K, V], Fn[K, V] -> Bool) -> Bool` | Check if any entry satisfies the predicate. |
-| `all` | `(Map[K, V], Fn[K, V] -> Bool) -> Bool` | Check if all entries satisfy the predicate. |
-| `count` | `(Map[K, V], Fn[K, V] -> Bool) -> Int` | Count entries that satisfy the predicate. |
-| `find` | `(Map[K, V], Fn[K, V] -> Bool) -> Option[(K, V)]` | Find the first entry matching the predicate. Returns Option[(K, V)]. |
-| `update` | `(Map[K, V], K, Fn[V] -> V) -> Map[K, V]` | Update the value at a key using a function. Key must exist. |
+| `map` | `(Map[K, V], (V) -> B) -> Map[K, B]` | Transform all values in the map using a function, keeping keys unchanged. |
+| `filter` | `(Map[K, V], (K, V) -> Bool) -> Map[K, V]` | Return a new map containing only entries where the predicate returns true. |
+| `fold` | `(Map[K, V], A, (A, K, V) -> A) -> A` | Accumulate over all entries with an initial value. |
+| `any` | `(Map[K, V], (K, V) -> Bool) -> Bool` | Check if any entry satisfies the predicate. |
+| `all` | `(Map[K, V], (K, V) -> Bool) -> Bool` | Check if all entries satisfy the predicate. |
+| `count` | `(Map[K, V], (K, V) -> Bool) -> Int` | Count entries that satisfy the predicate. |
+| `find` | `(Map[K, V], (K, V) -> Bool) -> Option[(K, V)]` | Find the first entry matching the predicate. Returns Option[(K, V)]. |
+| `update` | `(Map[K, V], K, (V) -> V) -> Map[K, V]` | Update the value at a key using a function. Key must exist. |
 | `insert` | `(Map[K, V], K, V) -> Unit` | Insert a key-value pair in place. Requires var binding. |
 | `delete` | `(Map[K, V], K) -> Unit` | Remove a key in place. Requires var binding. |
 | `clear` | `(Map[K, V]) -> Unit` | Remove all entries in place. Requires var binding. |
@@ -86,7 +86,7 @@ let m2 = map.remove(m, "temp")
 
 ### `map.keys(m: Map[K, V]) -> List[K]`
 
-Get all keys as a sorted list.
+Get all keys in insertion order.
 
 ```almd
 map.keys(m)
@@ -110,7 +110,7 @@ map.len(m)
 
 ### `map.entries(m: Map[K, V]) -> List[(K, V)]`
 
-Get all key-value pairs as a list of tuples, sorted by key.
+Get all key-value pairs as a list of tuples, in insertion order.
 
 ```almd
 map.entries(m)
@@ -140,23 +140,23 @@ Create a map from a list of (key, value) pairs.
 map.from_list([("a", 1), ("b", 2)])
 ```
 
-### `map.map(m: Map[K, V], f: Fn[V] -> B) -> Map[K, B]`
+### `map.map(m: Map[K, V], f: (V) -> B) -> Map[K, B]`
 
 Transform all values in the map using a function, keeping keys unchanged.
 
 ```almd
-map.map_values(m, fn(v) => v * 2)
+map.map(m, (v) => v * 2)
 ```
 
-### `map.filter(m: Map[K, V], f: Fn[K, V] -> Bool) -> Map[K, V]`
+### `map.filter(m: Map[K, V], f: (K, V) -> Bool) -> Map[K, V]`
 
 Return a new map containing only entries where the predicate returns true.
 
 ```almd
-map.filter(m, fn(k, v) => v > 0)
+map.filter(m, (k, v) => v > 0)
 ```
 
-### `map.fold(m: Map[K, V], init: A, f: Fn[A, K, V] -> A) -> A`
+### `map.fold(m: Map[K, V], init: A, f: (A, K, V) -> A) -> A`
 
 Accumulate over all entries with an initial value.
 
@@ -164,7 +164,7 @@ Accumulate over all entries with an initial value.
 map.fold(scores, 0, (acc, k, v) => acc + v)
 ```
 
-### `map.any(m: Map[K, V], f: Fn[K, V] -> Bool) -> Bool`
+### `map.any(m: Map[K, V], f: (K, V) -> Bool) -> Bool`
 
 Check if any entry satisfies the predicate.
 
@@ -172,7 +172,7 @@ Check if any entry satisfies the predicate.
 map.any(scores, (k, v) => v >= 90)
 ```
 
-### `map.all(m: Map[K, V], f: Fn[K, V] -> Bool) -> Bool`
+### `map.all(m: Map[K, V], f: (K, V) -> Bool) -> Bool`
 
 Check if all entries satisfy the predicate.
 
@@ -180,7 +180,7 @@ Check if all entries satisfy the predicate.
 map.all(scores, (k, v) => v > 0)
 ```
 
-### `map.count(m: Map[K, V], f: Fn[K, V] -> Bool) -> Int`
+### `map.count(m: Map[K, V], f: (K, V) -> Bool) -> Int`
 
 Count entries that satisfy the predicate.
 
@@ -188,7 +188,7 @@ Count entries that satisfy the predicate.
 map.count(scores, (k, v) => v >= 80)
 ```
 
-### `map.find(m: Map[K, V], f: Fn[K, V] -> Bool) -> Option[(K, V)]`
+### `map.find(m: Map[K, V], f: (K, V) -> Bool) -> Option[(K, V)]`
 
 Find the first entry matching the predicate. Returns Option[(K, V)].
 
@@ -196,7 +196,7 @@ Find the first entry matching the predicate. Returns Option[(K, V)].
 map.find(scores, (k, v) => v >= 90)
 ```
 
-### `map.update(m: Map[K, V], key: K, f: Fn[V] -> V) -> Map[K, V]`
+### `map.update(m: Map[K, V], key: K, f: (V) -> V) -> Map[K, V]`
 
 Update the value at a key using a function. Key must exist.
 

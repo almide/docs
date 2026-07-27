@@ -147,7 +147,7 @@ let parsed = int.parse(input)?          // Option[Int]
 Error type conversion (replaces `From`):
 
 ```almd
-fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
+result.map_err(fs.read_text(path), (e) => Io(e))!
 ```
 
 ## Operators (precedence high to low)
@@ -158,7 +158,9 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 
 **Auto-imported:** string, list, map, set, int, float, option, result, math, value
 
-**Import required:** json, bytes, matrix, fs, io, env, process, random, regex, datetime, http, testing, error
+**Auto-imported also:** `error`, `datetime`, `bytes`, `matrix`, `int8`…`uint64`, `float32`
+
+**Import required:** json, fs, io, env, process, random, regex, http, testing, path, args, base64, hex
 
 ## Key Rules
 
@@ -182,7 +184,7 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 | `each(xs, f)` | `for x in xs { f(x) }` | Use `for` loop for side effects |
 | `List.new()` | `[]` | No `new()` for List |
 | `{"a": 1}` | `["a": 1]` | Braces are for records, brackets for maps |
-| `string.length(s)` | `string.len(s)` | No synonyms |
+| `list.length(xs)` | `list.len(xs)` | `len` is the canonical name |
 | `println(42)` | `println(int.to_string(42))` | No implicit conversion |
 | `fn foo<T>(x: T)` | `fn foo[T](x: T)` | `[]` for generics |
 | `1 :: 2 :: []` | `[1, 2]` | No cons operator |
@@ -190,7 +192,7 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 ## Entry Point
 
 ```almd
-effect fn main(args: List[String]) -> Result[Unit, AppError] = {
+effect fn main() -> Result[Unit, AppError] = {   // main takes no parameters
   let cmd = list.get(args, 1)
   match cmd {
     some("run") => do_something()!,

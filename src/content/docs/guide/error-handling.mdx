@@ -140,10 +140,8 @@ type AppError =
   | Parse(String)
 
 effect fn load(path: String) -> Result[Config, AppError] = {
-  let text = fs.read_text(path)
-    |> result.map_err(_, (e) => Io(e))!
-  let raw = json.parse(text)
-    |> result.map_err(_, (e) => Parse(e))!
+  let text = result.map_err(fs.read_text(path), (e) => Io(e))!
+  let raw = result.map_err(json.parse(text), (e) => Parse(e))!
   ok(parse_config(raw))
 }
 ```
@@ -230,12 +228,11 @@ let name = map.get(env, "USER") ?? "anonymous"
 When each step can fail and depends on the previous:
 
 ```almide
-let config = int.parse(port_str)
-  |> result.flat_map(_, (port) =>
-    if port > 0 and port < 65536
-    then ok(port)
-    else err("port out of range")
-  )
+let config = result.flat_map(int.parse(port_str), (port) =>
+  if port > 0 and port < 65536
+  then ok(port)
+  else err("port out of range")
+)
 ```
 
 ## Next steps

@@ -236,10 +236,11 @@ text |> string.trim |> string.split(",")
 // equivalent to: string.split(string.trim(text), ",")
 ```
 
-Use `_` as a placeholder when the piped value is not the first argument:
+The piped value always becomes the first argument; there is no placeholder for
+other positions. Call the function directly when it does not fit:
 
 ```almide
-xs |> list.filter(_, (x) => x > 0)
+list.filter(xs, (x) => x > 0)
 ```
 
 Pipe into `match`:

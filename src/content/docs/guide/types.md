@@ -3,7 +3,7 @@ title: Types & Values
 description: Built-in types, collections, Option, Result, and custom types in Almide.
 ---
 
-Almide is statically typed with full type inference. Every value has a known type at compile time. There are no implicit conversions, no null, and no truthiness.
+Almide is statically typed with full type inference. Every value has a known type at compile time. There are no implicit conversions and no null.
 
 ## Primitive types
 
@@ -14,8 +14,8 @@ Almide is statically typed with full type inference. Every value has a known typ
 | `String` | UTF-8 text | `"hello"`, `'raw'`, `"""heredoc"""` |
 | `Bool` | Boolean | `true`, `false` |
 | `Unit` | No meaningful value | `()` |
-| `Path` | File system path | Used by `fs` module functions |
-| `Bytes` | Byte sequence | Used by `crypto`, `fs` for binary data |
+| `Path` | Alias for `String` | Documentation-only alias; `fs` functions take `String`. For a checked path type see `path.SafePath` |
+| `Bytes` | Byte sequence | Used by `fs`, `base64`, `hex` for binary data |
 
 Numeric literals support `_` as a visual separator: `1_000_000`, `0xFF_FF`.
 
@@ -51,7 +51,7 @@ let sql = """
 """
 ```
 
-Raw heredocs (`r"""..."""`) disable both escapes and interpolation.
+Raw heredocs (`r"""..."""`) disable escapes, interpolation **and indent stripping** — the content is taken verbatim, including the leading newline.
 
 ## Bool
 
@@ -167,7 +167,7 @@ for (i, item) in list.enumerate(items) {
 
 ```almide
 let found = some(42)       // Option[Int] with a value
-let missing = none         // Option[Int] with no value
+let missing: Option[Int] = none    // annotation required: none alone is ambiguous
 ```
 
 Use `match` to handle both cases:
@@ -186,8 +186,8 @@ See [Error Handling](/docs/guide/error-handling/) for more on `Option`.
 `Result[T, E]` represents a computation that can succeed or fail:
 
 ```almide
-let success = ok(42)            // Result[Int, String]
-let failure = err("not found")  // Result[Int, String]
+let success: Result[Int, String] = ok(42)
+let failure: Result[Int, String] = err("not found")
 ```
 
 Use `match` to handle both cases:
@@ -263,7 +263,7 @@ Use `match` to destructure variants:
 ```almide
 fn area(s: Shape) -> Float =
   match s {
-    Circle(r) => 3.14159 * r ^ 2,
+    Circle(r) => 3.14159 * r ^ 2.0,
     Rect{ width, height } => width * height,
     Point => 0.0,
   }
@@ -327,7 +327,9 @@ type Color: Eq =
   | Blue
 ```
 
-This generates implementations automatically. Available conventions: `Eq`, `Repr`, `Ord`, `Hash`, `Codec`. See [Protocols](/docs/guide/protocols/) for details.
+This generates implementations automatically. The compiler knows `Eq`, `Repr`, `Ord`, `Hash`, `Codec`, `Encode`, `Decode` and `Numeric`.
+
+`Ord` does not currently wire up `<` / `<=` / `>` / `>=` for the type — those operators remain limited to `Int`, `Float`, `String` and `Bool`. See [Protocols](/docs/guide/protocols/) for details.
 
 ## Built-in protocols
 

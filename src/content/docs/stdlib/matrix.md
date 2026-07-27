@@ -1,11 +1,7 @@
 ---
 title: matrix
-description: 2D matrix operations. Requires `import matrix`.
+description: 2D matrix operations. Auto-imported — no `import` needed.
 ---
-
-```almd
-import matrix
-```
 
 ## Functions
 
@@ -23,7 +19,7 @@ import matrix
 | `add` | `(Matrix, Matrix) -> Matrix` | Element-wise addition of two matrices. |
 | `mul` | `(Matrix, Matrix) -> Matrix` | Matrix multiplication. |
 | `scale` | `(Matrix, Float) -> Matrix` | Multiply all elements by a scalar. |
-| `map` | `(Matrix, fn(Float) -> Float) -> Matrix` | Apply a function to every element. |
+| `map` | `(Matrix, (Float) -> Float) -> Matrix` | Apply a function to every element. |
 
 ## Reference
 
@@ -123,7 +119,7 @@ Multiply all elements by a scalar.
 matrix.scale(m, 2.0)
 ```
 
-### `matrix.map(m: Matrix, f: fn(Float) -> Float) -> Matrix`
+### `matrix.map(m: Matrix, f: (Float) -> Float) -> Matrix`
 
 Apply a function to every element.
 

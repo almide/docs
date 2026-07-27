@@ -11,7 +11,7 @@ import testing
 
 | Function | Signature | Description |
 |---|---|---|
-| `assert_throws` | `(fn() -> Unit, String) -> Unit` | Assert that a function throws an error containing the expected message. |
+| `assert_throws` | `(() -> Unit, String) -> Unit` | Assert that a function throws an error containing the expected message. |
 | `assert_contains` | `(String, String) -> Unit` | Assert that a string contains a substring. |
 | `assert_approx` | `(Float, Float, Float) -> Unit` | Assert two floats are approximately equal within tolerance. |
 | `assert_gt` | `(Int, Int) -> Unit` | Assert that a is greater than b. |
@@ -21,12 +21,12 @@ import testing
 
 ## Reference
 
-### `testing.assert_throws(f: fn() -> Unit, expected: String) -> Unit`
+### `testing.assert_throws(f: () -> Unit, expected: String) -> Unit`
 
 Assert that a function throws an error containing the expected message.
 
 ```almd
-testing.assert_throws(fn() => panic("oh no"), "oh no")
+testing.assert_throws(() => panic("oh no"), "oh no")
 ```
 
 ### `testing.assert_contains(haystack: String, needle: String) -> Unit`

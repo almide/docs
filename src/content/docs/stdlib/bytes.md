@@ -1,11 +1,7 @@
 ---
 title: bytes
-description: Binary data manipulation. Requires `import bytes`.
+description: Binary data manipulation. Auto-imported — no `import` needed.
 ---
-
-```almd
-import bytes
-```
 
 ## Functions
 

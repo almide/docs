@@ -76,11 +76,15 @@ fn show[T: Repr](item: T) -> String = item.repr()
 fn process[T: Serializable](item: T) -> String = item.serialize()
 ```
 
-Multiple bounds are specified by listing protocols:
+Multiple bounds are joined with `+`:
 
 ```almide
-fn compare[T: Ord](a: T, b: T) -> Bool = a < b
+fn show_named[T: Showable + Nameable](item: T) -> String =
+  item.name() + ": " + item.show()
 ```
+
+A comma inside the brackets separates *type parameters*, not bounds — `[T: A, B]`
+declares a second type parameter named `B`.
 
 See [Protocols](/docs/guide/protocols/) for defining custom protocols that can be used as bounds.
 
@@ -104,7 +108,7 @@ Using `[]` for generics is a deliberate design choice:
 - `<` and `>` are always comparison operators, never part of type syntax
 - No ambiguity in expressions like `a < b` vs `f<T>(x)`
 - Simpler parsing for both the compiler and LLMs generating code
-- Common mistake prevention: `fn foo<T>(x: T)` is rejected with a clear hint
+- `fn foo<T>(x: T)` is rejected at parse time
 
 ## Next steps
 

@@ -62,7 +62,7 @@ int.parse(\"42\") // => ok(42)
 Parse a hexadecimal string into an integer. Returns err if the string is not valid hex.
 
 ```almd
-int.parse_hex(\"ff\") // => ok(255)
+int.from_hex(\"ff\") // => ok(255)
 ```
 
 ### `int.abs(n: Int) -> Int`

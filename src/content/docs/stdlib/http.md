@@ -11,7 +11,7 @@ import http
 
 | Function | Signature | Description |
 |---|---|---|
-| `serve` | `(Int, Fn[Unknown] -> Unknown) -> Unit` | Start an HTTP server on the given port with a request handler |
+| `serve` | `(Int, (Unknown) -> Unknown) -> Unit` | Start an HTTP server on the given port with a request handler |
 | `response` | `(Int, String) -> Response` | Create a plain text HTTP response with status code |
 | `json` | `(Int, String) -> Response` | Create a JSON HTTP response with status code |
 | `with_headers` | `(Int, String, Map[String, String]) -> Response` | Create a response with custom headers |
@@ -34,7 +34,7 @@ import http
 
 ## Reference
 
-### `http.serve(port: Int, f: Fn[Unknown] -> Unknown) -> Unit`
+### `http.serve(port: Int, f: (Unknown) -> Unknown) -> Unit`
 
 Start an HTTP server on the given port with a request handler
 

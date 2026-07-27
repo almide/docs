@@ -61,6 +61,11 @@ These modules are available without `import`:
 | `result` | Result combinators |
 | `option` | Option combinators |
 | `value` | Dynamic value operations |
+| `error` | Error construction and chaining |
+| `datetime` | Date and time operations |
+| `bytes` | Binary data |
+| `matrix` | Matrix operations |
+| `int8`…`uint64`, `float32` | Sized numeric types |
 
 Auto-imported types and constructors:
 
@@ -69,7 +74,7 @@ Auto-imported types and constructors:
 - Error handling: `Option[T]`, `Result[T, E]`
 - Constructors: `some(x)`, `none`, `ok(x)`, `err(x)`
 - Booleans: `true`, `false`
-- Boundary: `Json`, `Value`
+- Boundary: `Value`
 
 ## Import-required modules
 
@@ -84,11 +89,8 @@ These modules require an explicit `import`:
 | `json` | JSON parsing and building |
 | `random` | Random number generation (effect) |
 | `regex` | Regular expressions |
-| `datetime` | Date and time operations |
 | `http` | HTTP client (effect) |
-| `log` | Logging (effect) |
 | `testing` | Extended test assertions |
-| `error` | Error utilities |
 
 ## Bundled modules (pure Almide)
 
@@ -98,8 +100,8 @@ These are implemented in Almide itself and imported the same way:
 |--------|-------------|
 | `args` | Command-line argument parsing |
 | `path` | File path manipulation |
-| `option` | Option[T] utilities |
-| `result` | Result[T, E] utilities |
+| `base64` | Base64 encoding |
+| `hex` | Hexadecimal encoding |
 
 ## Aliased imports
 
@@ -110,10 +112,12 @@ import mylib as m
 m.hello()
 ```
 
-Self-alias lets you reference the current package by name:
+Self-alias lets you reference the current package by name. `import self` loads
+the package entry point `src/mod.almd`, so that file must exist; a sibling file
+is reached with `import self.<name>` and needs no entry point:
 
 ```almide
-import self as app
+import self as app       // requires src/mod.almd
 app.some_function()
 ```
 

@@ -83,5 +83,5 @@ regex.split("[,;]", "a,b;c") // => ["a", "b", "c"]
 Extract capture groups from the first match.
 
 ```almd
-regex.captures("(\\w+)@(\\w+)", "user@host") // => some(["user@host", "user", "host"])
+regex.captures("(\\w+)@(\\w+)", "user@host") // => some(["user", "host"])
 ```

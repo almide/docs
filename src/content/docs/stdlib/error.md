@@ -1,11 +1,7 @@
 ---
 title: error
-description: Error construction and inspection. Requires `import error`.
+description: Error construction and inspection. Auto-imported — no `import` needed.
 ---
-
-```almd
-import error
-```
 
 ## Functions
 
@@ -38,5 +34,6 @@ error.message(err("oops")) // => "oops"
 Chain two error messages with a cause separator.
 
 ```almd
-error.chain("load failed", "file not found") // => "load failed: file not found"
+error.chain("load failed", "file not found")
+// => "load failed\ncaused by: file not found"
 ```

@@ -33,36 +33,36 @@ The `list` module is **auto-imported** — no `import` statement needed.
 | `min` | `(List[A]) -> Option[A]` | Find the minimum element, or none if empty. |
 | `max` | `(List[A]) -> Option[A]` | Find the maximum element, or none if empty. |
 | `join` | `(List[String], String) -> String` | Join a list of strings with a separator. |
-| `map` | `(List[A], Fn[A] -> B) -> List[B]` | Apply a function to each element, returning a new list. |
-| `filter` | `(List[A], Fn[A] -> Bool) -> List[A]` | Keep elements that satisfy a predicate. |
-| `find` | `(List[A], Fn[A] -> Bool) -> Option[A]` | Find the first element matching a predicate. |
-| `any` | `(List[A], Fn[A] -> Bool) -> Bool` | Check if any element satisfies a predicate. |
-| `all` | `(List[A], Fn[A] -> Bool) -> Bool` | Check if all elements satisfy a predicate. |
-| `sort_by` | `(List[A], Fn[A] -> B) -> List[A]` | Sort by a key-extraction function (not a comparator). f extracts the sort key from each element. |
-| `flat_map` | `(List[A], Fn[A] -> List[B]) -> List[B]` | Map each element to a list and flatten the results. |
-| `filter_map` | `(List[A], Fn[A] -> Option[B]) -> List[B]` | Map and filter in one pass: keep only some values. |
-| `take_while` | `(List[A], Fn[A] -> Bool) -> List[A]` | Take elements from the front while a predicate holds. |
-| `drop_while` | `(List[A], Fn[A] -> Bool) -> List[A]` | Drop elements from the front while a predicate holds. |
-| `count` | `(List[A], Fn[A] -> Bool) -> Int` | Count elements that satisfy a predicate. |
-| `partition` | `(List[A], Fn[A] -> Bool) -> (List[A], List[A])` | Split a list into two: elements matching and not matching a predicate. |
-| `reduce` | `(List[A], Fn[A, A] -> A) -> Option[A]` | Reduce a list by combining elements pairwise. Returns none if empty. |
-| `group_by` | `(List[A], Fn[A] -> B) -> Map[B, List[A]]` | Group elements by a key function into a map. |
+| `map` | `(List[A], (A) -> B) -> List[B]` | Apply a function to each element, returning a new list. |
+| `filter` | `(List[A], (A) -> Bool) -> List[A]` | Keep elements that satisfy a predicate. |
+| `find` | `(List[A], (A) -> Bool) -> Option[A]` | Find the first element matching a predicate. |
+| `any` | `(List[A], (A) -> Bool) -> Bool` | Check if any element satisfies a predicate. |
+| `all` | `(List[A], (A) -> Bool) -> Bool` | Check if all elements satisfy a predicate. |
+| `sort_by` | `(List[A], (A) -> B) -> List[A]` | Sort by a key-extraction function (not a comparator). f extracts the sort key from each element. |
+| `flat_map` | `(List[A], (A) -> List[B]) -> List[B]` | Map each element to a list and flatten the results. |
+| `filter_map` | `(List[A], (A) -> Option[B]) -> List[B]` | Map and filter in one pass: keep only some values. |
+| `take_while` | `(List[A], (A) -> Bool) -> List[A]` | Take elements from the front while a predicate holds. |
+| `drop_while` | `(List[A], (A) -> Bool) -> List[A]` | Drop elements from the front while a predicate holds. |
+| `count` | `(List[A], (A) -> Bool) -> Int` | Count elements that satisfy a predicate. |
+| `partition` | `(List[A], (A) -> Bool) -> (List[A], List[A])` | Split a list into two: elements matching and not matching a predicate. |
+| `reduce` | `(List[A], (A, A) -> A) -> Option[A]` | Reduce a list by combining elements pairwise. Returns none if empty. |
+| `group_by` | `(List[A], (A) -> B) -> Map[B, List[A]]` | Group elements by a key function into a map. |
 | `range` | `(Int, Int) -> List[Int]` | Create a list of integers from start (inclusive) to end (exclusive). |
 | `slice` | `(List[A], Int, Int) -> List[A]` | Extract a sublist from start to end index. |
 | `insert` | `(List[A], Int, A) -> List[A]` | Insert an element at index i, shifting elements right. |
 | `remove_at` | `(List[A], Int) -> List[A]` | Remove the element at index i. |
-| `find_index` | `(List[A], Fn[A] -> Bool) -> Option[Int]` | Find the first index where a predicate holds. |
-| `update` | `(List[A], Int, Fn[A] -> A) -> List[A]` | Return a new list with the element at index i transformed by f. |
+| `find_index` | `(List[A], (A) -> Bool) -> Option[Int]` | Find the first index where a predicate holds. |
+| `update` | `(List[A], Int, (A) -> A) -> List[A]` | Return a new list with the element at index i transformed by f. |
 | `repeat` | `(A, Int) -> List[A]` | Create a list with a value repeated n times. |
-| `scan` | `(List[A], B, Fn[B, A] -> B) -> List[B]` | Like fold, but returns all intermediate accumulator values. |
+| `scan` | `(List[A], B, (B, A) -> B) -> List[B]` | Like fold, but returns all intermediate accumulator values. |
 | `intersperse` | `(List[A], A) -> List[A]` | Insert a separator between each element. |
 | `windows` | `(List[A], Int) -> List[List[A]]` | Return sliding windows of size n. |
 | `dedup` | `(List[A]) -> List[A]` | Remove consecutive duplicates. |
-| `zip_with` | `(List[A], List[B], Fn[A, B] -> C) -> List[C]` | Combine two lists element-wise using a function. |
-| `fold` | `(List[A], B, Fn[B, A] -> B) -> B` | Reduce a list from left with an initial accumulator. |
+| `zip_with` | `(List[A], List[B], (A, B) -> C) -> List[C]` | Combine two lists element-wise using a function. |
+| `fold` | `(List[A], B, (B, A) -> B) -> B` | Reduce a list from left with an initial accumulator. |
 | `take_end` | `(List[A], Int) -> List[A]` | Take the last N elements. |
 | `drop_end` | `(List[A], Int) -> List[A]` | Drop the last N elements. |
-| `unique_by` | `(List[A], Fn[A] -> K) -> List[A]` | Remove duplicates by key function, preserving first occurrence. |
+| `unique_by` | `(List[A], (A) -> K) -> List[A]` | Remove duplicates by key function, preserving first occurrence. |
 | `shuffle` | `(List[A]) -> List[A]` | Return a randomly shuffled copy of the list. |
 | `window` | `(List[A], Int) -> List[List[A]]` | Sliding window of size N over the list. |
 | `push` | `(List[A], A) -> Unit` | Append an element in place. Requires var binding. |
@@ -263,47 +263,47 @@ Join a list of strings with a separator.
 list.join(["a", "b", "c"], "-") // => "a-b-c"
 ```
 
-### `list.map(xs: List[A], f: Fn[A] -> B) -> List[B]`
+### `list.map(xs: List[A], f: (A) -> B) -> List[B]`
 
 Apply a function to each element, returning a new list.
 
 ```almd
-[1, 2, 3].map(fn(x) => x * 2) // => [2, 4, 6]
+[1, 2, 3].map((x) => x * 2) // => [2, 4, 6]
 ```
 
-### `list.filter(xs: List[A], f: Fn[A] -> Bool) -> List[A]`
+### `list.filter(xs: List[A], f: (A) -> Bool) -> List[A]`
 
 Keep elements that satisfy a predicate.
 
 ```almd
-[1, 2, 3, 4].filter(fn(x) => x > 2) // => [3, 4]
+[1, 2, 3, 4].filter((x) => x > 2) // => [3, 4]
 ```
 
-### `list.find(xs: List[A], f: Fn[A] -> Bool) -> Option[A]`
+### `list.find(xs: List[A], f: (A) -> Bool) -> Option[A]`
 
 Find the first element matching a predicate.
 
 ```almd
-[1, 2, 3].find(fn(x) => x > 1) // => some(2)
+[1, 2, 3].find((x) => x > 1) // => some(2)
 ```
 
-### `list.any(xs: List[A], f: Fn[A] -> Bool) -> Bool`
+### `list.any(xs: List[A], f: (A) -> Bool) -> Bool`
 
 Check if any element satisfies a predicate.
 
 ```almd
-[1, 2, 3].any(fn(x) => x > 2) // => true
+[1, 2, 3].any((x) => x > 2) // => true
 ```
 
-### `list.all(xs: List[A], f: Fn[A] -> Bool) -> Bool`
+### `list.all(xs: List[A], f: (A) -> Bool) -> Bool`
 
 Check if all elements satisfy a predicate.
 
 ```almd
-[2, 4, 6].all(fn(x) => x % 2 == 0) // => true
+[2, 4, 6].all((x) => x % 2 == 0) // => true
 ```
 
-### `list.sort_by(xs: List[A], f: Fn[A] -> B) -> List[A]`
+### `list.sort_by(xs: List[A], f: (A) -> B) -> List[A]`
 
 Sort by a key-extraction function (not a comparator). f extracts the sort key from each element.
 
@@ -311,68 +311,68 @@ Sort by a key-extraction function (not a comparator). f extracts the sort key fr
 ["bb", "a", "ccc"].sort_by((s) => string.len(s)) // => ["a", "bb", "ccc"]
 ```
 
-### `list.flat_map(xs: List[A], f: Fn[A] -> List[B]) -> List[B]`
+### `list.flat_map(xs: List[A], f: (A) -> List[B]) -> List[B]`
 
 Map each element to a list and flatten the results.
 
 ```almd
-[1, 2].flat_map(fn(x) => [x, x * 10]) // => [1, 10, 2, 20]
+[1, 2].flat_map((x) => [x, x * 10]) // => [1, 10, 2, 20]
 ```
 
-### `list.filter_map(xs: List[A], f: Fn[A] -> Option[B]) -> List[B]`
+### `list.filter_map(xs: List[A], f: (A) -> Option[B]) -> List[B]`
 
 Map and filter in one pass: keep only some values.
 
 ```almd
-["1", "x", "3"].filter_map(fn(s) => int.parse(s)) // => [1, 3]
+["1", "x", "3"].filter_map((s) => int.parse(s)) // => [1, 3]
 ```
 
-### `list.take_while(xs: List[A], f: Fn[A] -> Bool) -> List[A]`
+### `list.take_while(xs: List[A], f: (A) -> Bool) -> List[A]`
 
 Take elements from the front while a predicate holds.
 
 ```almd
-[1, 2, 3, 1].take_while(fn(x) => x < 3) // => [1, 2]
+[1, 2, 3, 1].take_while((x) => x < 3) // => [1, 2]
 ```
 
-### `list.drop_while(xs: List[A], f: Fn[A] -> Bool) -> List[A]`
+### `list.drop_while(xs: List[A], f: (A) -> Bool) -> List[A]`
 
 Drop elements from the front while a predicate holds.
 
 ```almd
-[1, 2, 3, 1].drop_while(fn(x) => x < 3) // => [3, 1]
+[1, 2, 3, 1].drop_while((x) => x < 3) // => [3, 1]
 ```
 
-### `list.count(xs: List[A], f: Fn[A] -> Bool) -> Int`
+### `list.count(xs: List[A], f: (A) -> Bool) -> Int`
 
 Count elements that satisfy a predicate.
 
 ```almd
-[1, 2, 3, 4].count(fn(x) => x > 2) // => 2
+[1, 2, 3, 4].count((x) => x > 2) // => 2
 ```
 
-### `list.partition(xs: List[A], f: Fn[A] -> Bool) -> (List[A], List[A])`
+### `list.partition(xs: List[A], f: (A) -> Bool) -> (List[A], List[A])`
 
 Split a list into two: elements matching and not matching a predicate.
 
 ```almd
-[1, 2, 3, 4].partition(fn(x) => x % 2 == 0) // => ([2, 4], [1, 3])
+[1, 2, 3, 4].partition((x) => x % 2 == 0) // => ([2, 4], [1, 3])
 ```
 
-### `list.reduce(xs: List[A], f: Fn[A, A] -> A) -> Option[A]`
+### `list.reduce(xs: List[A], f: (A, A) -> A) -> Option[A]`
 
 Reduce a list by combining elements pairwise. Returns none if empty.
 
 ```almd
-[1, 2, 3].reduce(fn(a, b) => a + b) // => some(6)
+[1, 2, 3].reduce((a, b) => a + b) // => some(6)
 ```
 
-### `list.group_by(xs: List[A], f: Fn[A] -> B) -> Map[B, List[A]]`
+### `list.group_by(xs: List[A], f: (A) -> B) -> Map[B, List[A]]`
 
 Group elements by a key function into a map.
 
 ```almd
-["hi", "hey", "bye"].group_by(fn(s) => string.char_at(s, 0))
+["hi", "hey", "bye"].group_by((s) => string.take(s, 0))
 ```
 
 ### `list.range(start: Int, end: Int) -> List[Int]`
@@ -407,20 +407,20 @@ Remove the element at index i.
 list.remove_at([1, 2, 3], 1) // => [1, 3]
 ```
 
-### `list.find_index(xs: List[A], f: Fn[A] -> Bool) -> Option[Int]`
+### `list.find_index(xs: List[A], f: (A) -> Bool) -> Option[Int]`
 
 Find the first index where a predicate holds.
 
 ```almd
-[10, 20, 30].find_index(fn(x) => x > 15) // => some(1)
+[10, 20, 30].find_index((x) => x > 15) // => some(1)
 ```
 
-### `list.update(xs: List[A], i: Int, f: Fn[A] -> A) -> List[A]`
+### `list.update(xs: List[A], i: Int, f: (A) -> A) -> List[A]`
 
 Return a new list with the element at index i transformed by f.
 
 ```almd
-list.update([1, 2, 3], 1, fn(x) => x * 10) // => [1, 20, 3]
+list.update([1, 2, 3], 1, (x) => x * 10) // => [1, 20, 3]
 ```
 
 ### `list.repeat(val: A, n: Int) -> List[A]`
@@ -431,12 +431,12 @@ Create a list with a value repeated n times.
 list.repeat(0, 3) // => [0, 0, 0]
 ```
 
-### `list.scan(xs: List[A], init: B, f: Fn[B, A] -> B) -> List[B]`
+### `list.scan(xs: List[A], init: B, f: (B, A) -> B) -> List[B]`
 
 Like fold, but returns all intermediate accumulator values.
 
 ```almd
-[1, 2, 3].scan(0, fn(acc, x) => acc + x) // => [1, 3, 6]
+[1, 2, 3].scan(0, (acc, x) => acc + x) // => [1, 3, 6]
 ```
 
 ### `list.intersperse(xs: List[A], sep: A) -> List[A]`
@@ -463,20 +463,20 @@ Remove consecutive duplicates.
 list.dedup([1, 1, 2, 2, 1]) // => [1, 2, 1]
 ```
 
-### `list.zip_with(xs: List[A], ys: List[B], f: Fn[A, B] -> C) -> List[C]`
+### `list.zip_with(xs: List[A], ys: List[B], f: (A, B) -> C) -> List[C]`
 
 Combine two lists element-wise using a function.
 
 ```almd
-list.zip_with([1, 2], [10, 20], fn(a, b) => a + b) // => [11, 22]
+list.zip_with([1, 2], [10, 20], (a, b) => a + b) // => [11, 22]
 ```
 
-### `list.fold(xs: List[A], init: B, f: Fn[B, A] -> B) -> B`
+### `list.fold(xs: List[A], init: B, f: (B, A) -> B) -> B`
 
 Reduce a list from left with an initial accumulator.
 
 ```almd
-[1, 2, 3].fold(0, fn(acc, x) => acc + x) // => 6
+[1, 2, 3].fold(0, (acc, x) => acc + x) // => 6
 ```
 
 ### `list.take_end(xs: List[A], n: Int) -> List[A]`
@@ -495,7 +495,7 @@ Drop the last N elements.
 list.drop_end([1, 2, 3, 4], 2) // => [1, 2]
 ```
 
-### `list.unique_by(xs: List[A], f: Fn[A] -> K) -> List[A]`
+### `list.unique_by(xs: List[A], f: (A) -> K) -> List[A]`
 
 Remove duplicates by key function, preserving first occurrence.
 

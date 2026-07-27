@@ -9,22 +9,22 @@ The `option` module is **auto-imported** — no `import` statement needed.
 
 | Function | Signature | Description |
 |---|---|---|
-| `map` | `(Option[A], Fn[A] -> B) -> Option[B]` | Transform the inner value using a function. If none, returns none. |
-| `flat_map` | `(Option[A], Fn[A] -> Option[B]) -> Option[B]` | Chain an Option-returning function on the inner value. Flattens nested Options. |
+| `map` | `(Option[A], (A) -> B) -> Option[B]` | Transform the inner value using a function. If none, returns none. |
+| `flat_map` | `(Option[A], (A) -> Option[B]) -> Option[B]` | Chain an Option-returning function on the inner value. Flattens nested Options. |
 | `flatten` | `(Option[Option[A]]) -> Option[A]` | Flatten a nested Option. some(some(x)) becomes some(x), some(none) becomes none. |
 | `unwrap_or` | `(Option[A], A) -> A` | Get the inner value, or return a default if none. |
-| `unwrap_or_else` | `(Option[A], Fn[Unit] -> A) -> A` | Get the inner value, or compute a default using a function. |
+| `unwrap_or_else` | `(Option[A], (Unit) -> A) -> A` | Get the inner value, or compute a default using a function. |
 | `is_some` | `(Option[A]) -> Bool` | Check if the Option contains a value. |
 | `is_none` | `(Option[A]) -> Bool` | Check if the Option is none. |
 | `to_result` | `(Option[A], String) -> Result[A, String]` | Convert some to ok, none to err with the given error message. |
-| `filter` | `(Option[A], Fn[A] -> Bool) -> Option[A]` | Keep the value if it satisfies the predicate, otherwise return none. |
+| `filter` | `(Option[A], (A) -> Bool) -> Option[A]` | Keep the value if it satisfies the predicate, otherwise return none. |
 | `zip` | `(Option[A], Option[B]) -> Option[(A, B)]` | Combine two Options into an Option of a tuple. None if either is none. |
-| `or_else` | `(Option[A], Fn[Unit] -> Option[A]) -> Option[A]` | Return the Option if some, otherwise call the function to produce an alternative. |
+| `or_else` | `(Option[A], (Unit) -> Option[A]) -> Option[A]` | Return the Option if some, otherwise call the function to produce an alternative. |
 | `to_list` | `(Option[A]) -> List[A]` | Convert some(x) to [x], none to []. |
 
 ## Reference
 
-### `option.map(o: Option[A], f: Fn[A] -> B) -> Option[B]`
+### `option.map(o: Option[A], f: (A) -> B) -> Option[B]`
 
 Transform the inner value using a function. If none, returns none.
 
@@ -32,7 +32,7 @@ Transform the inner value using a function. If none, returns none.
 option.map(some(2), (x) => x * 10) // => some(20)
 ```
 
-### `option.flat_map(o: Option[A], f: Fn[A] -> Option[B]) -> Option[B]`
+### `option.flat_map(o: Option[A], f: (A) -> Option[B]) -> Option[B]`
 
 Chain an Option-returning function on the inner value. Flattens nested Options.
 
@@ -56,7 +56,7 @@ Get the inner value, or return a default if none.
 option.unwrap_or(none, 0) // => 0
 ```
 
-### `option.unwrap_or_else(o: Option[A], f: Fn[Unit] -> A) -> A`
+### `option.unwrap_or_else(o: Option[A], f: (Unit) -> A) -> A`
 
 Get the inner value, or compute a default using a function.
 
@@ -88,7 +88,7 @@ Convert some to ok, none to err with the given error message.
 option.to_result(some(42), "missing") // => ok(42)
 ```
 
-### `option.filter(o: Option[A], f: Fn[A] -> Bool) -> Option[A]`
+### `option.filter(o: Option[A], f: (A) -> Bool) -> Option[A]`
 
 Keep the value if it satisfies the predicate, otherwise return none.
 
@@ -104,7 +104,7 @@ Combine two Options into an Option of a tuple. None if either is none.
 option.zip(some(1), some(2)) // => some((1, 2))
 ```
 
-### `option.or_else(o: Option[A], f: Fn[Unit] -> Option[A]) -> Option[A]`
+### `option.or_else(o: Option[A], f: (Unit) -> Option[A]) -> Option[A]`
 
 Return the Option if some, otherwise call the function to produce an alternative.
 

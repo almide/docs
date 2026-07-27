@@ -101,7 +101,7 @@ Each error points to exactly one repair:
 '!' is not valid in Almide at line 5:12
   Hint: Use 'not x' for boolean negation, not '!x'.
 
-'return' is not valid in Almide at line 12:5
+'return' is not needed in Almide at line 12:5
   Hint: Use the last expression as the return value,
         or 'guard ... else' for early exit.
 ```

@@ -1,11 +1,7 @@
 ---
 title: datetime
-description: Date and time operations. Requires `import datetime`.
+description: Date and time operations. Auto-imported — no `import` needed.
 ---
-
-```almd
-import datetime
-```
 
 ## Functions
 

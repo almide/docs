@@ -173,7 +173,7 @@ string.replace("aabbcc", "bb", "XX") // => "aaXXcc"
 Get the character at a given index, or none if out of bounds.
 
 ```almd
-string.char_at("hello", 1) // => some("e")
+string.get("hello", 1) // => some("e")
 ```
 
 ### `string.lines(s: String) -> List[String]`

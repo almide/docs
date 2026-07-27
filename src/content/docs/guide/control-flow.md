@@ -28,7 +28,7 @@ let grade = if score >= 90 then "A"
 if verbose then println("debug info")
 ```
 
-The condition must be `Bool`. There is no truthiness -- `if 1` or `if "hello"` are compile errors.
+The condition should be `Bool`. Note that `Int` conditions are currently accepted and treated C-style (`0` false, non-zero true), and a `String` condition passes the checker only to fail in codegen — both are known holes ([#896](https://github.com/almide/almide/issues/896)), not intended behaviour.
 
 Boolean operators use words, not symbols:
 
@@ -86,7 +86,7 @@ for (_, value) in map.entries(config) {
 
 ### Iterating maps
 
-Iterating a map directly yields keys:
+Iterating a map directly yields `(key, value)` pairs — it is the same as `map.entries(m)`:
 
 ```almide
 for key in m {
@@ -94,7 +94,7 @@ for key in m {
 }
 ```
 
-Use `map.entries(m)` to iterate key-value pairs.
+Use `map.keys(m)` when you only want the keys.
 
 ## while loops
 
@@ -199,7 +199,7 @@ Comparison operators are non-associative: `a < b < c` is a compile error. Use `a
 | | `not` `-` (unary) |
 | | `^` (power, right-assoc) |
 | | `*` `/` `%` |
-| | `+` `-` `++` |
+| | `+` `-` |
 | | `..` `..=` (range, non-assoc) |
 | | `==` `!=` `<` `>` `<=` `>=` (non-assoc) |
 | | `and` |
