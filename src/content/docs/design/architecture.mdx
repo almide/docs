@@ -5,7 +5,7 @@ description: Almide compiler pipeline, three-layer codegen, and crate structure.
 
 import { Tabs, TabItem, Aside, Card, CardGrid, Steps } from '@astrojs/starlight/components';
 
-Almide is a **~72,000-line pure-Rust compiler** organized as a workspace of 9 crates. Dependencies: `serde` (AST serialization), `toml` (template loading), `clap` (CLI), `lasso` (string interning).
+Almide is a **~183,000-line pure-Rust compiler**: a CLI binary plus 15 library crates. Dependencies: `serde` / `serde_json` (AST and IR serialization), `toml` (template loading), `clap` (CLI), `lasso` (string interning), `wat` / `wasmparser` / `wasm-encoder` (WASM), `lsp-server` / `lsp-types` (editor integration).
 
 ## Pipeline
 
@@ -16,28 +16,24 @@ The compiler operates in two phases: **build time** (when the compiler itself is
 ```mermaid
 graph LR
   subgraph Inputs
-    G["grammar/*.toml"]
     RR["runtime/rs/src/"]
-    S["stdlib/defs/"]
+    ST["stdlib/*.almd"]
   end
   B["build.rs"]
   subgraph "generated/"
-    AT["arg_transforms.rs"]
-    SS["stdlib_sigs.rs"]
     RRT["rust_runtime.rs"]
-    TT["token_table.rs"]
+    RFM["runtime_fn_modes.rs"]
+    MDG["matrix_desugar_gen.rs"]
   end
-  G --> B
   RR --> B
-  S --> B
-  B --> AT
-  B --> SS
+  ST --> B
   B --> RRT
-  B --> TT
+  B --> RFM
+  B --> MDG
 ```
 
 <Aside>
-  The Rust runtime is **embedded in the compiler binary** via `include_str!`. When emitting Rust, the runtime is prepended to the generated `.rs` file. No external runtime package needed.
+  The Rust runtime and the whole standard library are **embedded in the compiler binary** via `include_str!` — the stdlib is self-hosted `.almd` source, so there is no `stdlib/defs/` and no external runtime package. When emitting Rust, the runtime is prepended to the generated `.rs` file.
 </Aside>
 
 ### Run time — `almide run`
@@ -48,16 +44,19 @@ graph TD
   LEX --> PAR["Parser"]
   PAR --> AST["AST"]
   AST --> CHK["Type Checker"]
-  CHK -->|"expr_types + env"| LOW["Lowering\n(AST → Typed IR)"]
-  LOW --> NP["Nanopass Pipeline\n(target-specific rewrites)"]
-  LOW --> WD["Direct WASM Emission"]
-  NP --> TR["Template Renderer\n(TOML-driven)"]
-  TR --> OUT[".rs"]
-  WD --> WOUT[".wasm"]
+  CHK -->|"expr_types + env"| LOW["Lowering (AST to Typed IR)"]
+  LOW --> MIR["almide-mir (v1 trust-spine)"]
+  MIR --> WAT["WAT text"]
+  WAT --> WOUT[".wasm"]
+  MIR -->|"native: renders first"| OUT[".rs"]
+  LOW -.->|"native fallback on a wall"| NP["Nanopass pipeline"]
+  NP --> TR["Template renderer (TOML-driven)"]
+  TR --> OUT
 
   style SRC fill:#4f7cff,color:#fff
   style OUT fill:#d97706,color:#fff
   style WOUT fill:#7c3aed,color:#fff
+  style MIR fill:#0f766e,color:#fff
 ```
 
 <Steps>
@@ -69,9 +68,9 @@ graph TD
 
 4. **Lowering** — AST + type information → Typed IR. Every expression carries its resolved type.
 
-5. **Nanopass Pipeline** — Target-specific structural rewrites on the IR (see below).
+5. **almide-mir** — The v1 trust-spine. Ownership and layout are decided here, and this is what renders both targets: WAT for WASM (assembled by `wat`), and native Rust. Default on WASM since 0.29.0 and on native since 0.30.0.
 
-6. **Output** — Rust target uses TOML-driven template rendering. WASM target emits binary directly.
+6. **Output** — On WASM the trust-spine is the *only* path: a shape it cannot verify is a diagnosed wall, never a silent fallback. On native, a wall falls back to the classic nanopass + TOML template pipeline.
 </Steps>
 
 ---
@@ -92,8 +91,7 @@ flowchart TD
 
   subgraph Rust["Rust target"]
     direction TB
-    TC["TypeConcretization"] --> BI["BorrowInsertion"]
-    BI --> CI["CloneInsertion"]
+    TC["ConcretizeTypes"] --> CI["CloneInsertion"]
     CI --> SL["StdlibLowering"]
     SL --> RP["ResultPropagation"]
     RP --> BL["BuiltinLowering"]
@@ -102,7 +100,7 @@ flowchart TD
 
   subgraph WASM["WASM target"]
     direction TB
-    WE["Direct Emission\n(linear memory, WASI)"]
+    WE["almide-mir to WAT (linear memory, WASI)"]
   end
 
   FL1 --> RS[".rs"]
@@ -116,7 +114,7 @@ flowchart TD
 ```
 
 <Aside>
-  The WASM target bypasses the Nanopass + Template pipeline entirely, emitting WASM binary directly from the IR (`emit_wasm/`). Uses linear memory + WASI with native tail calls and multi-memory.
+  The WASM target does not run the nanopass + template pipeline. It goes through `almide-mir`, which renders WAT that the `wat` crate assembles — linear memory + WASI. The bytes ship exactly as rendered unless you opt into `--wasm-opt`. (The old direct emitter, `emit_wasm/`, was retired in #782.)
 </Aside>
 
 | Pass | Target | What it does |
@@ -242,16 +240,22 @@ Ty::Tuple(Vec<Ty>)
     │   ├── mono/            Monomorphization (generic instantiation)
     │   └── optimize/        DCE, constant propagation, LICM, peephole
     │
-    └── almide-codegen/      Code generation
-        ├── pass.rs          NanoPass trait, Pipeline, Target enum
-        ├── target.rs        Target config: pipeline + templates
-        ├── template.rs      TOML template engine
-        ├── walker/          IR → Rust source renderer (target-agnostic)
-        ├── emit_wasm/       Direct WASM binary emitter
-        ├── pass_*.rs        Nanopass implementations (20+ passes)
-        └── generated/       Auto-generated by build.rs (DO NOT EDIT)
-            ├── arg_transforms.rs    Per-function argument decoration
-            └── rust_runtime.rs      Embedded Rust runtime
+    ├── almide-codegen/      Classic code generation (native fallback)
+    │   ├── pass.rs          NanoPass trait, Pipeline, Target enum (Rust | Wasm | Wgsl)
+    │   ├── target.rs        Target config: pipeline + templates
+    │   ├── template.rs      TOML template engine
+    │   ├── walker/          IR → Rust source renderer (target-agnostic)
+    │   ├── emit_wgsl/       WGSL emitter
+    │   ├── pass_*.rs        Nanopass implementations (49 passes)
+    │   └── generated/       Auto-generated by build.rs (DO NOT EDIT)
+    │       ├── rust_runtime.rs      Embedded Rust runtime
+    │       ├── runtime_fn_modes.rs  Runtime calling modes
+    │       └── matrix_desugar_gen.rs
+    │
+    └── almide-mir/          v1 trust-spine — the largest crate (~87k lines)
+        ├── pipeline.rs      try_render_wasm_source: the single wasm entry
+        ├── render_wasm/     IR → WAT, plus the stdlib link registry
+        └── lower/           Ownership (Perceus), layout, drop insertion
     ```
   </TabItem>
 
@@ -270,6 +274,10 @@ Ty::Tuple(Vec<Ty>)
         └── selfupdate.rs    almide self-update
 
     crates/
+    ├── almide-interp/      IR tree-walker — the third cross-target oracle
+    ├── almide-dialect/      Experimental dialect lowering
+    ├── almide-kernel/       Proof kernel
+    ├── almide-egg-lab/      e-graph rewriting experiments
     ├── almide-tools/        Tooling
     │   ├── fmt.rs           Source code formatter
     │   └── interface.rs     Module interface extraction
@@ -297,7 +305,7 @@ error[E005]: argument 'xs' expects List[Int] but got String
 
 <CardGrid>
   <Card title="Error codes" icon="error">
-    E001–E010 for programmatic consumption. Each code maps to a specific error category.
+    Stable `Ennn` codes for programmatic consumption — 31 documented under `docs/diagnostics/`, each mapping to a specific error category. `almide explain E005` prints the long form.
   </Card>
   <Card title="Source context" icon="document">
     File:line:col location with source underline pointing to the exact span.

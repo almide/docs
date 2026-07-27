@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import astroMermaid from 'astro-mermaid';
+import { rehypeMermaidNoTranslate } from './src/plugins/rehype-mermaid-notranslate.mjs';
 import fs from 'node:fs';
 
 const almideGrammar = JSON.parse(fs.readFileSync(new URL('./src/almide.tmLanguage.json', import.meta.url), 'utf-8'));
@@ -14,6 +15,8 @@ export default defineConfig({
 		shikiConfig: {
 			langs: [almideLang],
 		},
+		// Runs after astro-mermaid has produced `<pre class="mermaid">`.
+		rehypePlugins: [rehypeMermaidNoTranslate],
 	},
 	integrations: [
 		astroMermaid(),
