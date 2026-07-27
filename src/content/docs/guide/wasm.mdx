@@ -29,9 +29,19 @@ disagree, the wasm side is wrong, and it is a compiler bug rather than a
 
 That sample prints the same bytes three ways: `almide run` natively, `almide
 run --target wasm` under wasmtime, and the Run button above — which compiles it
-in your browser and executes it under a WASI shim. Float formatting is part of
-the promise too, which is why the second line prints the full
-`0.30000000000000004` rather than a rounded-off `0.3`.
+in your browser and executes it under a WASI shim. Float formatting is part of the promise too, and the second line is where that
+bites. `0.1 + 0.2` is a *different* double from `0.3` — `==` says so — and
+`float.to_string` prints the shortest decimal that round-trips back to the exact
+value it was handed. `0.30000000000000004` is therefore the faithful rendering
+rather than a verbose one: `0.3` would name a value the program does not hold.
+When you do want `0.3`, ask for it with `float.to_fixed(x, 1)`.
+
+That line is in the sample because it was once a real divergence. The wasm
+backend formatted at fixed precision and printed `0.3` here while native printed
+the full expansion — and it was closed by implementing exact big-integer Dragon4
+in the wasm runtime, not by relaxing the guarantee. It is contract C-023, and
+`spec/wasm_cross/float_shortest_roundtrip.almd` opens with this exact
+expression.
 
 Where the guarantee is named, it is enforced rather than asserted. The compiler
 repository carries a behaviour contract ledger — 180+ named contracts, each
