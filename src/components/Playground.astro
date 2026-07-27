@@ -26,6 +26,7 @@
 import { Code } from 'astro:components';
 import { playgroundUrl, type PlaygroundFile } from '../lib/playground';
 import almideGrammar from '../almide.tmLanguage.json';
+import { playgroundTheme } from '../lib/playground-theme';
 
 // Astro's <Code> runs its own Shiki instance, separate from markdown.shikiConfig,
 // so the grammar has to be handed to it directly.
@@ -93,7 +94,7 @@ const preview = visible[0] ?? files[0];
       ))}
     </div>
     <div class="playground-code">
-      <Code code={preview.content.trimEnd()} lang={almideLang} theme="tokyo-night" />
+      <Code code={preview.content.trimEnd()} lang={almideLang} theme={playgroundTheme as any} />
     </div>
     <div class="playground-hint">Press Run to compile and execute this in your browser</div>
   </div>
