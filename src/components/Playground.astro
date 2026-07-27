@@ -113,6 +113,11 @@ const preview = visible[0] ?? files[0];
     flex-direction: column;
     height: 100%;
   }
+  /* An author `display` rule beats the UA stylesheet's `[hidden] { display: none }`,
+     so the attribute has to be honoured explicitly or the preview never goes away. */
+  .playground-preview[hidden] {
+    display: none;
+  }
 
   /* Mirrors the playground's own embed bar. */
   .playground-bar {
