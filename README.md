@@ -11,7 +11,12 @@ sample is handed to it through the playground's own share-link format
 (`#code=<deflate + base64url>`, encoded here at build time by
 `src/lib/playground.ts`).
 
-Use the component from any `.mdx` page:
+Samples live as real files under `src/samples/<id>/`, with `main.almd` as the
+entry point. Add more files to the same directory for a multi-file sample (tab
+names are module names — `import self.greeting` needs a `greeting.almd`), or
+data files a sample reads with `fs.read_text`.
+
+Reference one from any `.mdx` page:
 
 ```mdx
 ---
@@ -20,33 +25,20 @@ title: Some page
 
 import Playground from '../../../components/Playground.astro';
 
-<Playground code={`fn main() -> Unit = println("hi")`} />
-```
-
-Multi-file samples (tab names are module names — `import self.greeting` needs a
-`greeting.almd` tab), and setup code hidden from the tab strip but still
-compiled:
-
-```mdx
-<Playground
-  height={560}
-  hide={['fixtures.almd']}
-  files={[
-    { name: 'main.almd', content: `…` },
-    { name: 'greeting.almd', content: `…` },
-  ]}
-/>
+<Playground sample="hello-basic" />
+<Playground sample="modules-two-files" height={560} hide={['fixtures.almd']} />
 ```
 
 Notes for authors:
 
-- **Escape interpolation.** Inside a JS template literal, Almide's `${…}` must
-  be written `\${…}` or JS will substitute it.
+- **Never inline code in the page.** MDX reindents multi-line template literals
+  and eats `${…}`, so a sample written inline reaches the reader subtly altered.
+  Files on disk ship byte-for-byte, and `check:embeds` asserts it.
 - **The page stays cheap.** The snippet renders as an ordinary highlighted code
   block; the playground iframe is created only when the reader presses Run, and
   opening one closes the previous (each frame loads several MB of compiler).
-- **Samples must be `main.almd`-entry, browser-safe.** `process.exec`,
-  `env.args` and network access are unavailable in the browser sandbox.
+- **Samples must be browser-safe.** `process.exec`, `env.args` and network
+  access are unavailable in the browser sandbox.
 
 ## Commands
 
@@ -58,8 +50,11 @@ Notes for authors:
 | `npm run check:embeds`   | Compile + run every embedded sample (native and wasm) — run after `build` |
 | `npm run preview`        | Preview the build locally                                      |
 
-`check:embeds` decodes the playground links out of the built HTML and runs each
-sample through the real `almide` CLI on both targets, failing on a compile
-error or any native/wasm output drift. It needs the `almide` binary on the
-machine (`ALMIDE_BIN` overrides the default `~/.local/almide/almide`), so it is
-a local/authoring gate rather than part of the Pages deploy.
+`check:embeds` decodes the playground links out of the built HTML and checks
+that each sample is byte-identical to its `src/samples/` source, then runs it
+through the real `almide` CLI on both targets — failing on a compile error or
+any native/wasm output drift. The byte comparison is the part that catches
+silent reindentation: a reindented sample still compiles, so running it is not
+enough. It needs the `almide` binary on the machine (`ALMIDE_BIN` overrides the
+default `~/.local/almide/almide`), so it is a local/authoring gate rather than
+part of the Pages deploy.

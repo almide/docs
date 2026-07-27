@@ -1,0 +1,6 @@
+import self.greeting
+
+fn main() -> Unit = {
+  println(greeting.polite("Ada"))
+  println(greeting.casual("Ada"))
+}

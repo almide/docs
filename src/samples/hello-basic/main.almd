@@ -1,0 +1,4 @@
+effect fn main() -> Result[Unit, String] = {
+  println("Hello, world!")
+  ok(())
+}

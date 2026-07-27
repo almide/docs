@@ -9,10 +9,7 @@ import Playground from '../../../components/Playground.astro';
 
 Create a file called `hello.almd`:
 
-<Playground code={`effect fn main() -> Result[Unit, String] = {
-  println("Hello, world!")
-  ok(())
-}`} />
+<Playground sample="hello-basic" />
 
 No installation needed to try it: **Run in your browser** compiles this with the
 real Almide compiler — the same one you install locally, shipped to this page as
@@ -40,16 +37,7 @@ Hello, world!
 
 ## Adding logic
 
-<Playground code={`fn greet(name: String) -> String =
-  "Hello, \${name}!"
-
-effect fn main() -> Result[Unit, String] = {
-  let names = ["Alice", "Bob", "Charlie"]
-  for name in names {
-    println(greet(name))
-  }
-  ok(())
-}`} />
+<Playground sample="hello-greet" />
 
 ## Writing tests
 

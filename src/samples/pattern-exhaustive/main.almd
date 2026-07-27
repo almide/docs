@@ -1,0 +1,15 @@
+type Direction = | North | South | East | West
+
+fn describe(d: Direction) -> String =
+  match d {
+    North => "up",
+    South => "down",
+    East  => "right",
+    West  => "left",
+  }
+
+fn main() -> Unit = {
+  for d in [North, South, East, West] {
+    println(describe(d))
+  }
+}

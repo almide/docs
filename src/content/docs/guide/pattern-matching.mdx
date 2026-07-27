@@ -10,21 +10,7 @@ Pattern matching with `match` is the primary way to inspect and destructure valu
 Run this, then delete the `West` arm and run it again — the compiler names the
 case you dropped instead of failing at runtime:
 
-<Playground code={`type Direction = | North | South | East | West
-
-fn describe(d: Direction) -> String =
-  match d {
-    North => "up",
-    South => "down",
-    East  => "right",
-    West  => "left",
-  }
-
-fn main() -> Unit = {
-  for d in [North, South, East, West] {
-    println(describe(d))
-  }
-}`} />
+<Playground sample="pattern-exhaustive" />
 
 ## Basic match
 

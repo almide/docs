@@ -1,0 +1,3 @@
+fn polite(name: String) -> String = "Good morning, ${name}."
+
+fn casual(name: String) -> String = "hey ${name}"

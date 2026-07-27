@@ -1,0 +1,10 @@
+fn greet(name: String) -> String =
+  "Hello, ${name}!"
+
+effect fn main() -> Result[Unit, String] = {
+  let names = ["Alice", "Bob", "Charlie"]
+  for name in names {
+    println(greet(name))
+  }
+  ok(())
+}

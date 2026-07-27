@@ -1,10 +1,16 @@
 #!/usr/bin/env node
 // Every <Playground> snippet in the docs is presented to readers as runnable
 // code. This harness decodes them straight out of the BUILT html (the same
-// bytes the browser gets) and runs each one through the real compiler on both
-// targets, so a docs sample can never silently rot into something that does
-// not compile — or that behaves differently in the reader's browser than on
-// their machine.
+// bytes the browser gets) and checks two things:
+//
+//   1. the decoded sample is byte-identical to its source in src/samples/
+//      — MDX silently reindents code written inline in a page, and a
+//        reindented sample still compiles, so running it is NOT enough to
+//        catch that class of bug;
+//   2. it compiles and runs, with identical output on the native and wasm
+//      targets — so a docs sample can never rot into something that does not
+//      build, or that behaves differently in the reader's browser than on
+//      their machine.
 //
 // Usage:
 //   npx astro build && node scripts/check-playground-embeds.mjs
@@ -18,6 +24,7 @@ import { inflateRawSync } from 'node:zlib';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DIST = resolve(__dirname, '../dist');
+const SAMPLES = resolve(__dirname, '../src/samples');
 const ALMIDE_BIN = process.env.ALMIDE_BIN || join(homedir(), '.local/almide/almide');
 
 function htmlFiles(dir) {
@@ -38,17 +45,28 @@ function decodeEmbed(url) {
   return payload.files;
 }
 
+function attr(tag, name) {
+  const m = tag.match(new RegExp(`${name}="([^"]*)"`));
+  return m ? m[1].replace(/&#38;/g, '&').replace(/&amp;/g, '&') : null;
+}
+
 function collectEmbeds() {
   const embeds = [];
   for (const file of htmlFiles(DIST)) {
     const html = readFileSync(file, 'utf8');
-    const urls = [...html.matchAll(/data-playground-url="([^"]+)"/g)].map((m) =>
-      m[1].replace(/&#38;/g, '&').replace(/&amp;/g, '&'),
-    );
-    urls.forEach((url, i) => {
+    // Astro appends a scoped style class, so match the class token, not the
+    // whole attribute.
+    for (const m of html.matchAll(/<div class="playground(?:[ "])[^>]*>/g)) {
+      const url = attr(m[0], 'data-playground-url');
+      if (!url) continue;
       const files = decodeEmbed(url);
-      if (files) embeds.push({ page: relative(DIST, file), index: i, files });
-    });
+      if (!files) continue;
+      embeds.push({
+        page: relative(DIST, file),
+        sample: attr(m[0], 'data-playground-sample'),
+        files,
+      });
+    }
   }
   return embeds;
 }
@@ -84,8 +102,34 @@ const scratchRoot = join(realpathSync(tmpdir()), `almide-docs-embeds-${process.p
 let failures = 0;
 
 for (const embed of embeds) {
-  const label = `${embed.page}#${embed.index}`;
-  const root = join(scratchRoot, label.replace(/[^\w]+/g, '_'));
+  const label = `${embed.sample ?? '?'} (${embed.page})`;
+
+  // 1. byte-identical to the source of truth
+  if (embed.sample) {
+    let mismatch = null;
+    for (const f of embed.files) {
+      const source = readFileSync(join(SAMPLES, embed.sample, f.name), 'utf8');
+      if (source !== f.content) {
+        const srcLines = source.split('\n');
+        const gotLines = f.content.split('\n');
+        const i = srcLines.findIndex((l, n) => l !== gotLines[n]);
+        mismatch =
+          `${f.name} line ${i + 1}\n` +
+          `    source: ${JSON.stringify(srcLines[i])}\n` +
+          `    shipped: ${JSON.stringify(gotLines[i])}`;
+        break;
+      }
+    }
+    if (mismatch) {
+      console.error(`✗ ${label} [payload differs from src/samples/${embed.sample}]`);
+      console.error(`  ${mismatch}`);
+      failures++;
+      continue;
+    }
+  }
+
+  // 2. compiles and runs the same on both targets
+  const root = join(scratchRoot, (embed.sample ?? 'embed') + '_' + failures + '_' + embeds.indexOf(embed));
   mkdirSync(join(root, 'src'), { recursive: true });
   writeFileSync(join(root, 'almide.toml'), '[package]\nname = "docs_embed"\nversion = "0.1.0"\n');
   for (const f of embed.files) {
@@ -114,7 +158,7 @@ for (const embed of embeds) {
     failures++;
     continue;
   }
-  console.log(`✓ ${label} (${embed.files.map((f) => f.name).join(', ')})`);
+  console.log(`✓ ${label} — byte-exact, runs on both targets`);
 }
 
 rmSync(scratchRoot, { recursive: true, force: true });
