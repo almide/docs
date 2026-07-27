@@ -33,12 +33,19 @@ in your browser and executes it under a WASI shim. Float formatting is part of
 the promise too, which is why the second line prints the full
 `0.30000000000000004` rather than a rounded-off `0.3`.
 
-This is enforced, not asserted. The compiler repository carries a behaviour
-contract ledger — 180+ named contracts, each traceable to executable evidence,
-backed by a cross-target fixture per contract that must produce byte-identical
-output on both legs. The count grows most weeks; `docs/contracts/README.md` in
-the compiler repo carries the current figure. A change to observable behaviour has to update the ledger in the
-same commit.
+Where the guarantee is named, it is enforced rather than asserted. The compiler
+repository carries a behaviour contract ledger — 180+ named contracts, each
+traceable to executable evidence, and 300+ cross-target fixtures that must
+produce byte-identical output on both legs. A change to observable behaviour has
+to update the ledger in the same commit. The count grows most weeks;
+`docs/contracts/README.md` in the compiler repo carries the current figure.
+
+The ledger is a ratchet, not a proof of universal equivalence. Behaviour a
+contract names is pinned by a fixture; behaviour outside the named set rests on
+the rule above without a machine check behind it. Divergences do still surface
+there — a handful were found by hand while these pages were being written — and
+they get fixed as compiler bugs rather than written up as target differences.
+That triage rule, not the fixture count, is the part of the promise that binds.
 
 ## What the browser cannot do
 
