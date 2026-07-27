@@ -7,9 +7,9 @@ fn label(name: String, o: Option[Int8]) -> String =
 fn main() -> Unit = {
   // Sized values are made with a type annotation — there is no `42i8` suffix.
   let byte: UInt8 = 255
-  let big: UInt64 = 18446744073709551615
+  let word: UInt32 = 4294967295
   println("UInt8 max  = " + byte.to_string())
-  println("UInt64 max = " + big.to_string())
+  println("UInt32 max = " + word.to_string())
 
   // Int -> sized narrowing WRAPS (it does not trap).
   println("int.to_int8(300)            = " + int.to_int8(300).to_string())

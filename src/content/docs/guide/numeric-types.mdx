@@ -117,6 +117,11 @@ shapes rather than relying on them:
 - **A negative float literal in a `Float32` context is broken**
   ([#890](https://github.com/almide/almide/issues/890)): the native build fails
   and wasm silently yields `0.0`. Write `float.to_float32(-2.5)` instead.
+- **A `UInt64` literal above `Int`'s range is rejected in the browser**
+  ([#893](https://github.com/almide/almide/issues/893)). `almide run` accepts
+  `18446744073709551615` on both targets, but the playground — which drives the
+  verified renderer directly — refuses it. Build such values with
+  `int.to_uint64(n)` if you need them to run here.
 
 Also note that `Int64` and `Float64` are accepted as spellings of `Int` and
 `Float` in type positions, but they have no method modules — use

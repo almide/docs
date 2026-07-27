@@ -56,6 +56,13 @@ Notes for authors:
 Pages are served under `/docs`, so a link written as `/guide/types/` renders
 fine locally and 404s in production — it must be `/docs/guide/types/`.
 
+One gap to know about: `check:embeds` compiles through the `almide` CLI, which
+type-checks with the v0 checker before invoking the verified wasm renderer. The
+playground calls that renderer directly. The two can disagree (see
+[almide#893](https://github.com/almide/almide/issues/893)), so a sample can pass
+the harness and still be rejected in the browser. Open a new sample in the
+playground once before shipping it.
+
 `check:embeds` decodes the playground links out of the built HTML and checks
 that each sample is byte-identical to its `src/samples/` source, then runs it
 through the real `almide` CLI on both targets — failing on a compile error or
