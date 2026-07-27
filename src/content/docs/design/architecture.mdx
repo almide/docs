@@ -70,8 +70,17 @@ graph TD
 
 5. **almide-mir** — The v1 trust-spine. Ownership and layout are decided here, and this is what renders both targets: WAT for WASM (assembled by `wat`), and native Rust. Default on WASM since 0.29.0 and on native since 0.30.0.
 
-6. **Output** — On WASM the trust-spine is the *only* path: a shape it cannot verify is a diagnosed wall, never a silent fallback. On native, a wall falls back to the classic nanopass + TOML template pipeline.
+6. **Output** — On WASM the trust-spine is the *only* path: a shape it cannot verify is a diagnosed wall, never a silent fallback. On native it renders first, and a wall falls back to the classic nanopass + TOML template pipeline.
+
 </Steps>
+
+The two output paths are not a design; they are a migration in progress. The
+trust-spine already replaced the old emitter outright on WASM, and the same is
+the goal on native — one memory model (Perceus) serving both legs, with the
+nanopass + template pipeline deleted rather than kept as an alternative. What
+still falls back today is mostly aggregates: a scalar function or a variant
+renders through v1, while a record holding a `String` currently walls with an
+ownership-verification failure and takes the old path.
 
 ---
 
