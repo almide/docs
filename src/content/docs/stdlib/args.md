@@ -52,13 +52,10 @@ list.
 With no arguments at all, everything degrades quietly: `raw()` is empty,
 `flag` is false, `option` is `none`.
 
-:::caution[Two open bugs]
-- `positional()` and `positional_at()` drop the first user argument
-  ([#891](https://github.com/almide/almide/issues/891)). Until that is fixed,
-  read positionals from `args.raw()` and filter them yourself.
-- `args.flag` is unreliable on the wasm target — it can corrupt string output
-  or trap ([#892](https://github.com/almide/almide/issues/892)). The other
-  functions match native output.
+:::caution[One open bug]
+Calling `positional_at` twice with **different** indices hangs on the wasm
+target ([#903](https://github.com/almide/almide/issues/903)). Reading
+`positional()` once and indexing the list is a safe workaround.
 :::
 
 Command-line arguments are unavailable in a browser sandbox; a WASI host such

@@ -28,11 +28,12 @@ Each expression runs in parallel. Results are collected as a tuple in declaratio
 With one expression, the result is not a tuple:
 
 ```almide
-let result = fan {
-  add(10, 20)
+effect fn one() -> Result[Int, String] = {
+  let result = fan {
+    add(10, 20)
+  }
+  ok(result)   // Int, not a tuple
 }
-// result: Int (not a tuple)
-assert_eq(result, 30)
 ```
 
 ### Staged fan (dependency chains)
@@ -83,32 +84,33 @@ effect fn with_capture() -> Result[Unit, String] = {
 | Only inside `effect fn` | Pure functions cannot fork concurrent work |
 | Expressions only | No `let`, `var`, `for`, or `while` inside `fan` blocks |
 | No `var` capture | Only `let` bindings from outer scope (prevents data races) |
-| Fail-fast | If any expression returns `err(...)`, the entire `fan` fails and siblings are cancelled |
+| Fail-fast | If any expression returns `err(...)`, the `fan` fails with that error. Sibling *side effects* may still complete on native — only the returned value is guaranteed |
 
 What is **not** allowed:
 
 ```almide no-check
-// Compile error: var capture forbidden in fan
+effect fn add(a: Int, b: Int) -> Result[Int, String] = ok(a + b)
+
 effect fn bad() -> Result[Unit, String] = {
   var counter = 0
   fan {
-    counter = counter + 1  // error: no var capture in fan
+    add(counter, 1)   // error[E008]: cannot capture mutable variable 'counter' inside fan block
   }
   ok(())
 }
 ```
 
-```almide
-// Compile error: statements not allowed in fan
+```almide no-check
+// error: `let` is not allowed inside fan block
 fan {
-  let x = fetch()  // error: only expressions, no let
+  let x = fetch()
   x + 1
 }
 ```
 
 ## fan.map
 
-Parallel map over a collection. Each element is processed concurrently, results maintain original order:
+Map over a collection with fail-fast error propagation; results keep input order. It runs sequentially today on both targets — see *How it runs*.
 
 ```almide
 effect fn double(x: Int) -> Result[Int, String] = ok(x * 2)
@@ -134,8 +136,11 @@ effect fn with_offset() -> Result[List[Int], String] = {
 Empty list returns `[]`:
 
 ```almide
-let results = fan.map([], (x: Int) => double(x))
-assert_eq(results, [])
+effect fn empty_case() -> Result[Unit, String] = {
+  let results = fan.map([], (x: Int) => double(x))
+  println(int.to_string(list.len(results)))   // 0
+  ok(())
+}
 ```
 
 If any invocation returns `err(...)`, the entire `fan.map` fails.
@@ -182,11 +187,13 @@ Like `fan.race` but **skips failures**. Returns the first **successful** result:
 effect fn primary() -> Result[Int, String] = err("down")
 effect fn fallback() -> Result[Int, String] = ok(42)
 
-let result = fan.any([
-  () => primary(),
-  () => fallback(),
-])
-assert_eq(result, 42)  // primary failed, fallback wins
+effect fn pick_available() -> Result[Int, String] = {
+  let result = fan.any([
+    () => primary(),
+    () => fallback(),
+  ])
+  ok(result)   // 42 — primary failed, fallback wins
+}
 ```
 
 Use this for redundancy patterns (try multiple sources, use first that works).
@@ -197,15 +204,18 @@ Run all tasks to completion and **collect all results**, including failures:
 
 ```almide
 effect fn succeed(x: Int) -> Result[Int, String] = ok(x)
-effect fn fail(msg: String) -> Result[Int, String] = err(msg)
+effect fn fail_with(msg: String) -> Result[Int, String] = err(msg)
 
-let results = fan.settle([
-  () => succeed(1),
-  () => fail("bad"),
-  () => succeed(3),
-])
-// results: [ok(1), err("bad"), ok(3)]
-assert_eq(list.len(results), 3)
+effect fn run_all() -> Result[Unit, String] = {
+  let results = fan.settle([
+    () => succeed(1),
+    () => fail_with("bad"),
+    () => succeed(3),
+  ])
+  // results: [ok(1), err("bad"), ok(3)]
+  println(int.to_string(list.len(results)))   // 3
+  ok(())
+}
 ```
 
 Unlike `fan` blocks which are fail-fast, `fan.settle` never short-circuits. Useful for batch operations where partial failure is acceptable.
@@ -238,14 +248,16 @@ timeout 5 ./app
 | `fan.any(thunks)` | First **success** in list order wins | All must fail for error |
 | `fan.settle(thunks)` | Run all, collect all results | Never fails |
 
-Every combinator is deterministic: the same inputs give the same result, on
-both targets, every run.
+`race`, `settle` and `map` are deterministic — same inputs, same result, both
+targets. **`fan.any` is not**: on wasm it returns `0` unless the winning thunk
+is last in the list ([#900](https://github.com/almide/almide/issues/900)).
+Avoid it on the wasm target until that is fixed.
 
 ## How it runs
 
 | Target | Implementation |
 |--------|---------------|
-| Native | `std::thread::scope` for `race` and `settle`; `map` runs sequentially |
+| Native | `std::thread::scope` for `settle` and `fan { }` blocks; `race` evaluates only the head thunk; `map` and `any` run sequentially |
 | WASM | Sequential — the target is single-threaded |
 
 The asymmetry is not a gap in the wasm backend, it is the point. Because a fan

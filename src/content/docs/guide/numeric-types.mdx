@@ -96,32 +96,26 @@ genuinely can fall outside those ranges.
 `bytes` is where sized types earn their keep, with explicit endianness:
 
 ```almide
-bytes.read_uint16(b, offset, endian)
-bytes.read_uint32(b, offset, endian)
-bytes.read_int32(b, offset, endian)
-bytes.read_float32(b, offset, endian)
-
-bytes.write_uint32(b, value, endian)
+bytes.write_uint32(b, value, endian)   // takes a UInt32
 bytes.set_float32(b, offset, value, endian)
+
+bytes.read_uint32(b, offset, endian)   // note: returns UInt, not UInt32
+bytes.read_float32(b, offset, endian)  // returns Float
 ```
 
 ## Known rough edges
 
-Two compiler bugs are open in this area. Until they are fixed, avoid these
-shapes rather than relying on them:
+Two rough edges remain:
 
-- **Arithmetic overflow on sized integers is not yet consistent across targets**
-  ([#889](https://github.com/almide/almide/issues/889)). `Int8` `127 + 1` gives
-  `-128` natively and `128` on wasm. Conversions (`int.to_int8`, the `_checked`
-  and `_saturating` variants) are unaffected and agree on both targets.
-- **A negative float literal in a `Float32` context is broken**
-  ([#890](https://github.com/almide/almide/issues/890)): the native build fails
-  and wasm silently yields `0.0`. Write `float.to_float32(-2.5)` instead.
-- **A `UInt64` literal above `Int`'s range is rejected in the browser**
-  ([#893](https://github.com/almide/almide/issues/893)). `almide run` accepts
-  `18446744073709551615` on both targets, but the playground — which drives the
-  verified renderer directly — refuses it. Build such values with
-  `int.to_uint64(n)` if you need them to run here.
+- **A sized-integer overflow the compiler can constant-fold breaks the native
+  build** ([#901](https://github.com/almide/almide/issues/901)). `let a: Int8 =
+  127` followed by `a + b` where `b` is `1` folds to `128` and emits an
+  out-of-range `i8` literal. Going through a function call (so the fold cannot
+  happen) wraps correctly to `-128` on both targets.
+- **Mixing a sized type with plain `Int` is not caught.** `Int32 + Int64` is a
+  clean error, but `Int32 + Int` type-checks and then fails in the native build
+  or produces a wrong value on wasm ([#902](https://github.com/almide/almide/issues/902)).
+  Convert explicitly.
 
 Also note that `Int64` and `Float64` are accepted as spellings of `Int` and
 `Float` in type positions, but they have no method modules — use

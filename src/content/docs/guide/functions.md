@@ -69,7 +69,7 @@ All parameters require type annotations:
 
 ```almide
 fn distance(x1: Float, y1: Float, x2: Float, y2: Float) -> Float =
-  float.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+  float.sqrt((x2 - x1) ^ 2.0 + (y2 - y1) ^ 2.0)
 ```
 
 ### Default arguments
@@ -115,7 +115,7 @@ fn main() -> Unit = {
 ```
 
 The caller must pass a `var` binding — a `let` binding or a temporary
-expression is rejected (E007), since there's nothing to write the mutation
+expression is rejected, since there's nothing to write the mutation
 back into. `mut` can appear on any parameter, not just the first. This is how
 in-place stdlib operations are written (`list.push`, `list.pop`,
 `list.clear`, …) — an ordinary parameter marked `mut`, not a hidden receiver
@@ -213,7 +213,7 @@ fn parse(text: String) -> Ast = _                       // type-checked stub
 fn optimize(ast: Ast) -> Ast = todo("implement later")  // todo with message
 ```
 
-The compiler accepts any expected type for holes and reports the expected type, available variables, and suggestions.
+A hole type-checks against whatever type is expected; reaching one at runtime panics.
 
 ## UFCS (Uniform Function Call Syntax)
 

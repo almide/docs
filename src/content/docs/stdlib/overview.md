@@ -47,8 +47,8 @@ These need `import <module>`:
 | [io](/docs/stdlib/io/) | Console I/O: read_line, print (no newline), read_all | Yes |
 | [env](/docs/stdlib/env/) | Environment: args, env vars, timestamps, sleep | Yes |
 | [process](/docs/stdlib/process/) | Process execution, env vars, spawn/kill, signals | Yes |
-| path | Path manipulation: join, dirname, basename, extension | No |
-| args | Command-line flag and option parsing | No |
+| [path](/docs/stdlib/path/) | Path manipulation: join, dirname, basename, extension | No |
+| [args](/docs/stdlib/args/) | Command-line flag and option parsing | No |
 
 ### Data formats
 
@@ -56,8 +56,8 @@ These need `import <module>`:
 |---|---|---|
 | [json](/docs/stdlib/json/) | JSON parsing, building, path-based access | No |
 | [regex](/docs/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
-| base64 | Base64 encoding and decoding | No |
-| hex | Hexadecimal encoding and decoding | No |
+| [base64](/docs/stdlib/base64-hex/) | Base64 encoding and decoding | No |
+| [hex](/docs/stdlib/base64-hex/) | Hexadecimal encoding and decoding | No |
 
 ### Networking
 
@@ -96,7 +96,10 @@ set.union(a, b)                        // set union
 
 ### I/O Modules
 
-All I/O functions are `effect fn` and return `Result`:
+Most I/O is `effect fn` returning `Result`, but not all of it — `fs.exists`
+and its siblings are effectful yet return `Bool`, and `fs.temp_dir`, `env.os`,
+`process.args` and several `io` writers are pure. Check the per-module page
+before assuming:
 
 ```almd
 import fs
@@ -133,7 +136,7 @@ string.len("hello")
 "hello".len()
 
 // Chaining with method syntax:
-text.trim().split(",").map((s) => s.to_upper())
+text.trim().split(",").map((s: String) => s.to_upper())
 
 // Chaining with pipe:
 text |> string.trim |> string.split(",")
@@ -145,4 +148,4 @@ text |> string.trim |> string.split(",")
 - **`is_` prefix**: Boolean-returning functions (`is_empty`, `is_digit`)
 - **`to_` prefix**: Type conversion (`to_string`, `to_int`)
 - **`from_` prefix**: Construction from another type (`from_list`, `from_bytes`)
-- **No synonyms**: The name listed in the docs is the only valid name
+- **One canonical name**: the name listed here is the one to use (a few aliases exist for historical reasons, e.g. `string.length`)

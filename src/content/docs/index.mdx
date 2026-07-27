@@ -34,7 +34,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     Side effects are visible in the type signature. `effect fn` marks functions that touch the outside world.
   </Card>
   <Card title="Tiny WASM binaries" icon="rocket">
-    Direct IR-to-WASM emission with no runtime overhead. Hello World compiles to **703 bytes**; a program pulling in list, string and JSON is under 18 KB.
+    Direct IR-to-WASM emission with no runtime overhead. Hello World compiles to **703 bytes**, and you pay only for what you use — list work adds about 2 KB.
   </Card>
 </CardGrid>
 
@@ -64,7 +64,7 @@ effect fn main() -> Result[Unit, String] = {
     [Start learning →](/docs/guide/types/)
   </Card>
   <Card title="Standard Library" icon="list-format">
-    22 modules, 381 functions. Everything from strings to HTTP.
+    40 modules. Everything from strings to HTTP.
 
     [Browse stdlib →](/docs/stdlib/overview/)
   </Card>

@@ -17,8 +17,8 @@ failure stops `main` and its message reaches the output unchanged.
 `Result[T, E]` represents a computation that can succeed with `T` or fail with `E`:
 
 ```almide
-let success = ok(42)            // Result[Int, String]
-let failure = err("not found")  // Result[Int, String]
+let success: Result[Int, String] = ok(42)
+let failure: Result[Int, String] = err("not found")
 ```
 
 Handle both cases with `match`:
@@ -46,7 +46,7 @@ let chained = result.flat_map(int.parse("42"), (n) =>
 
 ```almide
 let found = some(42)       // Option[Int]
-let missing = none         // Option[Int]
+let missing: Option[Int] = none
 ```
 
 Common operations:
@@ -63,7 +63,7 @@ Almide provides three postfix operators for unwrapping `Result` and `Option` val
 
 ### `!` — propagate error
 
-`expr!` unwraps a `Result` or `Option`. If the value is `err(e)` or `none`, the enclosing `effect fn` immediately returns the error. Only valid inside `effect fn`.
+`expr!` unwraps a `Result` or `Option`. If the value is `err(e)` or `none`, the enclosing `effect fn` immediately returns the error. Valid inside an `effect fn` body or a `test` block.
 
 ```almide
 import fs
@@ -106,7 +106,7 @@ let found = map.get(config, "key")?   // Option[String] -> Option[String] (passt
 
 | Operator | On Result | On Option | Valid in |
 |----------|-----------|-----------|----------|
-| `expr!` | `ok(v)` -> `v`, `err(e)` -> propagate | `some(v)` -> `v`, `none` -> propagate | `effect fn` only |
+| `expr!` | `ok(v)` -> `v`, `err(e)` -> propagate | `some(v)` -> `v`, `none` -> propagate | `effect fn` or `test` block |
 | `expr ?? fallback` | `ok(v)` -> `v`, `err(_)` -> `fallback` | `some(v)` -> `v`, `none` -> `fallback` | Anywhere |
 | `expr?` | `ok(v)` -> `some(v)`, `err(_)` -> `none` | Passthrough | Anywhere |
 

@@ -82,15 +82,17 @@ Two caveats when your tests also have to pass on the wasm target:
 
 ## Stubbing with `where`
 
-A test can replace a binding for the duration of that test, which is how you
-pin a clock, a random source, or a network call without threading a parameter
-through the whole program:
+A test can replace a binding for the duration of that test:
 
 ```almide
-test "expires after the deadline" where clock.now = fixed_now {
-  assert(is_expired(session))
+test "uses the pinned clock" where now = () => 500 {
+  assert_eq(now(), 500)
 }
 ```
+
+The substitution is **lexical over the test body only** — it does not reach
+into functions the body calls. A helper that calls `now()` internally still
+gets the real one, so `where` is a local stub, not dependency injection.
 
 Three forms are available:
 
