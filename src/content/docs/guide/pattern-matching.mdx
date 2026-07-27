@@ -3,7 +3,28 @@ title: Pattern Matching
 description: Exhaustive match expressions, pattern syntax, guards, and destructuring in Almide.
 ---
 
+import Playground from '../../../components/Playground.astro';
+
 Pattern matching with `match` is the primary way to inspect and destructure values in Almide. Every `match` must be exhaustive -- the compiler verifies that all possible cases are covered.
+
+Run this, then delete the `West` arm and run it again — the compiler names the
+case you dropped instead of failing at runtime:
+
+<Playground code={`type Direction = | North | South | East | West
+
+fn describe(d: Direction) -> String =
+  match d {
+    North => "up",
+    South => "down",
+    East  => "right",
+    West  => "left",
+  }
+
+fn main() -> Unit = {
+  for d in [North, South, East, West] {
+    println(describe(d))
+  }
+}`} />
 
 ## Basic match
 

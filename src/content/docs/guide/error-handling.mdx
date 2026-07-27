@@ -3,7 +3,25 @@ title: Error Handling
 description: Result, Option, unwrap operators (!, ??, ?), effect fn, and guard for safe error handling.
 ---
 
+import Playground from '../../../components/Playground.astro';
+
 Almide has no exceptions. All errors are values, represented by `Result[T, E]` and `Option[T]`. Three postfix operators -- `!`, `??`, and `?` -- provide concise, explicit control over unwrapping.
+
+Here it is end to end. Add `"99999"` to the list and run it again: the first
+failure stops `main` and its message reaches the output unchanged.
+
+<Playground code={`fn parse_port(raw: String) -> Result[Int, String] = {
+  let n = int.parse(raw) ?? -1
+  if n < 1 or n > 65535 then err("not a port: \${raw}")
+  else ok(n)
+}
+
+effect fn main() -> Result[Unit, String] = {
+  for raw in ["8080", "443"] {
+    let port = parse_port(raw)!
+    println("port \${int.to_string(port)} ok")
+  }
+}`} />
 
 ## Result
 

@@ -3,18 +3,22 @@ title: Hello World
 description: Write and run your first Almide program.
 ---
 
+import Playground from '../../../components/Playground.astro';
+
 ## Your first program
 
 Create a file called `hello.almd`:
 
-```almide
-effect fn main() -> Result[Unit, String] = {
+<Playground code={`effect fn main() -> Result[Unit, String] = {
   println("Hello, world!")
   ok(())
-}
-```
+}`} />
 
-Run it:
+No installation needed to try it: **Run in your browser** compiles this with the
+real Almide compiler — the same one you install locally, shipped to this page as
+WebAssembly — and runs the result. Edit the code and press Run again.
+
+To run it on your machine instead:
 
 ```bash
 almide run hello.almd
@@ -36,9 +40,8 @@ Hello, world!
 
 ## Adding logic
 
-```almide
-fn greet(name: String) -> String =
-  "Hello, ${name}!"
+<Playground code={`fn greet(name: String) -> String =
+  "Hello, \${name}!"
 
 effect fn main() -> Result[Unit, String] = {
   let names = ["Alice", "Bob", "Charlie"]
@@ -46,14 +49,7 @@ effect fn main() -> Result[Unit, String] = {
     println(greet(name))
   }
   ok(())
-}
-```
-
-```text
-Hello, Alice!
-Hello, Bob!
-Hello, Charlie!
-```
+}`} />
 
 ## Writing tests
 

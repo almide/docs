@@ -1,0 +1,118 @@
+---
+/**
+ * A runnable code sample.
+ *
+ * Renders the snippet as a normal highlighted code block, plus a Run button
+ * that swaps in the playground (compiled and executed in the reader's own
+ * browser — no server). The iframe is created ONLY on click: each one loads
+ * the compiler wasm, so eagerly embedding several per page would be costly.
+ * At most one runs at a time; opening another closes the previous.
+ *
+ * Usage:
+ *   <Playground code={`fn main() -> Unit = println("hi")`} />
+ *   <Playground files={[{ name: 'main.almd', content: … }, …]} hide={['helper.almd']} />
+ */
+import { Code } from 'astro-expressive-code/components';
+import { playgroundUrl, type PlaygroundFile } from '../lib/playground';
+
+interface Props {
+  /** Single-file shorthand. */
+  code?: string;
+  /** Multi-file form; the entry point must be named `main.almd`. */
+  files?: PlaygroundFile[];
+  /** Tabs hidden from the strip but still compiled (setup code). */
+  hide?: string[];
+  /** Height of the playground frame once opened. */
+  height?: number;
+}
+
+const { code, files, hide = [], height = 520 } = Astro.props;
+
+const tabs: PlaygroundFile[] =
+  files ?? [{ name: 'main.almd', content: (code ?? '').trim() + '\n' }];
+const url = playgroundUrl(tabs, { hide });
+const preview = tabs.find((f) => !hide.includes(f.name)) ?? tabs[0];
+---
+
+<div class="playground" data-playground-url={url} data-playground-height={height}>
+  <div class="playground-preview">
+    <Code code={preview.content.trimEnd()} lang="almide" />
+    <button type="button" class="playground-run">
+      <span aria-hidden="true">▶</span> Run in your browser
+    </button>
+  </div>
+</div>
+
+<style>
+  .playground {
+    margin: 1rem 0;
+  }
+  .playground-preview {
+    position: relative;
+  }
+  .playground-run {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.75rem;
+    font-family: var(--sl-font);
+    color: var(--sl-color-white);
+    background: var(--sl-color-accent);
+    border: 1px solid var(--sl-color-accent-high);
+    border-radius: 0.35rem;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .playground-run:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+  .playground :global(iframe) {
+    width: 100%;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.5rem;
+    background: #131316;
+  }
+  .playground-note {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+  }
+</style>
+
+<script>
+  // One shared handler for every <Playground> on the page.
+  let openFrame: HTMLElement | null = null;
+
+  document.querySelectorAll<HTMLElement>('.playground').forEach((root) => {
+    const button = root.querySelector<HTMLButtonElement>('.playground-run');
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+      const url = root.dataset.playgroundUrl;
+      if (!url) return;
+
+      // Only one compiler instance at a time — each frame loads several MB.
+      if (openFrame && openFrame !== root) {
+        const preview = openFrame.querySelector<HTMLElement>('.playground-preview');
+        const frame = openFrame.querySelector('iframe');
+        if (preview && frame) {
+          frame.remove();
+          preview.hidden = false;
+        }
+      }
+
+      const preview = root.querySelector<HTMLElement>('.playground-preview');
+      if (preview) preview.hidden = true;
+
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.title = 'Almide playground';
+      iframe.style.height = (root.dataset.playgroundHeight ?? '520') + 'px';
+      root.appendChild(iframe);
+      openFrame = root;
+    });
+  });
+</script>

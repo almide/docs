@@ -1,49 +1,65 @@
-# Starlight Starter Kit: Basics
+# Almide documentation site
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Astro + [Starlight](https://starlight.astro.build), deployed to
+<https://almide.github.io/docs/> on every push to `main`.
 
-```
-npm create astro@latest -- --template starlight
-```
+## Runnable code samples
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Docs samples can be run by the reader, in their own browser, with no install
+and no server: the playground ships the real compiler as WebAssembly, and a
+sample is handed to it through the playground's own share-link format
+(`#code=<deflate + base64url>`, encoded here at build time by
+`src/lib/playground.ts`).
 
-## 🚀 Project Structure
+Use the component from any `.mdx` page:
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+```mdx
+---
+title: Some page
+---
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
+import Playground from '../../../components/Playground.astro';
+
+<Playground code={`fn main() -> Unit = println("hi")`} />
 ```
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+Multi-file samples (tab names are module names — `import self.greeting` needs a
+`greeting.almd` tab), and setup code hidden from the tab strip but still
+compiled:
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+```mdx
+<Playground
+  height={560}
+  hide={['fixtures.almd']}
+  files={[
+    { name: 'main.almd', content: `…` },
+    { name: 'greeting.almd', content: `…` },
+  ]}
+/>
+```
 
-Static assets, like favicons, can be placed in the `public/` directory.
+Notes for authors:
 
-## 🧞 Commands
+- **Escape interpolation.** Inside a JS template literal, Almide's `${…}` must
+  be written `\${…}` or JS will substitute it.
+- **The page stays cheap.** The snippet renders as an ordinary highlighted code
+  block; the playground iframe is created only when the reader presses Run, and
+  opening one closes the previous (each frame loads several MB of compiler).
+- **Samples must be `main.almd`-entry, browser-safe.** `process.exec`,
+  `env.args` and network access are unavailable in the browser sandbox.
 
-All commands are run from the root of the project, from a terminal:
+## Commands
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Command                  | Action                                                        |
+| :----------------------- | :------------------------------------------------------------ |
+| `npm install`            | Install dependencies                                           |
+| `npm run dev`            | Local dev server at `localhost:4321`                           |
+| `npm run build`          | Build the production site to `./dist/`                         |
+| `npm run check:embeds`   | Compile + run every embedded sample (native and wasm) — run after `build` |
+| `npm run preview`        | Preview the build locally                                      |
 
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+`check:embeds` decodes the playground links out of the built HTML and runs each
+sample through the real `almide` CLI on both targets, failing on a compile
+error or any native/wasm output drift. It needs the `almide` binary on the
+machine (`ALMIDE_BIN` overrides the default `~/.local/almide/almide`), so it is
+a local/authoring gate rather than part of the Pages deploy.

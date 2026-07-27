@@ -3,7 +3,32 @@ title: Modules & Imports
 description: Importing modules, selective imports, auto-imported modules, and visibility in Almide.
 ---
 
+import Playground from '../../../components/Playground.astro';
+
 Almide organizes code into modules. The standard library provides modules for common operations, and user packages are imported the same way.
+
+Your own files are modules too. The sample below has two of them — switch tabs
+inside the playground to see `greeting.almd`, and note that the file name is
+the module name:
+
+<Playground
+  height={560}
+  files={[
+    { name: 'main.almd', content: `import self.greeting
+
+fn main() -> Unit = {
+  println(greeting.polite("Ada"))
+  println(greeting.casual("Ada"))
+}
+` },
+    { name: 'greeting.almd', content: `fn polite(name: String) -> String = "Good morning, \${name}."
+
+fn casual(name: String) -> String = "hey \${name}"
+` },
+  ]}
+/>
+
+Locally the same code is a project: `src/main.almd` plus `src/greeting.almd`.
 
 ## Import syntax
 
