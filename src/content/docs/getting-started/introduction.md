@@ -16,19 +16,22 @@ Most programming languages optimize for human expressiveness. Almide optimizes f
 
 ## Multi-target compilation
 
-Almide compiles to three targets from the same source:
+Almide compiles to two targets from the same source, and they are guaranteed to
+behave identically:
 
 | Target | Use case |
 |--------|----------|
-| **Rust** | Production binaries, system programming |
-| **TypeScript** | Web applications, Node.js |
+| **Native** (via Rust) | Production binaries, system programming |
 | **WASM** | Browser, edge computing, sandboxed execution |
 
 ```bash
-almide run app.almd              # Compile + execute (via Rust)
-almide build app.almd --target wasm  # Build WASM binary
-almide app.almd --target ts      # Emit TypeScript source
+almide run app.almd                  # Compile + execute natively
+almide run app.almd --target wasm    # Execute on wasmtime
+almide build app.almd --target wasm  # Build a .wasm module
 ```
+
+Same stdout, same stderr, same exit code on both — see
+[WebAssembly](/docs/guide/wasm/).
 
 ## Design principles
 
@@ -42,6 +45,8 @@ almide app.almd --target ts      # Emit TypeScript source
 ## What Almide looks like
 
 ```almide
+import fs
+
 // Pure function — no side effects
 fn fibonacci(n: Int) -> Int =
   if n <= 1 then n

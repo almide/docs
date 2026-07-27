@@ -143,7 +143,7 @@ The `else` branch must return the enclosing function's return type.
 Guard with a block body:
 
 ```almide
-guard not fs.exists?(path) else {
+guard not fs.exists(path) else {
   println("already exists")
   ok(())
 }

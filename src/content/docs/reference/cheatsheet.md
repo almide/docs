@@ -35,7 +35,7 @@ effect fn name(x: Type) -> Result[T, E] = expr       // side effects
 
 **Visibility:** `fn f()` (public) | `mod fn f()` (project) | `local fn f()` (file)
 **Order:** `[local|mod]? effect? fn`
-**Predicate:** `fn empty?(xs: List[T]) -> Bool` (`?` suffix = Bool return only)
+**Predicate:** `fn is_empty(xs: List[T]) -> Bool` (`is_` prefix; there is no `?` suffix in identifiers)
 **Hole:** `fn parse(text: String) -> Ast = _`
 **Todo:** `fn optimize(ast: Ast) -> Ast = todo("later")`
 
@@ -165,7 +165,7 @@ fs.read_text(path) |> result.map_err(_, (e) => Io(e))!
 - Newline = statement separator (no semicolons needed)
 - `[]` for generics, NOT `<>`
 - `effect fn` for side effects, NOT `fn name!()`
-- `fn name?()` suffix is for Bool predicates only
+- Predicates use an `is_` prefix (`is_empty`, `is_digit`); `?` is an operator, not a name suffix
 - Postfix `!` / `??` / `?` are unwrap operators (see above)
 - No exceptions -- use `Result[T, E]`
 - No null -- use `Option[T]`

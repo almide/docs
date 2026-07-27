@@ -50,7 +50,15 @@ Notes for authors:
 | `npm run check`          | Both checks below — run after `build`                          |
 | `npm run check:links`    | Verify every internal link resolves in the built site          |
 | `npm run check:embeds`   | Compile + run every embedded sample (native and wasm)          |
+| `npm run check:snippets` | Type-check the `almide` code blocks on every page              |
 | `npm run preview`        | Preview the build locally                                      |
+
+`check:snippets` runs `almide check` over the ```` ```almide ```` blocks. Most
+blocks are fragments that cannot stand alone and are counted, not checked; a
+block made of top-level declarations is checked for real. A block that only
+names helpers the surrounding prose defines is reported separately rather than
+as a failure — the gate is for code that could not be written the way the page
+shows it. Deliberately-invalid examples opt out with ```` ```almide no-check ````.
 
 `check:links` catches the most common docs bug on this site: the base path.
 Pages are served under `/docs`, so a link written as `/guide/types/` renders

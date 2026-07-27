@@ -37,6 +37,8 @@ fn classify(n: Int) -> String = {
 Functions with side effects (I/O, network, randomness) must be marked `effect fn`:
 
 ```almide
+import fs
+
 effect fn save(path: String, content: String) -> Result[Unit, String] = {
   fs.write(path, content)!
   ok(())
@@ -121,14 +123,16 @@ convention.
 
 ## Predicate functions
 
-Functions ending in `?` must return `Bool`:
+Predicates are named with an `is_` prefix, matching the standard library
+(`string.is_empty`, `list.is_empty`, `string.is_digit`):
 
 ```almide
-fn empty?(xs: List[Int]) -> Bool = list.len(xs) == 0
-fn positive?(n: Int) -> Bool = n > 0
+fn is_empty(xs: List[Int]) -> Bool = list.len(xs) == 0
+fn is_positive(n: Int) -> Bool = n > 0
 ```
 
-The `?` suffix is a naming convention enforced by the compiler. It cannot be used with non-`Bool` return types.
+There is no `?` suffix in identifiers — `fn empty?(…)` is a syntax error.
+(`?` is an operator, used postfix on a `Result` to turn it into an `Option`.)
 
 ## Lambdas
 

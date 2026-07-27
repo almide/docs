@@ -89,7 +89,7 @@ bytes.to_list(b) // => [72, 105]
 Check if byte buffer is empty.
 
 ```almd
-bytes.is_empty?([]) // => true
+bytes.is_empty([]) // => true
 ```
 
 ### `bytes.concat(a: Bytes, b: Bytes) -> Bytes`

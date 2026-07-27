@@ -24,8 +24,8 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
   <Card title="One way to write it" icon="pencil">
     Canonical syntax with no synonyms. LLMs converge on the correct output faster because there's only one valid way to express each concept.
   </Card>
-  <Card title="Multi-target" icon="setting">
-    Write once, compile to **Rust**, **TypeScript**, or **WASM**. Same semantics, same types, every target.
+  <Card title="Two targets, one behaviour" icon="setting">
+    Compile to a **native** binary or to **WASM**. Not merely "same semantics" — identical stdout, stderr and exit code, enforced by a contract ledger.
   </Card>
   <Card title="Repair-first compiler" icon="approve-check">
     Every error includes file:line, context, and an actionable hint. The compiler is a repair tool, not a rejection tool.
@@ -34,7 +34,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
     Side effects are visible in the type signature. `effect fn` marks functions that touch the outside world.
   </Card>
   <Card title="Tiny WASM binaries" icon="rocket">
-    Direct IR-to-WASM emission with no runtime overhead. Hello World compiles to **~2 KB**. Full stdlib programs stay under 50 KB.
+    Direct IR-to-WASM emission with no runtime overhead. Hello World compiles to **703 bytes**; a program pulling in list, string and JSON is under 18 KB.
   </Card>
 </CardGrid>
 

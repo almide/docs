@@ -10,7 +10,8 @@
     "astro": "astro",
     "check:embeds": "node scripts/check-playground-embeds.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "check": "npm run check:links && npm run check:embeds"
+    "check:snippets": "node scripts/check-snippets.mjs",
+    "check": "npm run check:links && npm run check:embeds && npm run check:snippets"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.38.2",

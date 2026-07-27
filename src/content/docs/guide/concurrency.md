@@ -1,6 +1,6 @@
 ---
 title: Concurrency
-description: Structured concurrency with fan blocks, fan.map, fan.race, fan.any, fan.settle, and fan.timeout.
+description: Structured concurrency with fan blocks, fan.map, fan.race, fan.any, and fan.settle.
 ---
 
 Almide provides structured concurrency through the `fan` construct. All concurrent work is scoped, cancellable, and fail-fast. There is no unstructured `spawn`.
@@ -87,7 +87,7 @@ effect fn with_capture() -> Result[Unit, String] = {
 
 What is **not** allowed:
 
-```almide
+```almide no-check
 // Compile error: var capture forbidden in fan
 effect fn bad() -> Result[Unit, String] = {
   var counter = 0
@@ -142,7 +142,7 @@ If any invocation returns `err(...)`, the entire `fan.map` fails.
 
 ## fan.race
 
-Run multiple tasks, return the result of the **first to complete**. All other tasks are cancelled:
+Run multiple tasks and take the result of the **first one to settle**:
 
 ```almide
 effect fn fastest_mirror(mirrors: List[String]) -> Result[String, String] = {
@@ -151,18 +151,28 @@ effect fn fastest_mirror(mirrors: List[String]) -> Result[String, String] = {
 }
 ```
 
-`fan.race` takes a **list of thunks** (zero-argument functions). The winner is non-deterministic:
+`fan.race` takes a **list of thunks** (zero-argument functions).
+
+The winner is decided by **list order, not by wall-clock speed** — the same
+input always produces the same result, on both targets:
 
 ```almide
 effect fn fast() -> Result[String, String] = ok("fast")
 effect fn slow() -> Result[String, String] = ok("slow")
 
-let winner = fan.race([
-  () => fast(),
-  () => slow(),
-])
-// winner is "fast" or "slow" — whichever completes first
+effect fn pick() -> Result[String, String] = {
+  let winner = fan.race([
+    () => slow(),
+    () => fast(),
+  ])
+  ok(winner)   // "slow" — it is first in the list
+}
 ```
+
+This is deliberate. A race whose outcome depends on timing would make a program
+non-reproducible and would break the native/wasm equivalence guarantee, so
+`race` means "I accept any one of these", not "give me whichever machine
+happens to finish first".
 
 ## fan.any
 
@@ -200,22 +210,22 @@ assert_eq(list.len(results), 3)
 
 Unlike `fan` blocks which are fail-fast, `fan.settle` never short-circuits. Useful for batch operations where partial failure is acceptable.
 
-## fan.timeout
+## There is no fan.timeout
 
-Wrap any task with a deadline (in milliseconds):
+`fan.timeout` existed once and was removed. Using it is a diagnosed error:
 
-```almide
-let result: Result[Int, String] = fan.timeout(5000, () => slow_computation())
-// ok(value) if completed within 5 seconds
-// err("timeout") if deadline exceeded
+```
+error[E027]: fan.timeout was removed: a wall-clock timeout has no portable
+             cross-target meaning
 ```
 
-Combine with other fan operations:
+A deadline measured in milliseconds cannot mean the same thing natively and in
+a wasm sandbox, so it would have made programs behave differently per target —
+the one thing the language refuses to do. Enforce deadlines at the boundary
+that invokes the program instead:
 
-```almide
-effect fn resilient_fetch(url: String) -> Result[String, String] = {
-  fan.timeout(3000, () => http.get(url))
-}
+```bash
+timeout 5 ./app
 ```
 
 ## Summary
@@ -224,20 +234,26 @@ effect fn resilient_fetch(url: String) -> Result[String, String] = {
 |----------|----------|-------------|
 | `fan { a; b }` | Run expressions concurrently, return tuple | Fail-fast: first `err` cancels all |
 | `fan.map(xs, f)` | Parallel map, ordered results | Fail-fast |
-| `fan.race(thunks)` | First to complete wins | First result (success or failure) |
-| `fan.any(thunks)` | First **success** wins | All must fail for error |
+| `fan.race(thunks)` | First in list order settles the race | First result (success or failure) |
+| `fan.any(thunks)` | First **success** in list order wins | All must fail for error |
 | `fan.settle(thunks)` | Run all, collect all results | Never fails |
-| `fan.timeout(ms, f)` | Deadline wrapper | `err("timeout")` on expiry |
 
-## Codegen
+Every combinator is deterministic: the same inputs give the same result, on
+both targets, every run.
 
-The `fan` construct maps to target-specific concurrency primitives:
+## How it runs
 
 | Target | Implementation |
 |--------|---------------|
-| Rust | `tokio::join!` / `tokio::spawn` |
-| TypeScript | `Promise.all` / `Promise.race` / `Promise.any` / `Promise.allSettled` |
-| WASM | Sequential (single-threaded) |
+| Native | `std::thread::scope` for `race` and `settle`; `map` runs sequentially |
+| WASM | Sequential — the target is single-threaded |
+
+The asymmetry is not a gap in the wasm backend, it is the point. Because a fan
+thunk cannot capture a `var` (that is a compile error), the thunks are pure, so
+running them in parallel and running them in order produce the same values.
+Parallelism is an implementation detail the language is free to drop; the
+result is not. That is what lets the native and wasm legs stay byte-identical
+while only one of them actually uses threads.
 
 ## Design philosophy
 
