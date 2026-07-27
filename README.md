@@ -47,8 +47,14 @@ Notes for authors:
 | `npm install`            | Install dependencies                                           |
 | `npm run dev`            | Local dev server at `localhost:4321`                           |
 | `npm run build`          | Build the production site to `./dist/`                         |
-| `npm run check:embeds`   | Compile + run every embedded sample (native and wasm) — run after `build` |
+| `npm run check`          | Both checks below — run after `build`                          |
+| `npm run check:links`    | Verify every internal link resolves in the built site          |
+| `npm run check:embeds`   | Compile + run every embedded sample (native and wasm)          |
 | `npm run preview`        | Preview the build locally                                      |
+
+`check:links` catches the most common docs bug on this site: the base path.
+Pages are served under `/docs`, so a link written as `/guide/types/` renders
+fine locally and 404s in production — it must be `/docs/guide/types/`.
 
 `check:embeds` decodes the playground links out of the built HTML and checks
 that each sample is byte-identical to its `src/samples/` source, then runs it

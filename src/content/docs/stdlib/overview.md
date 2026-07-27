@@ -3,66 +3,74 @@ title: Standard Library Overview
 description: Overview of all Almide standard library modules, categorized by function and import requirements.
 ---
 
-The Almide standard library provides 23 modules with 430+ functions covering data types, I/O, networking, and more. Modules are either auto-imported (available without an `import` statement) or require explicit import.
+The Almide standard library covers data types, I/O, networking, numerics and
+more. Modules are either auto-imported (usable with no `import` statement at
+all) or require an explicit `import`.
 
-## Auto-Imported Modules
+The split is not stylistic: everything that can touch the outside world —
+files, the network, the clock as a source of entropy, the process environment —
+is import-required, so a file's imports are an honest summary of what it can
+reach.
 
-These modules are available in every Almide file without an `import` statement:
+## Auto-imported modules
+
+Available in every file with no `import` statement. Writing `import string` is
+redundant.
 
 | Module | Description |
 |---|---|
-| [string](/stdlib/string/) | String manipulation: trim, split, join, replace, search |
-| [list](/stdlib/list/) | List operations: map, filter, fold, sort, search |
-| [map](/stdlib/map/) | Map (dictionary) operations: get, set, merge, iterate |
-| [int](/stdlib/int/) | Integer conversion, parsing, bitwise operations |
-| [float](/stdlib/float/) | Float conversion, rounding, math utilities |
-| [option](/stdlib/option/) | Option[T] utilities: map, flat_map, unwrap_or |
-| [result](/stdlib/result/) | Result[T, E] utilities: map, flat_map, unwrap_or |
-| [math](/stdlib/math/) | Mathematical functions: trig, logarithms, constants |
-| [set](/stdlib/set/) | Set operations: union, intersection, difference |
-| value | Generic value type for JSON and dynamic data |
+| [string](/docs/stdlib/string/) | String manipulation: trim, split, join, replace, search |
+| [list](/docs/stdlib/list/) | List operations: map, filter, fold, sort, search |
+| [map](/docs/stdlib/map/) | Map (dictionary) operations: get, set, merge, iterate |
+| [set](/docs/stdlib/set/) | Set operations: union, intersection, difference |
+| [int](/docs/stdlib/int/) | Integer conversion, parsing, bitwise operations |
+| [float](/docs/stdlib/float/) | Float conversion, rounding, math utilities |
+| [math](/docs/stdlib/math/) | Mathematical functions: trig, logarithms, constants |
+| [option](/docs/stdlib/option/) | `Option[T]` utilities: map, flat_map, unwrap_or |
+| [result](/docs/stdlib/result/) | `Result[T, E]` utilities: map, flat_map, unwrap_or |
+| [value](/docs/stdlib/value/) | Generic dynamic value type shared with JSON |
+| [error](/docs/stdlib/error/) | Error construction and chaining |
+| [datetime](/docs/stdlib/datetime/) | Date/time: parse, format, arithmetic |
+| [bytes](/docs/stdlib/bytes/) | Binary data: read/write, slice, encode, decode |
+| [matrix](/docs/stdlib/matrix/) | Matrix operations: create, multiply, transpose |
+| [sized numeric types](/docs/guide/numeric-types/) | `int8`…`int32`, `uint8`…`uint64`, `float32` |
 
-## Import-Required Modules
+## Import-required modules
 
-These modules must be explicitly imported with `import <module>`:
+These need `import <module>`:
 
-### I/O and System
-
-| Module | Description | Effect |
-|---|---|---|
-| [fs](/stdlib/fs/) | File system: read, write, list directories | Yes |
-| [io](/stdlib/io/) | Console I/O: read_line, print (no newline), read_all | Yes |
-| [env](/stdlib/env/) | Environment: args, env vars, timestamps, sleep | Yes |
-| [process](/stdlib/process/) | Process execution, env vars, spawn/kill, signals | Yes |
-
-### Data Formats
+### I/O and system
 
 | Module | Description | Effect |
 |---|---|---|
-| [json](/stdlib/json/) | JSON parsing, building, path-based access | No |
-| [regex](/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
-| [datetime](/stdlib/datetime/) | Date/time: parse, format, arithmetic | Mixed |
-| [bytes](/stdlib/bytes/) | Binary data: read/write, encode, decode, slice, hex | No |
-| [random](/stdlib/random/) | Random number generation | Yes |
+| [fs](/docs/stdlib/fs/) | File system: read, write, list directories | Yes |
+| [io](/docs/stdlib/io/) | Console I/O: read_line, print (no newline), read_all | Yes |
+| [env](/docs/stdlib/env/) | Environment: args, env vars, timestamps, sleep | Yes |
+| [process](/docs/stdlib/process/) | Process execution, env vars, spawn/kill, signals | Yes |
+| path | Path manipulation: join, dirname, basename, extension | No |
+| args | Command-line flag and option parsing | No |
+
+### Data formats
+
+| Module | Description | Effect |
+|---|---|---|
+| [json](/docs/stdlib/json/) | JSON parsing, building, path-based access | No |
+| [regex](/docs/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
+| base64 | Base64 encoding and decoding | No |
+| hex | Hexadecimal encoding and decoding | No |
 
 ### Networking
 
 | Module | Description | Effect |
 |---|---|---|
-| [http](/stdlib/http/) | HTTP client and server | Yes |
-
-### Numeric / Scientific
-
-| Module | Description | Effect |
-|---|---|---|
-| [matrix](/stdlib/matrix/) | Matrix operations: create, multiply, transpose | No |
+| [http](/docs/stdlib/http/) | HTTP client and server | Yes |
 
 ### Development
 
 | Module | Description | Effect |
 |---|---|---|
-| [testing](/stdlib/testing/) | Test assertions: assert_eq, assert_approx, assert_throws | No |
-| [error](/stdlib/error/) | Error type construction and chaining | No |
+| [testing](/docs/stdlib/testing/) | Test assertions: assert_eq, assert_approx, assert_throws | No |
+| [random](/docs/stdlib/random/) | Random number generation | Yes |
 
 ## Module Categories
 

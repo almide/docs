@@ -1,0 +1,129 @@
+---
+title: Numeric Types
+description: Int and Float, the sized integer and float types, explicit conversion, and the checked and saturating variants.
+---
+
+import Playground from '../../../components/Playground.astro';
+
+Almide has two default numeric types and nine sized ones:
+
+| | Types |
+|---|---|
+| Default | `Int` (64-bit signed), `Float` (64-bit IEEE 754) |
+| Sized signed | `Int8`, `Int16`, `Int32` |
+| Sized unsigned | `UInt8`, `UInt16`, `UInt32`, `UInt64` |
+| Sized float | `Float32` |
+
+`Int` and `Float` are what you want almost always. The sized types exist for
+the places where width is part of the problem rather than an optimization:
+binary formats, checksums, hardware and wire protocols, and interop with C or
+WebAssembly.
+
+Every sized-type module is auto-imported — `int8`, `uint32`, `float32` and the
+rest are available with no `import`.
+
+## Writing sized values
+
+A sized value is written as an ordinary literal with a type annotation. There
+is no literal suffix — `42i8` is a syntax error, since `i8` parses as an
+identifier.
+
+```almide
+let a: Int8    = -128
+let b: UInt8   = 255
+let c: UInt32  = 0xdeadbeef
+let d: UInt64  = 18446744073709551615
+```
+
+A literal that does not fit is a compile error, not a silent fold:
+
+```
+error[E024]: integer literal '200' is out of range for Int8
+  hint: Int8 would silently fold to 0 here; its range is -128..=127
+```
+
+## Conversion is always explicit
+
+Almide has no implicit numeric widening. Mixing widths in one expression is an
+error that tells you what to write:
+
+```
+error: operator '+' mixes sized numeric types Int32 and Int64 — explicit conversion required (e.g. `.to_int32()`)
+```
+
+Three families of conversion cover everything:
+
+| From | To | Call |
+|---|---|---|
+| `Int` | sized | `int.to_int8(n)`, `int.to_uint32(n)`, `int.to_float32(n)`, … |
+| sized | `Int` | `int.from_int8(x)`, `int.from_uint32(x)`, … |
+| sized | sized | `x.to_int32()`, `x.to_uint8()`, `x.to_float32()`, … |
+| `Float` | sized | `float.to_int8(f)`, `float.to_uint32(f)`, `float.to_float32(f)` |
+| `Float32` | `Float` | `float.from_float32(x)` |
+
+Each sized module carries a `to_*` for every other numeric type plus
+`to_string`. They hold no arithmetic: `x.abs()` on an `Int8` is not a thing.
+
+## Narrowing: wrap, checked, or saturating
+
+Plain narrowing **wraps**, in two's complement, without trapping. When silence
+is not acceptable, two variants say so explicitly:
+
+| Form | Returns | Behaviour |
+|---|---|---|
+| `int.to_int8(n)` | `Int8` | wraps |
+| `int.to_int8_checked(n)` | `Option[Int8]` | `none` if the value would not survive the round trip |
+| `int.to_int8_saturating(n)` | `Int8` | clamps to `Int8`'s range |
+
+`_checked` follows Swift's `Int(exactly:)`: it is `some` only when the
+conversion is exact. From a float that means NaN, infinity, a fractional part
+and out-of-range all give `none`.
+
+`_saturating` clamps to the nearest bound, and from a float NaN becomes `0`.
+
+<Playground sample="numeric-conversions" />
+
+Float-to-integer conversion truncates toward zero and saturates at the type's
+bounds; integer-to-float rounds to nearest, ties to even.
+
+Availability is not perfectly symmetric, for a reason: `int` has no
+`to_int64_checked`, because `Int` *is* 64-bit and that conversion cannot fail.
+`float` does have `to_int64_checked` and `to_uint64_checked`, because a float
+genuinely can fall outside those ranges.
+
+## Reading and writing binary
+
+`bytes` is where sized types earn their keep, with explicit endianness:
+
+```almide
+bytes.read_uint16(b, offset, endian)
+bytes.read_uint32(b, offset, endian)
+bytes.read_int32(b, offset, endian)
+bytes.read_float32(b, offset, endian)
+
+bytes.write_uint32(b, value, endian)
+bytes.set_float32(b, offset, value, endian)
+```
+
+## Known rough edges
+
+Two compiler bugs are open in this area. Until they are fixed, avoid these
+shapes rather than relying on them:
+
+- **Arithmetic overflow on sized integers is not yet consistent across targets**
+  ([#889](https://github.com/almide/almide/issues/889)). `Int8` `127 + 1` gives
+  `-128` natively and `128` on wasm. Conversions (`int.to_int8`, the `_checked`
+  and `_saturating` variants) are unaffected and agree on both targets.
+- **A negative float literal in a `Float32` context is broken**
+  ([#890](https://github.com/almide/almide/issues/890)): the native build fails
+  and wasm silently yields `0.0`. Write `float.to_float32(-2.5)` instead.
+
+Also note that `Int64` and `Float64` are accepted as spellings of `Int` and
+`Float` in type positions, but they have no method modules — use
+`int.to_string(x)` rather than `x.to_string()` on a value typed that way.
+
+## Next steps
+
+- [int](/docs/stdlib/int/) and [float](/docs/stdlib/float/) — the full conversion surface
+- [bytes](/docs/stdlib/bytes/) — binary reads and writes
+- [WebAssembly](/docs/guide/wasm/) — where fixed widths matter most

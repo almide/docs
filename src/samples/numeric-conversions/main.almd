@@ -1,0 +1,31 @@
+fn label(name: String, o: Option[Int8]) -> String =
+  match o {
+    Some(v) => name + " = some(" + v.to_string() + ")"
+    None    => name + " = none"
+  }
+
+fn main() -> Unit = {
+  // Sized values are made with a type annotation — there is no `42i8` suffix.
+  let byte: UInt8 = 255
+  let big: UInt64 = 18446744073709551615
+  println("UInt8 max  = " + byte.to_string())
+  println("UInt64 max = " + big.to_string())
+
+  // Int -> sized narrowing WRAPS (it does not trap).
+  println("int.to_int8(300)            = " + int.to_int8(300).to_string())
+
+  // _checked reports the loss instead: Option[T], none when it would not fit.
+  println(label("int.to_int8_checked(127)", int.to_int8_checked(127)))
+  println(label("int.to_int8_checked(128)", int.to_int8_checked(128)))
+
+  // _saturating clamps to the type's range.
+  println("int.to_int8_saturating(999) = " + int.to_int8_saturating(999).to_string())
+
+  // Float -> int truncates toward zero and saturates at the bounds.
+  println("float.to_int8_saturating(-3.7) = " + float.to_int8_saturating(-3.7).to_string())
+  println(label("float.to_int8_checked(9.5)", float.to_int8_checked(9.5)))
+
+  // Widening back to Int goes through int.from_*.
+  let small: Int8 = 42
+  println("int.from_int8(42)          = " + int.to_string(int.from_int8(small)))
+}

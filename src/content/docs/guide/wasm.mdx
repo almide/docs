@@ -1,0 +1,88 @@
+---
+title: WebAssembly
+description: Building and running Almide on the wasm target, and the cross-target equivalence guarantee that native and wasm produce identical output.
+---
+
+import Playground from '../../../components/Playground.astro';
+
+Almide compiles to two backends from one intermediate representation: native
+code (through Rust) and WebAssembly. The wasm target is not a reduced dialect
+or a separate implementation — it is the same compiler, the same standard
+library, and the same program semantics.
+
+```bash
+almide run app.almd --target wasm     # compile and execute on wasmtime
+almide build app.almd --target wasm   # emit app.wasm
+```
+
+`run --target wasm` needs the [`wasmtime`](https://wasmtime.dev) CLI on your
+`PATH`; `build` does not.
+
+## The guarantee
+
+**A program's observable behaviour is identical on both targets.** Observable
+means stdout, stderr, and the exit code. Native is the oracle: where the two
+disagree, the wasm side is wrong, and it is a compiler bug rather than a
+"platform difference" you are expected to work around.
+
+<Playground sample="wasm-crosstarget" />
+
+That sample prints the same bytes three ways: `almide run` natively, `almide
+run --target wasm` under wasmtime, and the Run button above — which compiles it
+in your browser and executes it under a WASI shim. Float formatting is part of
+the promise too, which is why the second line prints the full
+`0.30000000000000004` rather than a rounded-off `0.3`.
+
+This is enforced, not asserted. The compiler repository carries a behaviour
+contract ledger — 179 named contracts, each traceable to executable evidence,
+backed by 305 cross-target fixtures that must produce byte-identical output on
+both legs. A change to observable behaviour has to update the ledger in the
+same commit.
+
+## What the browser cannot do
+
+The wasm target itself is complete; the *browser* is a sandbox, and some of the
+standard library needs a host that a web page does not provide:
+
+- `process.exec` and friends — no subprocesses
+- `env.args()` — no command line
+- `http` — no sockets (the fetch API is not a socket)
+- `fs.*` — only whatever the embedder mounts into the WASI filesystem. The
+  playground, for example, mounts its data-file tabs, so `fs.read_text("data.csv")`
+  works there.
+
+None of this applies to server-side wasm runtimes such as wasmtime, which
+provide the full WASI surface.
+
+## Verified output
+
+The wasm module is produced by the v1 trust-spine renderer, and what it renders
+is what ships — the bytes are not post-processed. `--wasm-opt` runs
+`wasm-opt -Oz` over the result for a smaller module, but that is an explicit
+opt-in which deliberately leaves the verified envelope: the shipped bytes are
+then no longer the exact bytes the trust-spine rendered.
+
+```bash
+almide build app.almd --target wasm              # verbatim, verified
+almide build app.almd --target wasm --wasm-opt   # smaller, no longer verbatim
+```
+
+If the renderer cannot verify a program it refuses it with a diagnosed wall
+instead of silently falling back to unverified codegen. A wall is a bug report
+worth filing: it means a program shape the verified path does not cover yet.
+
+## Running it in a page
+
+The [playground](https://almide.github.io/playground/) is the reference
+embedding: the compiler itself is compiled to wasm, so both compilation and
+execution happen in the reader's browser with no server involved. Every
+runnable sample in these docs is that same mechanism.
+
+For shipping your own Almide code to the web as a library, see
+[almide-wasm-bindgen](https://github.com/almide/almide-wasm-bindgen), which
+generates the JavaScript/TypeScript bindings around a built module.
+
+## Next steps
+
+- [CLI Usage](/docs/reference/cli/) — every build and run flag
+- [Architecture](/docs/design/architecture/) — how one IR reaches two backends

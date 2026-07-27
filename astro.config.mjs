@@ -67,6 +67,10 @@ export default defineConfig({
 						{ label: 'Generics', slug: 'guide/generics' },
 						{ label: 'Protocols', slug: 'guide/protocols' },
 						{ label: 'Concurrency', slug: 'guide/concurrency' },
+						{ label: 'Numeric Types', slug: 'guide/numeric-types' },
+						{ label: 'Testing', slug: 'guide/testing' },
+						{ label: 'Packages', slug: 'guide/packages' },
+						{ label: 'WebAssembly', slug: 'guide/wasm' },
 					],
 				},
 				{
@@ -97,6 +101,9 @@ export default defineConfig({
 						{ label: 'datetime', slug: 'stdlib/datetime' },
 						{ label: 'random', slug: 'stdlib/random' },
 						{ label: 'testing', slug: 'stdlib/testing' },
+						{ label: 'path', slug: 'stdlib/path' },
+						{ label: 'args', slug: 'stdlib/args' },
+						{ label: 'base64 / hex', slug: 'stdlib/base64-hex' },
 					],
 				},
 				{
