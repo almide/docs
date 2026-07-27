@@ -184,17 +184,36 @@ const preview = visible[0] ?? files[0];
   }
   /* The sample renders on the playground's surface, not the page's, so the
      before/after swap does not change colour scheme mid-interaction. */
+  /* Font, size and line height are the playground editor's, so the glyphs do
+     not change shape or reflow when the live version takes over. */
   .playground-code :global(pre) {
     margin: 0;
-    padding: 14px 12px;
+    padding: 14px 0;
     background: #131316 !important;
     border: none;
     border-radius: 0;
+    font-family: var(--sl-font-mono);
     font-size: 13px;
     line-height: 1.7;
+    counter-reset: pg-line;
   }
   .playground-code :global(code) {
     background: transparent;
+    font-family: inherit;
+  }
+  /* CodeMirror renders a line-number gutter; mirror it so the columns line up. */
+  .playground-code :global(.line) {
+    counter-increment: pg-line;
+  }
+  .playground-code :global(.line)::before {
+    content: counter(pg-line);
+    display: inline-block;
+    width: 2.5em;
+    margin-right: 0.9em;
+    padding-right: 0.35em;
+    text-align: right;
+    color: #6b6b78;
+    user-select: none;
   }
 
   .playground-hint {

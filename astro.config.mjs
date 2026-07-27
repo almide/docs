@@ -47,6 +47,18 @@ export default defineConfig({
 					tag: 'meta',
 					attrs: { name: 'og:image', content: '/docs/og.png' },
 				},
+				// `--sl-font-mono` already asks for JetBrains Mono but nothing loaded it,
+				// so every code block fell back to the platform default — and to a
+				// different face than the playground iframe, which does load it.
+				{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' } },
+				{ tag: 'link', attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true } },
+				{
+					tag: 'link',
+					attrs: {
+						rel: 'stylesheet',
+						href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap',
+					},
+				},
 			],
 			sidebar: [
 				{
