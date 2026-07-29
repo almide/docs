@@ -97,7 +97,7 @@ The `+` operator is overloaded for strings and lists:
 ```almd
 0..<5                          // [0, 1, 2, 3, 4] (exclusive end)
 1...5                          // [1, 2, 3, 4, 5] (inclusive end)
-for i in 0..n { ... }          // optimized: no list allocation
+for i in 0..<n { ... }         // optimized: no list allocation
 ```
 
 Ranges are non-associative -- you cannot chain them.

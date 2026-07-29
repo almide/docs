@@ -26,8 +26,8 @@ The `int` module is **auto-imported** — no `import` statement needed.
 | `wrap_mul` | `(Int, Int, Int) -> Int` | Wrapping multiplication within a given bit width. Overflow wraps around. |
 | `rotate_right` | `(Int, Int, Int) -> Int` | Rotate bits right within a given bit width. |
 | `rotate_left` | `(Int, Int, Int) -> Int` | Rotate bits left within a given bit width. |
-| `to_u32` | `(Int) -> Int` | Truncate an integer to an unsigned 32-bit value (mask to 0..4294967295). |
-| `to_u8` | `(Int) -> Int` | Truncate an integer to an unsigned 8-bit value (mask to 0..255). |
+| `to_u32` | `(Int) -> Int` | Truncate an integer to an unsigned 32-bit value (mask to 0...4294967295). |
+| `to_u8` | `(Int) -> Int` | Truncate an integer to an unsigned 8-bit value (mask to 0...255). |
 | `clamp` | `(Int, Int, Int) -> Int` | Clamp an integer to the range [lo, hi]. |
 | `to_float` | `(Int) -> Float` | Convert an integer to a floating-point number. |
 
@@ -171,7 +171,7 @@ int.rotate_left(128, 1, 8) // => 1
 
 ### `int.to_u32(a: Int) -> Int`
 
-Truncate an integer to an unsigned 32-bit value (mask to 0..4294967295).
+Truncate an integer to an unsigned 32-bit value (mask to 0...4294967295).
 
 ```almd
 int.to_u32(300) // => 300
@@ -179,7 +179,7 @@ int.to_u32(300) // => 300
 
 ### `int.to_u8(a: Int) -> Int`
 
-Truncate an integer to an unsigned 8-bit value (mask to 0..255).
+Truncate an integer to an unsigned 8-bit value (mask to 0...255).
 
 ```almd
 int.to_u8(300) // => 44
