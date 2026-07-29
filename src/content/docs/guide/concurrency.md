@@ -243,15 +243,15 @@ timeout 5 ./app
 | Function | Behavior | Failure mode |
 |----------|----------|-------------|
 | `fan { a; b }` | Run expressions concurrently, return tuple | Fail-fast: first `err` cancels all |
-| `fan.map(xs, f)` | Parallel map, ordered results | Fail-fast |
+| `fan.map(xs, f)` | Deterministic map, list order | Fail-fast |
 | `fan.race(thunks)` | First in list order settles the race | First result (success or failure) |
 | `fan.any(thunks)` | First **success** in list order wins | All must fail for error |
 | `fan.settle(thunks)` | Run all, collect all results | Never fails |
 
-`race`, `settle` and `map` are deterministic — same inputs, same result, both
-targets. **`fan.any` is not**: on wasm it returns `0` unless the winning thunk
-is last in the list ([#900](https://github.com/almide/almide/issues/900)).
-Avoid it on the wasm target until that is fixed.
+All five are deterministic — same inputs, same result, both targets.
+(`fan.any` once miscompiled on wasm, returning `0` unless the winning thunk
+was last — [#900](https://github.com/almide/almide/issues/900) — that was
+fixed and the fix is pinned by a cross-target fixture.)
 
 ## How it runs
 
