@@ -49,7 +49,7 @@ effect fn name(x: Type) -> Result[T, E] = expr       // side effects
 | Block | `{ let x = 1; x + 1 }` |
 | For | `for x in xs { ... }` |
 | While | `while cond { ... }` |
-| Range | `0..5` (excl) / `1..=5` (incl) |
+| Range | `0..<5` (excl) / `1...5` (incl) |
 | Pipe | `x \|> f \|> g` |
 | Spread | `{ ...base, name: "bob" }` |
 
@@ -152,7 +152,7 @@ result.map_err(fs.read_text(path), (e) => Io(e))!
 
 ## Operators (precedence high to low)
 
-`. () [] ! ?? ?` > `not -` > `^` > `* / %` > `+ -` > `.. ..=` > `== != < > <= >=` > `and` > `or` > `|> >>`
+`. () [] ! ?? ?` > `not -` > `^` > `* / %` > `+ -` > `..< ...` > `== != < > <= >=` > `and` > `or` > `|> >>`
 
 ## Stdlib Modules
 

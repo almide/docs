@@ -15,7 +15,7 @@ Operators are listed from highest precedence (binds tightest) to lowest.
 | 4 | `^` | Right | Exponentiation (power) |
 | 5 | `*` `/` `%` | Left | Multiplication, division, modulo |
 | 6 | `+` `-` | Left | Addition/concatenation, subtraction |
-| 7 | `..` `..=` | None | Exclusive range, inclusive range |
+| 7 | `..<` `...` | None | Exclusive range, inclusive range |
 | 8 | `\|>` | Left | Pipe |
 | 9 | `==` `!=` `<` `>` `<=` `>=` | None | Comparison (non-associative) |
 | 10 | `and` | Left | Logical AND (short-circuit) |
@@ -92,11 +92,11 @@ The `+` operator is overloaded for strings and lists:
 [1, 2] + [3, 4]               // => [1, 2, 3, 4]
 ```
 
-### Range (`..` `..=`)
+### Range (`..<` `...`)
 
 ```almd
-0..5                           // [0, 1, 2, 3, 4] (exclusive end)
-1..=5                          // [1, 2, 3, 4, 5] (inclusive end)
+0..<5                          // [0, 1, 2, 3, 4] (exclusive end)
+1...5                          // [1, 2, 3, 4, 5] (inclusive end)
 for i in 0..n { ... }          // optimized: no list allocation
 ```
 

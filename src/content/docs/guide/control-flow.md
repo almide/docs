@@ -51,11 +51,11 @@ for name in names {
 ### Ranges
 
 ```almide
-for i in 0..5 {                  // 0, 1, 2, 3, 4 (exclusive end)
+for i in 0..<5 {                 // 0, 1, 2, 3, 4 (exclusive end)
   println(int.to_string(i))
 }
 
-for i in 1..=5 {                 // 1, 2, 3, 4, 5 (inclusive end)
+for i in 1...5 {                 // 1, 2, 3, 4, 5 (inclusive end)
   println(int.to_string(i))
 }
 ```
@@ -200,7 +200,7 @@ Comparison operators are non-associative: `a < b < c` is a compile error. Use `a
 | | `^` (power, right-assoc) |
 | | `*` `/` `%` |
 | | `+` `-` |
-| | `..` `..=` (range, non-assoc) |
+| | `..<` `...` (range, non-assoc) |
 | | `==` `!=` `<` `>` `<=` `>=` (non-assoc) |
 | | `and` |
 | | `or` |

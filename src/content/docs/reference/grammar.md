@@ -80,7 +80,7 @@ binary      = expr OP expr
               (* ** is accepted as an alias for ^ *)
 
 pipe        = expr "|>" expr                              (* pipe operator *)
-range       = expr ".." expr | expr "..=" expr            (* exclusive / inclusive range *)
+range       = expr "..<" expr | expr "..." expr           (* exclusive / inclusive range *)
 
 call        = expr "(" args ")"
             | expr "." IDENT "(" args ")"
@@ -150,7 +150,7 @@ local   mod     fan
 ### Operators and Delimiters
 
 ```almide
-Operators:   +  -  *  /  %  ^  ==  !=  <  <=  >  >=  |>  ..  ..=
+Operators:   +  -  *  /  %  ^  ==  !=  <  <=  >  >=  |>  ..<  ...
 Unary:       -  not
 Logical:     and  or
 Assignment:  =

@@ -122,7 +122,7 @@ let _ = some_function()    // call for side effect, discard result
 In `for` loops, `_` ignores the loop variable:
 
 ```almide
-for _ in 0..5 {
+for _ in 0..<5 {
   println("tick")
 }
 ```

@@ -39,7 +39,7 @@ A literal that does not fit is a compile error, not a silent fold:
 
 ```
 error[E024]: integer literal '200' is out of range for Int8
-  hint: Int8 would silently fold to 0 here; its range is -128..=127
+  hint: Int8 would silently fold to 0 here; its range is -128...127
 ```
 
 ## Conversion is always explicit
