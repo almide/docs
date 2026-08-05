@@ -18,9 +18,9 @@ The `result` module is **auto-imported** — no `import` statement needed.
 | `is_err` | `(Result[A, E]) -> Bool` | Check if the Result is err. |
 | `to_option` | `(Result[A, E]) -> Option[A]` | Convert ok to some, err to none. Discards the error value. |
 | `to_err_option` | `(Result[A, E]) -> Option[E]` | Convert err to some, ok to none. Discards the ok value. |
-| `collect` | `(List[Result[T, E]]) -> Result[List[T], List[E]]` | Collect a list of Results. All ok → ok(values), any err → err(all_errors). |
+| `collect` | `(List[Result[T, E]]) -> Result[List[T], List[E]]` | **非推奨(E039・ADR-0007、削除予定)** — `partition` を使う。 |
 | `partition` | `(List[Result[T, E]]) -> (List[T], List[E])` | Partition a list of Results into ok values and err values. |
-| `collect_map` | `(List[T], (T) -> Result[U, E]) -> Result[List[U], List[E]]` | Map a function over a list and collect Results. All ok → ok(values), any err → err(all_errors). |
+| `collect_map` | `(List[T], (T) -> Result[U, E]) -> Result[List[U], List[E]]` | **非推奨(E039・ADR-0007、削除予定)** — `partition` を使う。 |
 
 ## Reference
 
@@ -97,6 +97,12 @@ result.to_err_option(err("fail"))
 ```
 
 ### `result.collect(rs: List[Result[T, E]]) -> Result[List[T], List[E]]`
+
+> **非推奨(E039・ADR-0007)**: Rust の `collect` は最初の Err で打ち切る(E は E のまま)のに対し、この関数は全エラーを集める — 同じ名前で逆の戦略。名前ごと引退し、全エラー収集は `partition` で綴る:
+> ```almide
+> let (oks, errs) = result.partition(rs)
+> if list.is_empty(errs) then ok(oks) else err(errs)
+> ```
 
 Collect a list of Results. All ok → ok(values), any err → err(all_errors).
 
