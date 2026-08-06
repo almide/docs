@@ -105,7 +105,7 @@ before assuming:
 import fs
 
 effect fn read_config() -> Result[String, String] = {
-  let text = fs.read_text("config.toml")
+  let text = fs.read_text("config.toml")!
   ok(text)
 }
 ```

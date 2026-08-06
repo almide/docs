@@ -24,7 +24,7 @@ import io
 Read a single line from standard input
 
 ```almd
-let name = io.read_line()
+let name = io.read_line()!
 ```
 
 ### `io.print(s: String) -> Unit`
@@ -40,7 +40,7 @@ io.print("Enter name: ")
 Read all of standard input as a single string
 
 ```almd
-let input = io.read_all()
+let input = io.read_all()!
 ```
 
 ### `io.write_bytes(data: List[Int]) -> Unit`

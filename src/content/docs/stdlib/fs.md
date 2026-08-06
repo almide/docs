@@ -43,7 +43,7 @@ import fs
 Read file contents as a UTF-8 string
 
 ```almd
-let text = fs.read_text("config.toml")
+let text = fs.read_text("config.toml")!
 ```
 
 ### `fs.read_bytes(path: String) -> Result[List[Int], String]`
@@ -51,7 +51,7 @@ let text = fs.read_text("config.toml")
 Read file contents as a list of bytes
 
 ```almd
-let bytes = fs.read_bytes("image.png")
+let bytes = fs.read_bytes("image.png")!
 ```
 
 ### `fs.write(path: String, content: String) -> Result[Unit, String]`
@@ -99,7 +99,7 @@ if fs.exists("config.toml") then ...
 Read a file as a list of lines
 
 ```almd
-let lines = fs.read_lines("data.csv")
+let lines = fs.read_lines("data.csv")!
 ```
 
 ### `fs.remove(path: String) -> Result[Unit, String]`
@@ -115,7 +115,7 @@ fs.remove("temp.txt")
 List entries in a directory
 
 ```almd
-let entries = fs.list_dir("src/")
+let entries = fs.list_dir("src/")!
 ```
 
 ### `fs.is_dir(path: String) -> Bool`
@@ -155,7 +155,7 @@ fs.rename("old.txt", "new.txt")
 Recursively list all files in a directory tree
 
 ```almd
-let all_files = fs.walk("src/")
+let all_files = fs.walk("src/")!
 ```
 
 ### `fs.remove_all(path: String) -> Result[Unit, String]`
@@ -171,7 +171,7 @@ fs.remove_all("build/")
 Get file size in bytes
 
 ```almd
-let size = fs.file_size("data.bin")
+let size = fs.file_size("data.bin")!
 ```
 
 ### `fs.temp_dir() -> String`
@@ -179,7 +179,7 @@ let size = fs.file_size("data.bin")
 Get the system temporary directory path
 
 ```almd
-let tmp = fs.temp_dir()
+let tmp = fs.temp_dir()!
 ```
 
 ### `fs.stat(path: String) -> Result[{size: Int, is_dir: Bool, is_file: Bool, modified: Int}, String]`
@@ -195,7 +195,7 @@ let info = fs.stat("file.txt") // {size, is_dir, is_file, modified}
 Find files matching a glob pattern
 
 ```almd
-let files = fs.glob("src/**/*.almd")
+let files = fs.glob("src/**/*.almd")!
 ```
 
 ### `fs.create_temp_file(prefix: String) -> Result[String, String]`
@@ -203,7 +203,7 @@ let files = fs.glob("src/**/*.almd")
 Create a temporary file with a given prefix, return its path
 
 ```almd
-let path = fs.create_temp_file("almide-")
+let path = fs.create_temp_file("almide-")!
 ```
 
 ### `fs.create_temp_dir(prefix: String) -> Result[String, String]`
@@ -211,7 +211,7 @@ let path = fs.create_temp_file("almide-")
 Create a temporary directory with a given prefix, return its path
 
 ```almd
-let dir = fs.create_temp_dir("build-")
+let dir = fs.create_temp_dir("build-")!
 ```
 
 ### `fs.is_symlink(path: String) -> Bool`
@@ -227,5 +227,5 @@ if fs.is_symlink("link") then ...
 Get file modification time as Unix timestamp (seconds)
 
 ```almd
-let ts = fs.modified_at("file.txt")
+let ts = fs.modified_at("file.txt")!
 ```

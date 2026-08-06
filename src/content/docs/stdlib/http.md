@@ -151,7 +151,7 @@ let params = http.query_params(req) // {"page": "1", "q": "test"}
 Send an HTTP GET request and return the response body
 
 ```almd
-let html = http.get("https://example.com")
+let html = http.get("https://example.com")!
 ```
 
 ### `http.post(url: String, body: String) -> Result[String, String]`
@@ -159,7 +159,7 @@ let html = http.get("https://example.com")
 Send an HTTP POST request with a body string
 
 ```almd
-let resp = http.post("https://api.example.com", body)
+let resp = http.post("https://api.example.com", body)!
 ```
 
 ### `http.put(url: String, body: String) -> Result[String, String]`
@@ -167,7 +167,7 @@ let resp = http.post("https://api.example.com", body)
 Send an HTTP PUT request
 
 ```almd
-let resp = http.put(url, body)
+let resp = http.put(url, body)!
 ```
 
 ### `http.patch(url: String, body: String) -> Result[String, String]`
@@ -175,7 +175,7 @@ let resp = http.put(url, body)
 Send an HTTP PATCH request
 
 ```almd
-let resp = http.patch(url, body)
+let resp = http.patch(url, body)!
 ```
 
 ### `http.delete(url: String) -> Result[String, String]`
@@ -183,7 +183,7 @@ let resp = http.patch(url, body)
 Send an HTTP DELETE request
 
 ```almd
-let resp = http.delete(url)
+let resp = http.delete(url)!
 ```
 
 ### `http.request(method: String, url: String, body: String, headers: Map[String, String]) -> Result[String, String]`
@@ -191,5 +191,5 @@ let resp = http.delete(url)
 Send a custom HTTP request with method, URL, body, and headers
 
 ```almd
-let resp = http.request("PUT", url, body, headers)
+let resp = http.request("PUT", url, body, headers)!
 ```
