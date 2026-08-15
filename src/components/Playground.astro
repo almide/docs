@@ -227,10 +227,17 @@ const preview = visible[0] ?? files[0];
     letter-spacing: 0.02em;
   }
 
+  /* `margin: 0` is load-bearing. Starlight spaces adjacent markdown children
+     with `* + *` → `margin-top: 1rem`, and the iframe is inserted as a sibling
+     of the preview, so it inherits that 16px. In a fixed-height, overflow-hidden
+     box that pushes the frame down and clips an equal strip off the bottom —
+     which is exactly where the playground's mobile action bar (Run) sits when
+     the frame is narrower than 768px, as it always is in the docs column. */
   .playground :global(iframe) {
     display: block;
     width: 100%;
     height: 100%;
+    margin: 0;
     border: none;
     background: #131316;
   }
