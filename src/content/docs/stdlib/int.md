@@ -29,6 +29,8 @@ The `int` module is **auto-imported** — no `import` statement needed.
 | `to_u32` | `(Int) -> Int` | Truncate an integer to an unsigned 32-bit value (mask to 0...4294967295). |
 | `to_u8` | `(Int) -> Int` | Truncate an integer to an unsigned 8-bit value (mask to 0...255). |
 | `clamp` | `(Int, Int, Int) -> Int` | Clamp an integer to the range [lo, hi]. |
+| `is_even` | `(Int) -> Bool` | `true` when the integer is divisible by 2. |
+| `is_odd` | `(Int) -> Bool` | `true` when the integer is not divisible by 2. |
 | `to_float` | `(Int) -> Float` | Convert an integer to a floating-point number. |
 
 ## Reference
@@ -191,6 +193,28 @@ Clamp an integer to the range [lo, hi].
 
 ```almd
 int.clamp(15, 0, 10) // => 10
+```
+
+### `int.is_even(n: Int) -> Bool`
+
+Parity predicate: `true` when `n` is divisible by 2. Negative values and the
+bounds are exact (the test is `n % 2 == 0`, and `%` keeps the dividend's sign).
+
+```almd
+int.is_even(4)  // => true
+int.is_even(-3) // => false
+int.is_even(0)  // => true
+```
+
+### `int.is_odd(n: Int) -> Bool`
+
+The other half of the parity pair: `true` when `n` is not divisible by 2.
+Scalar `Int` only — a sized value reaches it through `int.from_int8(x)` and friends.
+
+```almd
+int.is_odd(7)  // => true
+int.is_odd(-3) // => true
+int.is_odd(4)  // => false
 ```
 
 ### `int.to_float(n: Int) -> Float`
