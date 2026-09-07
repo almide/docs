@@ -28,7 +28,7 @@ Four sections are read; anything else is ignored.
 [package]
 name = "mypkg"          # required — this is the import name
 version = "0.1.0"
-almide = "0.36.0"       # minimum compiler version
+almide = "0.62.0"       # minimum compiler version
 
 [dependencies]
 base64 = { git = "https://github.com/almide/base64" }

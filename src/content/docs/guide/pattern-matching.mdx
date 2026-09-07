@@ -158,6 +158,62 @@ match point {
 }
 ```
 
+### List patterns
+
+`[]` matches the empty list, `[a, b]` a list of exactly two elements, and a
+`..` rest slot in the **last** position takes the remainder. `[h, ..t]` is the
+idiomatic head/tail split: it matches a list of length ≥ 1 and binds `t` to the
+tail (itself a list).
+
+```almide
+fn sum(xs: List[Int]) -> Int = match xs {
+  [] => 0,
+  [h, ..t] => h + sum(t),
+}
+```
+
+A bare `..` ignores the rest — `[a, b, ..]` matches any list of length ≥ 2:
+
+```almide
+fn starts_with(xs: List[Int]) -> String = match xs {
+  [a, b, ..] => "starts ${int.to_string(a)}, ${int.to_string(b)}",
+  _ => "fewer than two",
+}
+```
+
+The rest slot is **last-only**: `[..t, x]` and `[x, ..mid, y]` are refused by
+the parser ("Rest pattern must be last"). Match the tail with `list.last` /
+`list.reverse` instead.
+
+### As-patterns (`@`)
+
+`name @ pattern` binds the whole value to `name` *and* destructures it with
+`pattern`, so an arm can keep the original alongside its parts:
+
+```almide
+type Shape =
+  | Circle(Float)
+  | Rect{ width: Float, height: Float }
+
+fn describe(s: Shape) -> String = match s {
+  c @ Circle(r) => "circle r=${float.to_string(r)} (${float.to_string(area(c))})",
+  r @ Rect{ width, .. } => "rect w=${float.to_string(width)} (${float.to_string(area(r))})",
+}
+
+fn area(s: Shape) -> Float = match s {
+  Circle(r) => 3.14159 * r * r,
+  Rect{ width, height } => width * height,
+}
+```
+
+### Not supported
+
+- **Range patterns** (`1..5`) — use a guard: `n if n >= 1 and n < 5 => …`.
+- **Rest anywhere but the last list slot** — `[..t, x]` refuses.
+- **Binding inside or-patterns** — `"a" | "an" | "the" => …` is fine at the top
+  of an arm, but the alternatives cannot bind variables; write separate arms when
+  the body needs the payload.
+
 ## Guards
 
 Add `if condition` after a pattern for additional constraints:
