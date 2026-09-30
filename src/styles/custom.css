@@ -1,49 +1,51 @@
-/* Almide docs theme — based on playground color palette */
+/* Almide docs theme — the ALMIDE Brand Guideline v2 palette, shared with the playground:
+   navy grounds from the dark GitHub cover, accents from the shell's teal layers. */
 
 :root {
 	--sl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 	--sl-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
 
-	/* Purple accent from playground: #7c5cbf / #9b7de0 */
-	--sl-color-accent-low: #1e1630;
-	--sl-color-accent: #9b7de0;
-	--sl-color-accent-high: #d4c4f5;
+	/* Shell 01 #14A2A2 as the accent on dark */
+	--sl-color-accent-low: #0c2a33;
+	--sl-color-accent: #14a2a2;
+	--sl-color-accent-high: #b8e6e6;
 
-	/* Dark palette — text pushed toward white for readability */
-	--sl-color-white: #f5f5f3;
-	--sl-color-gray-1: #c8c8d0;
-	--sl-color-gray-2: #8a8a96;
-	--sl-color-text: #dcdce2;
-	--sl-color-gray-3: #505060;
-	--sl-color-gray-4: #383842;
-	--sl-color-gray-5: #28282f;
-	--sl-color-gray-6: #1a1a1f;
-	--sl-color-black: #131316;
+	/* Dark palette — navy grounds, text pushed toward the brand off-white */
+	--sl-color-white: #f4f7f8;
+	--sl-color-gray-1: #c5d0da;
+	--sl-color-gray-2: #8a9bab;
+	--sl-color-text: #dde5ec;
+	--sl-color-gray-3: #4d6278;
+	--sl-color-gray-4: #2b4058;
+	--sl-color-gray-5: #1a2a3d;
+	--sl-color-gray-6: #101b29;
+	--sl-color-black: #0b1420;
 }
 
 :root[data-theme='light'] {
-	--sl-color-accent-low: #ede5fb;
-	--sl-color-accent: #6b3fad;
-	--sl-color-accent-high: #3a1d6e;
-	--sl-color-text: #2a2a32;
+	/* Shell 05 #096578 on white, ALMIDE Navy #1F3A5F as its strong form */
+	--sl-color-accent-low: #e0f3f3;
+	--sl-color-accent: #096578;
+	--sl-color-accent-high: #1f3a5f;
+	--sl-color-text: #2b2b2b;
 
-	--sl-color-white: #131316;
-	--sl-color-gray-1: #1a1a1f;
-	--sl-color-gray-2: #383842;
-	--sl-color-gray-3: #6b6b78;
-	--sl-color-gray-4: #a0a0ab;
-	--sl-color-gray-5: #d8d8dc;
-	--sl-color-gray-6: #f0f0f2;
-	--sl-color-gray-7: #f8f8fa;
+	--sl-color-white: #0b1420;
+	--sl-color-gray-1: #1f2a37;
+	--sl-color-gray-2: #3a4b5e;
+	--sl-color-gray-3: #5a6b7d;
+	--sl-color-gray-4: #a3b3c2;
+	--sl-color-gray-5: #d8e4e6;
+	--sl-color-gray-6: #eef3f4;
+	--sl-color-gray-7: #f7fafa;
 	--sl-color-black: #ffffff;
 }
 
 /* Site title label color — match playground */
 .site-title .label {
-	color: #ededeb !important;
+	color: #f4f7f8 !important;
 }
 :root[data-theme='light'] .site-title .label {
-	color: #1a1a1f !important;
+	color: #2b2b2b !important;
 }
 
 /* Heading spacing — target both bare headings and Starlight wrappers */
@@ -71,10 +73,10 @@ pre {
 
 /* Selection color matching playground */
 ::selection {
-	background: rgba(124, 92, 191, 0.4);
+	background: rgba(20, 162, 162, 0.4);
 }
 :root[data-theme='light'] ::selection {
-	background: rgba(107, 63, 173, 0.25);
+	background: rgba(9, 101, 120, 0.2);
 }
 
 /* Card styling */

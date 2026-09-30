@@ -14,11 +14,11 @@ export const playgroundTheme = {
   name: 'almide-playground',
   type: 'dark' as const,
   colors: {
-    'editor.background': '#131316',
-    'editor.foreground': '#ededeb',
+    'editor.background': '#0b1420',
+    'editor.foreground': '#f4f7f8',
   },
   settings: [
-    { settings: { background: '#131316', foreground: '#ededeb' } },
+    { settings: { background: '#0b1420', foreground: '#f4f7f8' } },
     {
       scope: ['keyword', 'keyword.control', 'keyword.declaration', 'storage', 'storage.modifier'],
       settings: { foreground: '#bb9af7', fontStyle: '' },

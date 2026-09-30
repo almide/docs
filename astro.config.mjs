@@ -29,7 +29,7 @@ export default defineConfig({
 				},
 			},
 			title: 'Almide',
-			favicon: '/favicon.png',
+			favicon: '/favicon.svg',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/almide/almide' },
 			],
@@ -43,10 +43,13 @@ export default defineConfig({
 				baseUrl: 'https://github.com/almide/almide/edit/develop/docs-site/',
 			},
 			head: [
-				{
-					tag: 'meta',
-					attrs: { name: 'og:image', content: '/docs/og.png' },
-				},
+				// Open Graph reads `property` and wants an absolute URL.
+				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://almide.github.io/docs/og.png' } },
+				{ tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+				{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+				// Browsers without SVG favicons, and iOS home screens.
+				{ tag: 'link', attrs: { rel: 'icon', href: '/docs/favicon.ico', sizes: '32x32' } },
+				{ tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/docs/apple-touch-icon.png' } },
 				// `--sl-font-mono` already asks for JetBrains Mono but nothing loaded it,
 				// so every code block fell back to the platform default — and to a
 				// different face than the playground iframe, which does load it.
