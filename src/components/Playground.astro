@@ -10,10 +10,12 @@
  * exactly that.
  *
  * The pre-Run state deliberately imitates the playground it turns into: same
- * dark surface, same slim bar, same file tab, same height. Pressing Run swaps
- * the interior for the live iframe, so the frame appears to stay put and only
- * the contents come alive — rather than a page-themed code block being
- * replaced by a full dark IDE that is a different size.
+ * dark surface, same slim bar, same file tab. Both are sized to their content,
+ * like a notebook cell: the preview by the code, the live frame by the height
+ * the embedded playground reports (`almide-playground:height`) — code first,
+ * the output growing in under it once it runs. Pressing Run swaps the interior
+ * for the live iframe at the preview's height, so the frame appears to stay
+ * put and only the contents come alive.
  *
  * The iframe is created ONLY on click: each one loads the compiler wasm, so
  * eagerly embedding several per page would be costly. At most one runs at a
@@ -21,7 +23,7 @@
  *
  * Usage:
  *   <Playground sample="hello-basic" />
- *   <Playground sample="modules-two-files" height={560} hide={['fixtures.almd']} />
+ *   <Playground sample="modules-two-files" hide={['fixtures.almd']} />
  */
 import { Code } from 'astro:components';
 import { playgroundUrl, type PlaygroundFile } from '../lib/playground';
@@ -37,11 +39,9 @@ interface Props {
   sample: string;
   /** Tabs hidden from the strip but still compiled (setup code). */
   hide?: string[];
-  /** Height of the playground frame once opened. */
-  height?: number;
 }
 
-const { sample, hide = [], height = 520 } = Astro.props;
+const { sample, hide = [] } = Astro.props;
 
 // Eager raw import: the sample sources are inlined at build time, exactly as
 // they are on disk.
@@ -72,6 +72,7 @@ if (!files.some((f) => f.name === 'main.almd')) {
 }
 
 const url = playgroundUrl(files, { hide });
+const openUrl = playgroundUrl(files, { embed: false, autorun: false });
 const visible = files.filter((f) => !hide.includes(f.name));
 const preview = visible[0] ?? files[0];
 ---
@@ -79,13 +80,12 @@ const preview = visible[0] ?? files[0];
 <div
   class="playground"
   data-playground-url={url}
-  data-playground-height={height}
   data-playground-sample={sample}
-  style={`--pg-height: ${height}px`}
 >
   <div class="playground-preview">
     <div class="playground-bar">
       <span class="playground-brand">Almide</span>
+      <a class="playground-open" href={openUrl} target="_blank" rel="noopener">Open in Playground ↗</a>
       <button type="button" class="playground-run">Run</button>
     </div>
     <div class="playground-tabs">
@@ -103,7 +103,6 @@ const preview = visible[0] ?? files[0];
 <style>
   .playground {
     margin: 1rem 0;
-    height: var(--pg-height);
     border: 1px solid #22344a;
     border-radius: 0.5rem;
     overflow: hidden;
@@ -112,12 +111,16 @@ const preview = visible[0] ?? files[0];
   .playground-preview {
     display: flex;
     flex-direction: column;
-    height: 100%;
   }
   /* An author `display` rule beats the UA stylesheet's `[hidden] { display: none }`,
      so the attribute has to be honoured explicitly or the preview never goes away. */
   .playground-preview[hidden] {
     display: none;
+  }
+  /* Starlight spaces adjacent content children (`* + *` → 1rem); inside the
+     cell that would open gaps the live playground does not have. */
+  .playground-preview > * {
+    margin: 0;
   }
 
   /* Mirrors the playground's own embed bar. */
@@ -136,8 +139,14 @@ const preview = visible[0] ?? files[0];
     color: #a3b3c2;
     letter-spacing: 0.04em;
   }
-  .playground-run {
+  .playground-open {
     margin-left: auto;
+    font-size: 11px;
+    color: #6b7f93;
+    text-decoration: none;
+  }
+  .playground-open:hover { color: #14a2a2; }
+  .playground-run {
     padding: 4px 14px;
     font-size: 11px;
     font-weight: 500;
@@ -158,10 +167,10 @@ const preview = visible[0] ?? files[0];
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 6px 12px;
+    padding: 3px 10px;
     background: #101b29;
     border-bottom: 1px solid #22344a;
-    min-height: 37px;
+    min-height: 30px;
     flex: none;
   }
   .playground-tab {
@@ -178,10 +187,10 @@ const preview = visible[0] ?? files[0];
     border: 1px solid #2b4058;
   }
 
+  /* The live editor caps at 440px and scrolls; so does the preview. */
   .playground-code {
-    flex: 1;
+    max-height: 440px;
     overflow: auto;
-    min-height: 0;
   }
   /* The sample renders on the playground's surface, not the page's, so the
      before/after swap does not change colour scheme mid-interaction. */
@@ -227,19 +236,17 @@ const preview = visible[0] ?? files[0];
     letter-spacing: 0.02em;
   }
 
-  /* `margin: 0` is load-bearing. Starlight spaces adjacent markdown children
+  /* `margin: 0` is load-bearing: Starlight spaces adjacent markdown children
      with `* + *` → `margin-top: 1rem`, and the iframe is inserted as a sibling
-     of the preview, so it inherits that 16px. In a fixed-height, overflow-hidden
-     box that pushes the frame down and clips an equal strip off the bottom —
-     which is exactly where the playground's mobile action bar (Run) sits when
-     the frame is narrower than 768px, as it always is in the docs column. */
+     of the preview, so it would inherit that 16px gap. The height is set from
+     script: the preview's at first, then whatever the playground reports. */
   .playground :global(iframe) {
     display: block;
     width: 100%;
-    height: 100%;
     margin: 0;
     border: none;
     background: #0b1420;
+    transition: height 0.15s ease;
   }
 </style>
 
@@ -256,6 +263,14 @@ const preview = visible[0] ?? files[0];
     }
   }
 
+  // The embedded playground posts its content height whenever it changes.
+  window.addEventListener('message', (e) => {
+    if (e.data?.type !== 'almide-playground:height') return;
+    for (const frame of document.querySelectorAll<HTMLIFrameElement>('.playground iframe')) {
+      if (frame.contentWindow === e.source) frame.style.height = `${e.data.height}px`;
+    }
+  });
+
   document.querySelectorAll<HTMLElement>('.playground').forEach((root) => {
     const button = root.querySelector<HTMLButtonElement>('.playground-run');
     if (!button) return;
@@ -268,9 +283,10 @@ const preview = visible[0] ?? files[0];
       if (openFrame && openFrame !== root) closeFrame(openFrame);
 
       const preview = root.querySelector<HTMLElement>('.playground-preview');
-      if (preview) preview.hidden = true;
-
       const iframe = document.createElement('iframe');
+      // Swap in at the preview's height; the playground then reports its own.
+      iframe.style.height = `${preview?.offsetHeight ?? 320}px`;
+      if (preview) preview.hidden = true;
       iframe.src = url;
       iframe.title = 'Almide playground';
       root.appendChild(iframe);
