@@ -79,6 +79,41 @@ pre {
 	background: rgba(9, 101, 120, 0.2);
 }
 
+/* Link buttons (hero actions) — Starlight gives them no hover or press colour at all.
+   On dark the pale-teal primary lifts toward white and sinks toward Shell 01; on light
+   the Shell 05 primary deepens. The secondary takes on the accent. */
+.sl-link-button {
+	transition: background-color 0.15s, border-color 0.15s, color 0.15s, transform 0.15s;
+}
+.sl-link-button:active {
+	transform: scale(0.98);
+	transition-duration: 0.05s;
+}
+.sl-link-button.primary:hover {
+	background: #d6f2f2;
+	border-color: #d6f2f2;
+}
+.sl-link-button.primary:active {
+	background: #8fd3d3;
+	border-color: #8fd3d3;
+}
+:root[data-theme='light'] .sl-link-button.primary:hover {
+	background: #075364;
+	border-color: #075364;
+}
+:root[data-theme='light'] .sl-link-button.primary:active {
+	background: #053f4c;
+	border-color: #053f4c;
+}
+.sl-link-button.secondary:hover {
+	background: var(--sl-color-accent-low);
+	border-color: var(--sl-color-text-accent);
+	color: var(--sl-color-text-accent);
+}
+.sl-link-button.secondary:active {
+	background: color-mix(in srgb, var(--sl-color-accent-low), var(--sl-color-text-accent) 18%);
+}
+
 /* Card styling */
 .card-grid {
 	gap: 1rem;

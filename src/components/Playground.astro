@@ -156,11 +156,21 @@ const preview = visible[0] ?? files[0];
     border: 1px solid #14a2a2;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.15s, box-shadow 0.15s;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
   }
+  /* Same states as the playground's Run: lift to Shell 01 under the pointer, sink to
+     Shell 05 when pressed — on this navy ground a darker hover just reads as no change. */
   .playground-run:hover {
-    background: #096578;
+    background: #14a2a2;
+    border-color: #14a2a2;
     box-shadow: 0 0 20px rgba(20, 162, 162, 0.2);
+  }
+  .playground-run:active {
+    background: #096578;
+    border-color: #0e7e86;
+    box-shadow: none;
+    transform: scale(0.98);
+    transition-duration: 0.05s;
   }
 
   .playground-tabs {
