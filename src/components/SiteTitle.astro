@@ -1,7 +1,7 @@
 ---
 import config from 'virtual:starlight/user-config';
 import mark from '../assets/almide-symbol.svg';
-import markDark from '../assets/almide-symbol-white.svg';
+import markDark from '../assets/almide-symbol-dark.svg';
 const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 ---
 
@@ -29,7 +29,7 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
     view-transition-name: site-title;
   }
   /* The brand guideline forbids recolouring the shell, so the mark is shown as
-     delivered: brand colours on light, the white reverse on dark. */
+     delivered: brand colours on light, the colour-shell variant (off-white body) on dark. */
   .mark {
     width: 28px !important;
     height: 28px !important;
