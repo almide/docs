@@ -3,92 +3,101 @@ title: map
 description: Map (dictionary) operations — key-value collections. Auto-imported.
 ---
 
-The `map` module is **auto-imported** — no `import` statement needed.
-
-## Functions
-
-| Function | Signature | Description |
-|---|---|---|
-| `new` | `() -> Map[K, V]` | Create an empty map. |
-| `get` | `(Map[K, V], K) -> Option[V]` | Get a value by key. Returns none if the key doesn't exist. |
-| `get_or` | `(Map[K, V], K, V) -> V` | Get a value by key, returning a default if the key doesn't exist. |
-| `set` | `(Map[K, V], K, V) -> Map[K, V]` | Return a new map with the key set to value. Immutable — does not modify the original. |
-| `contains` | `(Map[K, V], K) -> Bool` | Check if a key exists in the map. |
-| `remove` | `(Map[K, V], K) -> Map[K, V]` | Return a new map with the key removed. Immutable — does not modify the original. |
-| `keys` | `(Map[K, V]) -> List[K]` | Get all keys in insertion order. |
-| `values` | `(Map[K, V]) -> List[V]` | Get all values as a list. |
-| `len` | `(Map[K, V]) -> Int` | Get the number of key-value pairs in the map. |
-| `entries` | `(Map[K, V]) -> List[(K, V)]` | Get all key-value pairs as a list of tuples, in insertion order. |
-| `merge` | `(Map[K, V], Map[K, V]) -> Map[K, V]` | Merge two maps. Keys in the second map override keys in the first. |
-| `is_empty` | `(Map[K, V]) -> Bool` | Check if the map has no entries. |
-| `from_list` | `(List[(K, V)]) -> Map[K, V]` | Create a map from a list of (key, value) pairs. |
-| `map` | `(Map[K, V], (V) -> B) -> Map[K, B]` | Transform all values in the map using a function, keeping keys unchanged. |
-| `filter` | `(Map[K, V], (K, V) -> Bool) -> Map[K, V]` | Return a new map containing only entries where the predicate returns true. |
-| `fold` | `(Map[K, V], A, (A, K, V) -> A) -> A` | Accumulate over all entries with an initial value. |
-| `any` | `(Map[K, V], (K, V) -> Bool) -> Bool` | Check if any entry satisfies the predicate. |
-| `all` | `(Map[K, V], (K, V) -> Bool) -> Bool` | Check if all entries satisfy the predicate. |
-| `count` | `(Map[K, V], (K, V) -> Bool) -> Int` | Count entries that satisfy the predicate. |
-| `find` | `(Map[K, V], (K, V) -> Bool) -> Option[(K, V)]` | Find the first entry matching the predicate. Returns Option[(K, V)]. |
-| `update` | `(Map[K, V], K, (V) -> V) -> Map[K, V]` | Update the value at a key using a function. Key must exist. |
-| `insert` | `(Map[K, V], K, V) -> Unit` | Insert a key-value pair in place. Requires var binding. |
-| `delete` | `(Map[K, V], K) -> Unit` | Remove a key in place. Requires var binding. |
-| `clear` | `(Map[K, V]) -> Unit` | Remove all entries in place. Requires var binding. |
-
-## Reference
+Map (dictionary) operations. auto-imported.
 
 ### `map.new() -> Map[K, V]`
 
 Create an empty map.
 
-```almd
-let m = map.new()
+```almide
+fn main() -> Unit = {
+  let m: Map[String, Int] = map.new()
+  println("${map.len(m)}")
+  println("${map.is_empty(m)}")
+}
+```
+```text
+0
+true
 ```
 
 ### `map.get(m: Map[K, V], key: K) -> Option[V]`
 
 Get a value by key. Returns none if the key doesn't exist.
 
-```almd
-map.get(m, "name")
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("name", "Alice")])
+  match map.get(m, "name") {
+    some(v) => println(v),
+    none => println("missing"),
+  }
+  match map.get(m, "age") {
+    some(v) => println(v),
+    none => println("missing"),
+  }
+}
 ```
-
-### `map.get_or(m: Map[K, V], key: K, default: V) -> V`
-
-Get a value by key, returning a default if the key doesn't exist.
-
-```almd
-map.get(m, "name") ?? "unknown"
+```text
+Alice
+missing
 ```
 
 ### `map.set(m: Map[K, V], key: K, value: V) -> Map[K, V]`
 
 Return a new map with the key set to value. Immutable — does not modify the original.
 
-```almd
-let m2 = map.set(m, "name", "Alice")
+```almide
+fn main() -> Unit = {
+  let m: Map[String, String] = map.new()
+  let m2 = map.set(m, "name", "Alice")
+  println("${m}")
+  println("${m2}")
+}
+```
+```text
+[:]
+["name": "Alice"]
 ```
 
 ### `map.contains(m: Map[K, V], key: K) -> Bool`
 
 Check if a key exists in the map.
 
-```almd
-map.contains(m, "name")
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("name", "Alice")])
+  println("${map.contains(m, "name")}")
+  println("${map.contains(m, "age")}")
+}
+```
+```text
+true
+false
 ```
 
 ### `map.remove(m: Map[K, V], key: K) -> Map[K, V]`
 
 Return a new map with the key removed. Immutable — does not modify the original.
 
-```almd
-let m2 = map.remove(m, "temp")
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("keep", 1), ("temp", 2)])
+  let m2 = map.remove(m, "temp")
+  println("${m}")
+  println("${m2}")
+}
+```
+```text
+["keep": 1, "temp": 2]
+["keep": 1]
 ```
 
 ### `map.keys(m: Map[K, V]) -> List[K]`
 
-Get all keys in insertion order.
+Get all keys as a list, in insertion order (the order the entries were first inserted; overwriting a key keeps its position).
 
-```almd
+```almide
 map.keys(m)
 ```
 
@@ -96,23 +105,35 @@ map.keys(m)
 
 Get all values as a list.
 
-```almd
-map.values(m)
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("a", 1), ("b", 2), ("c", 3)])
+  println("${map.values(m)}")
+}
+```
+```text
+[1, 2, 3]
 ```
 
 ### `map.len(m: Map[K, V]) -> Int`
 
 Get the number of key-value pairs in the map.
 
-```almd
-map.len(m)
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("a", 1), ("b", 2), ("c", 3)])
+  println("${map.len(m)}")
+}
+```
+```text
+3
 ```
 
-### `map.entries(m: Map[K, V]) -> List[(K, V)]`
+### `map.to_list(m: Map[K, V]) -> List[(K, V)]`
 
 Get all key-value pairs as a list of tuples, in insertion order.
 
-```almd
+```almide
 map.to_list(m)
 ```
 
@@ -120,110 +141,339 @@ map.to_list(m)
 
 Merge two maps. Keys in the second map override keys in the first.
 
-```almd
-map.merge(base, overrides)
+```almide
+fn main() -> Unit = {
+  let base = map.from_list([("a", 1), ("b", 2)])
+  let overrides = map.from_list([("b", 20), ("c", 3)])
+  println("${map.merge(base, overrides)}")
+}
+```
+```text
+["a": 1, "b": 20, "c": 3]
 ```
 
 ### `map.is_empty(m: Map[K, V]) -> Bool`
 
 Check if the map has no entries.
 
-```almd
-map.is_empty(m)
+```almide
+fn main() -> Unit = {
+  let m: Map[String, Int] = map.new()
+  println("${map.is_empty(m)}")
+  println("${map.is_empty(map.from_list([("a", 1)]))}")
+}
+```
+```text
+true
+false
 ```
 
 ### `map.from_list(pairs: List[(K, V)]) -> Map[K, V]`
 
 Create a map from a list of (key, value) pairs.
 
-```almd
-map.from_list([("a", 1), ("b", 2)])
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("a", 1), ("b", 2)])
+  println("${m}")
+  println("${map.len(m)}")
+}
+```
+```text
+["a": 1, "b": 2]
+2
 ```
 
-### `map.map(m: Map[K, V], f: (V) -> B) -> Map[K, B]`
+### `map.map(m: Map[K, V], f: Fn[V] -> B) -> Map[K, B]`
 
 Transform all values in the map using a function, keeping keys unchanged.
 
-```almd
-map.map(m, (v) => v * 2)
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("a", 1), ("b", 2), ("c", 3)])
+  let doubled = map.map(m, (v) => v * 2)
+  println("${map.get(doubled, "a") ?? 0} ${map.get(doubled, "b") ?? 0} ${map.get(doubled, "c") ?? 0}")
+  println(int.to_string(map.len(doubled)))
+}
+```
+```text
+2 4 6
+3
 ```
 
-### `map.filter(m: Map[K, V], f: (K, V) -> Bool) -> Map[K, V]`
+### `map.filter(m: Map[K, V], f: Fn[(K, V)] -> Bool) -> Map[K, V]`
 
 Return a new map containing only entries where the predicate returns true.
 
-```almd
-map.filter(m, (k, v) => v > 0)
+```almide
+fn main() -> Unit = {
+  let m = map.from_list([("a", 1), ("b", 0), ("c", 3)])
+  println("${map.filter(m, (k, v) => v > 0)}")
+}
+```
+```text
+["a": 1, "c": 3]
 ```
 
-### `map.fold(m: Map[K, V], init: A, f: (A, K, V) -> A) -> A`
+### `map.fold(m: Map[K, V], init: A, f: Fn[A, (K, V)] -> A) -> A`
 
 Accumulate over all entries with an initial value.
 
-```almd
-map.fold(scores, 0, (acc, k, v) => acc + v)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75), ("carol", 82)])
+  println("${map.fold(scores, 0, (acc, (k, v)) => acc + v)}")
+}
+```
+```text
+247
 ```
 
-### `map.any(m: Map[K, V], f: (K, V) -> Bool) -> Bool`
+### `map.any(m: Map[K, V], f: Fn[(K, V)] -> Bool) -> Bool`
 
 Check if any entry satisfies the predicate.
 
-```almd
-map.any(scores, (k, v) => v >= 90)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75), ("carol", 82)])
+  println("${map.any(scores, (k, v) => v >= 90)}")
+  println("${map.any(scores, (k, v) => v >= 100)}")
+}
+```
+```text
+true
+false
 ```
 
-### `map.all(m: Map[K, V], f: (K, V) -> Bool) -> Bool`
+### `map.all(m: Map[K, V], f: Fn[(K, V)] -> Bool) -> Bool`
 
 Check if all entries satisfy the predicate.
 
-```almd
-map.all(scores, (k, v) => v > 0)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75), ("carol", 82)])
+  println("${map.all(scores, (k, v) => v > 0)}")
+  println("${map.all(scores, (k, v) => v >= 80)}")
+}
+```
+```text
+true
+false
 ```
 
-### `map.count(m: Map[K, V], f: (K, V) -> Bool) -> Int`
+### `map.count(m: Map[K, V], f: Fn[(K, V)] -> Bool) -> Int`
 
 Count entries that satisfy the predicate.
 
-```almd
-map.count(scores, (k, v) => v >= 80)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75), ("carol", 82)])
+  println("${map.count(scores, (k, v) => v >= 80)}")
+}
+```
+```text
+2
 ```
 
-### `map.find(m: Map[K, V], f: (K, V) -> Bool) -> Option[(K, V)]`
+### `map.find(m: Map[K, V], f: Fn[(K, V)] -> Bool) -> Option[(K, V)]`
 
 Find the first entry matching the predicate. Returns Option[(K, V)].
 
-```almd
-map.find(scores, (k, v) => v >= 90)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75), ("carol", 82)])
+  match map.find(scores, (k, v) => v >= 90) {
+    some((k, v)) => println("${k}: ${v}"),
+    none => println("no match"),
+  }
+  match map.find(scores, (k, v) => v >= 100) {
+    some((k, v)) => println("${k}: ${v}"),
+    none => println("no match"),
+  }
+}
+```
+```text
+alice: 90
+no match
 ```
 
-### `map.update(m: Map[K, V], key: K, f: (V) -> V) -> Map[K, V]`
+### `map.update(m: Map[K, V], key: K, f: Fn[V] -> V) -> Map[K, V]`
 
 Update the value at a key using a function. Key must exist.
 
-```almd
-map.update(scores, "alice", (v) => v + 10)
+```almide
+fn main() -> Unit = {
+  let scores = map.from_list([("alice", 90), ("bob", 75)])
+  println("${map.update(scores, "alice", (v) => v + 10)}")
+}
 ```
-
-### `map.insert(m: Map[K, V], key: K, value: V) -> Unit`
-
-Insert a key-value pair in place. Requires var binding.
-
-```almd
-m = map.set(m, "name", "Alice")
-```
-
-### `map.delete(m: Map[K, V], key: K) -> Unit`
-
-Remove a key in place. Requires var binding.
-
-```almd
-m = map.remove(m, "temp")
+```text
+["alice": 100, "bob": 75]
 ```
 
 ### `map.clear(m: Map[K, V]) -> Unit`
 
 Remove all entries in place. Requires var binding.
 
-```almd
-map.clear(m)
+```almide
+fn main() -> Unit = {
+  var m = map.from_list([("a", 1), ("b", 2)])
+  map.clear(m)
+  println("${map.len(m)}")
+  println("${map.is_empty(m)}")
+}
 ```
+
+
+## Signature index (37 functions)
+
+```
+// An empty Map[K, V].
+// @since 0.5.0 or earlier
+map.new() -> Map[K, V]
+
+// Value for key, or none when absent.
+// @since 0.5.0 or earlier
+map.get(m: Map[K, V], key: K) -> Option[V]
+
+// Copy with key -> value; an existing key is overwritten and keeps its position.
+// @since 0.5.0 or earlier
+map.set(m: Map[K, V], key: K, value: V) -> Map[K, V]
+
+// true when key is present.
+// @since 0.5.0 or earlier
+map.contains(m: Map[K, V], key: K) -> Bool
+
+// Copy without key; unchanged if absent.
+// @since 0.5.0 or earlier
+map.remove(m: Map[K, V], key: K) -> Map[K, V]
+
+// Every key, in insertion order.
+// @since 0.5.0 or earlier
+map.keys(m: Map[K, V]) -> List[K]
+
+// Every value, in key insertion order.
+// @since 0.5.0 or earlier
+map.values(m: Map[K, V]) -> List[V]
+
+// Entry count; 0 for an empty map.
+// @since 0.5.0 or earlier
+map.len(m: Map[K, V]) -> Int
+
+// (key, value) pairs in insertion order.
+// @since 0.5.0 or earlier
+map.to_list(m: Map[K, V]) -> List[(K, V)]
+
+// a plus b's entries; b wins on shared keys.
+// @since 0.5.0 or earlier
+map.merge(a: Map[K, V], b: Map[K, V]) -> Map[K, V]
+
+// true iff m has no entries.
+// @since 0.6.0 or earlier
+map.is_empty(m: Map[K, V]) -> Bool
+
+// Map of the pairs xs; a repeated key takes the last value.
+// @since 0.5.0 or earlier
+map.from_list(xs: List[(K, V)]) -> Map[K, V]
+
+// Same keys and order, values replaced by f(v).
+// @since 0.6.1 or earlier
+map.map(m: Map[K, V], f: (V) -> B) -> Map[K, B]
+
+// Entries where f((k, v)) holds, order kept.
+// @since 0.5.0 or earlier
+map.filter(m: Map[K, V], f: ((K, V)) -> Bool) -> Map[K, V]
+
+// Folds f(acc, (k, v)) in insertion order.
+// @since 0.7.0 or earlier
+map.fold(m: Map[K, V], init: A, f: (A, (K, V)) -> A) -> A
+
+// true if some f((k, v)) holds; false when empty.
+// @since 0.7.0 or earlier
+map.any(m: Map[K, V], f: ((K, V)) -> Bool) -> Bool
+
+// true if every f((k, v)) holds; true when empty.
+// @since 0.7.0 or earlier
+map.all(m: Map[K, V], f: ((K, V)) -> Bool) -> Bool
+
+// Number of entries where f((k, v)) holds.
+// @since 0.7.0 or earlier
+map.count(m: Map[K, V], f: ((K, V)) -> Bool) -> Int
+
+// First (k, v) where f holds, or none.
+// @since 0.7.0 or earlier
+map.find(m: Map[K, V], f: ((K, V)) -> Bool) -> Option[(K, V)]
+
+// Copy with key's value f(v); no-op if absent.
+// @since 0.7.0 or earlier
+map.update(m: Map[K, V], key: K, f: (V) -> V) -> Map[K, V]
+
+// key -> f(old) if present, else init appended.
+// @since 0.57.0
+map.upsert(m: Map[K, V], key: K, init: V, f: (V) -> V) -> Map[K, V]
+
+// Removes every entry of m in place.
+// @since 0.9.3 or earlier
+map.clear(mut m: Map[K, V]) -> Unit
+
+// (index, (key, value)) pairs in insertion order, index from 0.
+// @since unreleased
+map.enumerate(m: Map[K, V]) -> List[(Int, (K, V))]
+
+// Entries paired with ys by position; stops at the shorter.
+// @since unreleased
+map.zip(m: Map[K, V], ys: List[B]) -> List[((K, V), B)]
+
+// f over (entry, ys element) pairs; stops at the shorter.
+// @since unreleased
+map.zip_with(m: Map[K, V], ys: List[B], f: ((K, V), B) -> C) -> List[C]
+
+// The somes f gives over the entries, in insertion order.
+// @since unreleased
+map.filter_map(m: Map[K, V], f: ((K, V)) -> Option[B]) -> List[B]
+
+// The first some f gives over the entries, or none; f is not called after the hit.
+// @since unreleased
+map.find_map(m: Map[K, V], f: ((K, V)) -> Option[B]) -> Option[B]
+
+// Left fold of the entries seeded by the first; none when empty.
+// @since unreleased
+map.reduce(m: Map[K, V], f: ((K, V), (K, V)) -> (K, V)) -> Option[(K, V)]
+
+// Running fold values over the entries, init excluded.
+// @since unreleased
+map.scan(m: Map[K, V], init: B, f: (B, (K, V)) -> B) -> List[B]
+
+// (entries where f holds, the rest), insertion order kept.
+// @since unreleased
+map.partition(m: Map[K, V], f: ((K, V)) -> Bool) -> (List[(K, V)], List[(K, V)])
+
+// Key f(entry) -> entries; keys in first-seen order.
+// @since unreleased
+map.group_by(m: Map[K, V], f: ((K, V)) -> B) -> Map[B, List[(K, V)]]
+
+// Entries sorted by key f(entry), stable; f runs once per entry.
+// @since unreleased
+map.sort_by(m: Map[K, V], f: ((K, V)) -> B) -> List[(K, V)]
+
+// Entries sorted by cmp, stable: negative puts a first.
+// @since unreleased
+map.sort_with(m: Map[K, V], cmp: ((K, V), (K, V)) -> Int) -> List[(K, V)]
+
+// Entry with the least f(entry); the first on ties.
+// @since unreleased
+map.min_by(m: Map[K, V], f: ((K, V)) -> U) -> Option[(K, V)]
+
+// Entry with the greatest f(entry); the first on ties.
+// @since unreleased
+map.max_by(m: Map[K, V], f: ((K, V)) -> U) -> Option[(K, V)]
+
+// Least entry by cmp; the first on ties.
+// @since unreleased
+map.min_with(m: Map[K, V], cmp: ((K, V), (K, V)) -> Int) -> Option[(K, V)]
+
+// Greatest entry by cmp; the first on ties.
+// @since unreleased
+map.max_with(m: Map[K, V], cmp: ((K, V), (K, V)) -> Int) -> Option[(K, V)]
+```
+

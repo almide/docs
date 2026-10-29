@@ -3,125 +3,250 @@ title: result
 description: Result type operations — error handling. Auto-imported.
 ---
 
-The `result` module is **auto-imported** — no `import` statement needed.
+> **Removed (ADR-0007)**: `result.collect` / `collect_map` are gone — a call is now an ordinary [E002](https://github.com/almide/almide/blob/main/docs/diagnostics/E002.md). All-errors collection is spelled with `result.partition`.
 
-## Functions
+# result
 
-| Function | Signature | Description |
-|---|---|---|
-| `map` | `(Result[A, E], (A) -> B) -> Result[B, E]` | Transform the ok value using a function. If err, passes through unchanged. |
-| `map_err` | `(Result[A, E], (E) -> F) -> Result[A, F]` | Transform the err value using a function. If ok, passes through unchanged. |
-| `flat_map` | `(Result[A, E], (A) -> Result[B, E]) -> Result[B, E]` | Chain a Result-returning function on the ok value. Flattens nested Results. |
-| `unwrap_or` | `(Result[A, E], A) -> A` | Get the ok value, or return a default if err. |
-| `unwrap_or_else` | `(Result[A, E], (E) -> A) -> A` | Get the ok value, or compute a default from the error using a function. |
-| `is_ok` | `(Result[A, E]) -> Bool` | Check if the Result is ok. |
-| `is_err` | `(Result[A, E]) -> Bool` | Check if the Result is err. |
-| `to_option` | `(Result[A, E]) -> Option[A]` | Convert ok to some, err to none. Discards the error value. |
-| `to_err_option` | `(Result[A, E]) -> Option[E]` | Convert err to some, ok to none. Discards the ok value. |
-| `collect` | `(List[Result[T, E]]) -> Result[List[T], List[E]]` | **非推奨(E039・ADR-0007、削除予定)** — `partition` を使う。 |
-| `partition` | `(List[Result[T, E]]) -> (List[T], List[E])` | Partition a list of Results into ok values and err values. |
-| `collect_map` | `(List[T], (T) -> Result[U, E]) -> Result[List[U], List[E]]` | **非推奨(E039・ADR-0007、削除予定)** — `partition` を使う。 |
+Result type operations. auto-imported.
 
-## Reference
-
-### `result.map(r: Result[A, E], f: (A) -> B) -> Result[B, E]`
+### `result.map(r: Result[A, E], f: Fn[A] -> B) -> Result[B, E]`
 
 Transform the ok value using a function. If err, passes through unchanged.
 
-```almd
-result.map(ok(2), (x) => x * 10)
+```almide
+fn show(r: Result[Int, String]) -> String = match r {
+  ok(n) => "ok(${n})",
+  err(e) => "err(\"${e}\")",
+}
+
+fn main() -> Unit = {
+  println(show(result.map(ok(2), (x) => x * 10)))
+  println(show(result.map(err("fail"), (x) => x * 10)))
+}
+```
+```text
+ok(20)
+err("fail")
 ```
 
-### `result.map_err(r: Result[A, E], f: (E) -> F) -> Result[A, F]`
+### `result.map_err(r: Result[A, E], f: Fn[E] -> F) -> Result[A, F]`
 
 Transform the err value using a function. If ok, passes through unchanged.
 
-```almd
-result.map_err(err("fail"), (e) => "wrapped: " ++ e)
+```almide
+fn show(r: Result[Int, String]) -> String = match r {
+  ok(n) => "ok(${n})",
+  err(e) => "err(\"${e}\")",
+}
+
+fn main() -> Unit = {
+  println(show(result.map_err(err("fail"), (e) => "wrapped: " + e)))
+  println(show(result.map_err(ok(1): Result[Int, String], (e) => "wrapped: " + e)))
+}
+```
+```text
+err("wrapped: fail")
+ok(1)
 ```
 
-### `result.flat_map(r: Result[A, E], f: (A) -> Result[B, E]) -> Result[B, E]`
+### `result.flat_map(r: Result[A, E], f: Fn[A] -> Result[B, E]) -> Result[B, E]`
 
 Chain a Result-returning function on the ok value. Flattens nested Results.
 
-```almd
-result.flat_map(ok(5), (x) => if x > 0 then ok(x) else err("negative"))
+```almide
+fn show(r: Result[Int, String]) -> String = match r {
+  ok(n) => "ok(${n})",
+  err(e) => "err(\"${e}\")",
+}
+
+fn main() -> Unit = {
+  println(show(result.flat_map(ok(5), (x) => if x > 0 then ok(x) else err("negative"))))
+  println(show(result.flat_map(ok(-5), (x) => if x > 0 then ok(x) else err("negative"))))
+}
+```
+```text
+ok(5)
+err("negative")
 ```
 
 ### `result.unwrap_or(r: Result[A, E], default: A) -> A`
 
+**Deprecated (E052, ADR-0005 D4)** — the eager fallback is the third spelling with no definition relation to `??` (`≡ unwrap_or_else`, the default is evaluated only on the fallback path). Write `value ?? default`; `almide fix` rewrites both the call and the pipe-stage form. Removed one dialect window later.
+
+
 Get the ok value, or return a default if err.
 
-```almd
-result.unwrap_or(err("fail"), 0)
+```almide
+fn main() -> Unit = {
+  let r: Result[Int, String] = err("fail")
+  println("${r ?? 0}")
+  println("${(ok(7): Result[Int, String]) ?? 0}")
+}
+```
+```text
+0
+7
 ```
 
-### `result.unwrap_or_else(r: Result[A, E], f: (E) -> A) -> A`
+### `result.unwrap_or_else(r: Result[A, E], f: Fn[E] -> A) -> A`
 
 Get the ok value, or compute a default from the error using a function.
 
-```almd
-result.unwrap_or_else(err("fail"), (e) => string.len(e))
+```almide
+fn main() -> Unit = {
+  println("${result.unwrap_or_else(err("fail"), (e) => string.len(e))}")
+}
+```
+```text
+4
 ```
 
 ### `result.is_ok(r: Result[A, E]) -> Bool`
 
 Check if the Result is ok.
 
-```almd
-result.is_ok(ok(42))
+```almide
+fn main() -> Unit = {
+  println("${result.is_ok(ok(42): Result[Int, String])}")
+}
+```
+```text
+true
 ```
 
 ### `result.is_err(r: Result[A, E]) -> Bool`
 
 Check if the Result is err.
 
-```almd
-result.is_err(err("fail"))
+```almide
+fn main() -> Unit = {
+  println("${result.is_err(err("fail"): Result[Int, String])}")
+}
+```
+```text
+true
 ```
 
 ### `result.to_option(r: Result[A, E]) -> Option[A]`
 
 Convert ok to some, err to none. Discards the error value.
 
-```almd
-result.to_option(ok(42))
+```almide
+fn show(o: Option[Int]) -> String = match o {
+  some(n) => "some(${n})",
+  none => "none",
+}
+
+fn main() -> Unit = {
+  println(show(result.to_option(ok(42): Result[Int, String])))
+  println(show(result.to_option(err("fail"): Result[Int, String])))
+}
+```
+```text
+some(42)
+none
 ```
 
 ### `result.to_err_option(r: Result[A, E]) -> Option[E]`
 
 Convert err to some, ok to none. Discards the ok value.
 
-```almd
-result.to_err_option(err("fail"))
+```almide
+fn show(o: Option[String]) -> String = match o {
+  some(e) => "some(\"${e}\")",
+  none => "none",
+}
+
+fn main() -> Unit = {
+  println(show(result.to_err_option(err("fail"): Result[Int, String])))
+  println(show(result.to_err_option(ok(42): Result[Int, String])))
+}
 ```
-
-### `result.collect(rs: List[Result[T, E]]) -> Result[List[T], List[E]]`
-
-> **非推奨(E039・ADR-0007)**: Rust の `collect` は最初の Err で打ち切る(E は E のまま)のに対し、この関数は全エラーを集める — 同じ名前で逆の戦略。名前ごと引退し、全エラー収集は `partition` で綴る:
-> ```almide
-> let (oks, errs) = result.partition(rs)
-> if list.is_empty(errs) then ok(oks) else err(errs)
-> ```
-
-Collect a list of Results. All ok → ok(values), any err → err(all_errors).
-
-```almd
-result.collect([ok(1), ok(2), ok(3)]) // => ok([1, 2, 3])
+```text
+some("fail")
+none
 ```
 
 ### `result.partition(rs: List[Result[T, E]]) -> (List[T], List[E])`
 
-Partition a list of Results into ok values and err values.
+Partition a list of Results into ok values and err values. This is the
+all-errors collection primitive — the removed `result.collect` /
+`result.collect_map` are spelled with it:
 
-```almd
-result.partition([ok(1), err("x"), ok(2)]) // => ([1, 2], ["x"])
+```almide
+fn main() -> Unit = {
+  println("${result.partition([ok(1), err("x"), ok(2)])}")
+}
+
+// result.collect(rs)          → let (oks, errs) = result.partition(rs)
+// result.collect_map(xs, f)   → let (oks, errs) = result.partition(list.map(xs, f))
+```
+```text
+([1, 2], ["x"])
 ```
 
-### `result.collect_map(xs: List[T], f: (T) -> Result[U, E]) -> Result[List[U], List[E]]`
 
-Map a function over a list and collect Results. All ok → ok(values), any err → err(all_errors).
+## Signature index (15 functions)
 
-```almd
-result.collect_map([1, 2, 3], (x) => if x > 0 then ok(x) else err("neg"))
 ```
+// ok(f(v)) for ok(v); err passes through.
+// @since 0.5.13 or earlier
+result.map(r: Result[A, E], f: (A) -> B) -> Result[B, E]
+
+// err(f(e)) for err(e); ok passes through.
+// @since 0.5.13 or earlier
+result.map_err(r: Result[A, E], f: (E) -> F) -> Result[A, F]
+
+// f(v) for ok(v); err passes through.
+// @since 0.6.1 or earlier
+result.flat_map(r: Result[A, E], f: (A) -> Result[B, E]) -> Result[B, E]
+
+// v for ok(v), else default (always evaluated).
+// @since 0.5.13 or earlier
+result.unwrap_or(r: Result[A, E], default: A) -> A   (deprecated — use ??)
+
+// v for ok(v), else f(e); f runs only on err.
+// @since 0.5.13 or earlier
+result.unwrap_or_else(r: Result[A, E], f: (E) -> A) -> A
+
+// true for ok(_), false for err(_).
+// @since 0.6.0 or earlier
+result.is_ok(r: Result[A, E]) -> Bool
+
+// true for err(_), false for ok(_).
+// @since 0.6.0 or earlier
+result.is_err(r: Result[A, E]) -> Bool
+
+// some(v) for ok(v); none for err, e dropped.
+// @since 0.5.13 or earlier
+result.to_option(r: Result[A, E]) -> Option[A]
+
+// some(e) for err(e); none for ok.
+// @since 0.5.13 or earlier
+result.to_err_option(r: Result[A, E]) -> Option[E]
+
+// (ok values, err values), each in list order.
+// @since 0.9.1 or earlier
+result.partition(xs: List[Result[A, E]]) -> (List[A], List[E])
+
+// Inner result of ok(inner); outer err kept.
+// @since 0.15.0 or earlier
+result.flatten(r: Result[Result[A, E], E]) -> Result[A, E]
+
+// [v] for ok(v), [] for err.
+// @since 0.15.0 or earlier
+result.to_list(r: Result[A, E]) -> List[A]
+
+// ok((x, y)) if both ok, else the first err.
+// @since 0.15.0 or earlier
+result.zip(a: Result[A, E], b: Result[B, E]) -> Result[(A, B), E]
+
+// r when ok, else f(e); f runs only on err.
+// @since 0.15.0 or earlier
+result.or_else(r: Result[A, E], f: (E) -> Result[A, F]) -> Result[A, F]
+
+// err(err_val) if f fails on ok; err kept.
+// @since 0.15.0 or earlier
+result.filter(r: Result[A, E], f: (A) -> Bool, err_val: E) -> Result[A, E]
+```
+

@@ -3,198 +3,297 @@ title: math
 description: Mathematical functions and constants. Auto-imported — no `import` needed.
 ---
 
-## Functions
-
-| Function | Signature | Description |
-|---|---|---|
-| `min` | `(Int, Int) -> Int` | Return the smaller of two integers. |
-| `max` | `(Int, Int) -> Int` | Return the larger of two integers. |
-| `abs` | `(Int) -> Int` | Return the absolute value of an integer. |
-| `pow` | `(Int, Int) -> Int` | Raise an integer base to an integer exponent. |
-| `pi` | `() -> Float` | Return the mathematical constant pi (3.14159...). |
-| `e` | `() -> Float` | Return Euler's number e (2.71828...). |
-| `sin` | `(Float) -> Float` | Return the sine of an angle in radians. |
-| `cos` | `(Float) -> Float` | Return the cosine of an angle in radians. |
-| `tan` | `(Float) -> Float` | Return the tangent of an angle in radians. |
-| `log` | `(Float) -> Float` | Return the natural logarithm (base e) of a float. |
-| `exp` | `(Float) -> Float` | Return e raised to the given power. |
-| `sqrt` | `(Float) -> Float` | Return the square root of a float. |
-| `log10` | `(Float) -> Float` | Return the base-10 logarithm of a float. |
-| `log2` | `(Float) -> Float` | Return the base-2 logarithm of a float. |
-| `sign` | `(Int) -> Int` | Return the sign of an integer: -1, 0, or 1. |
-| `fmin` | `(Float, Float) -> Float` | Return the smaller of two floats. |
-| `fmax` | `(Float, Float) -> Float` | Return the larger of two floats. |
-| `fpow` | `(Float, Float) -> Float` | Raise a float base to a float exponent. |
-| `factorial` | `(Int) -> Int` | Return the factorial of a non-negative integer. |
-| `choose` | `(Int, Int) -> Int` | Return the binomial coefficient C(n, k) = n! / (k! * (n-k)!). |
-| `log_gamma` | `(Float) -> Float` | Return the natural logarithm of the gamma function at x. |
-
-## Reference
-
-### `math.min(a: Int, b: Int) -> Int`
-
-Return the smaller of two integers.
-
-```almd
-int.min(3, 7) // => 3
-```
-
-### `math.max(a: Int, b: Int) -> Int`
-
-Return the larger of two integers.
-
-```almd
-int.max(3, 7) // => 7
-```
-
-### `math.abs(n: Int) -> Int`
-
-Return the absolute value of an integer.
-
-```almd
-int.abs(-5) // => 5
-```
-
-### `math.pow(base: Int, exp: Int) -> Int`
-
-Raise an integer base to an integer exponent.
-
-```almd
-int.pow(2, 10) // => 1024
-```
+Mathematical functions. import math.
 
 ### `math.pi() -> Float`
 
 Return the mathematical constant pi (3.14159...).
 
-```almd
-math.pi() // => 3.141592653589793
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.pi()))
+}
+```
+```text
+3.141592653589793
 ```
 
 ### `math.e() -> Float`
 
 Return Euler's number e (2.71828...).
 
-```almd
-math.e() // => 2.718281828459045
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.e()))
+}
+```
+```text
+2.718281828459045
 ```
 
 ### `math.sin(x: Float) -> Float`
 
 Return the sine of an angle in radians.
 
-```almd
-math.sin(0.0) // => 0.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.sin(0.0)))
+}
+```
+```text
+0.0
 ```
 
 ### `math.cos(x: Float) -> Float`
 
 Return the cosine of an angle in radians.
 
-```almd
-math.cos(0.0) // => 1.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.cos(0.0)))
+}
+```
+```text
+1.0
 ```
 
 ### `math.tan(x: Float) -> Float`
 
 Return the tangent of an angle in radians.
 
-```almd
-math.tan(0.0) // => 0.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.tan(0.0)))
+}
+```
+```text
+0.0
 ```
 
 ### `math.log(x: Float) -> Float`
 
 Return the natural logarithm (base e) of a float.
 
-```almd
-math.log(1.0) // => 0.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.log(1.0)))
+}
+```
+```text
+0.0
 ```
 
 ### `math.exp(x: Float) -> Float`
 
-Return e raised to the given power.
+Return e raised to the given power. The vendored libm guarantees the result within 1 ulp of the true value and byte-identical across targets (C-305) — not correct rounding: `math.exp(1.0)` is one ulp above `math.e()`, which is the correctly rounded constant.
 
-```almd
-math.exp(1.0) // => 2.7182818284590455
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.exp(0.0)))
+  println(float.to_string(math.exp(1.0)))
+  println(float.to_string(math.e()))
+}
+```
+```text
+1.0
+2.7182818284590455
+2.718281828459045
 ```
 
 ### `math.sqrt(x: Float) -> Float`
 
 Return the square root of a float.
 
-```almd
-math.sqrt(16.0) // => 4.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.sqrt(16.0)))
+}
+```
+```text
+4.0
 ```
 
 ### `math.log10(x: Float) -> Float`
 
 Return the base-10 logarithm of a float.
 
-```almd
-math.log10(100.0) // => 2.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.log10(100.0)))
+}
+```
+```text
+2.0
 ```
 
 ### `math.log2(x: Float) -> Float`
 
 Return the base-2 logarithm of a float.
 
-```almd
-math.log2(8.0) // => 3.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(math.log2(8.0)))
+}
 ```
-
-### `math.sign(n: Int) -> Int`
-
-Return the sign of an integer: -1, 0, or 1.
-
-```almd
-int.sign(-42) // => -1
-```
-
-### `math.fmin(a: Float, b: Float) -> Float`
-
-Return the smaller of two floats.
-
-```almd
-float.min(1.5, 2.5) // => 1.5
-```
-
-### `math.fmax(a: Float, b: Float) -> Float`
-
-Return the larger of two floats.
-
-```almd
-float.max(1.5, 2.5) // => 2.5
-```
-
-### `math.fpow(base: Float, exp: Float) -> Float`
-
-Raise a float base to a float exponent.
-
-```almd
-float.pow(2.0, 0.5) // => 1.4142135623730951
+```text
+3.0
 ```
 
 ### `math.factorial(n: Int) -> Int`
 
-Return the factorial of a non-negative integer.
+Return the factorial of a non-negative integer (1 for n <= 1). The product wraps modulo 2^64
+like every Int product, so it is wrong past 20 and 0 for every n >= 66: from there on n!
+holds at least 64 factors of two (v2(66!) = 66 - popcount(66) = 64), and the answer comes
+back at once instead of after n multiplications.
 
-```almd
-math.factorial(5) // => 120
+```almide
+fn main() -> Unit = {
+  println("${math.factorial(5)}")
+}
+```
+```text
+120
 ```
 
 ### `math.choose(n: Int, k: Int) -> Int`
 
-Return the binomial coefficient C(n, k) = n! / (k! * (n-k)!).
+Return the binomial coefficient C(n, k) = n! / (k! * (n-k)!), exactly whenever it fits in an
+Int (`choose(62, 31)` = 465428353255261088); a larger result wraps modulo 2^64 like every Int
+product. `k < 0` or `k > n` gives 0.
 
-```almd
-math.choose(5, 2) // => 10
+```almide
+fn main() -> Unit = {
+  println("${math.choose(5, 2)}")
+}
+```
+```text
+10
 ```
 
 ### `math.log_gamma(x: Float) -> Float`
 
-Return the natural logarithm of the gamma function at x.
+Return `ln|Γ(x)|`, the natural logarithm of the absolute gamma function, on the whole real
+line (negative non-integers included). The non-positive integers are poles and give `inf`.
 
-```almd
-math.log_gamma(5.0) // => 3.178...
+```almide
+fn main() -> Unit = {
+  println(float.to_fixed(math.log_gamma(5.0), 3))
+}
 ```
+```text
+3.178
+```
+
+
+## Signature index (27 functions)
+
+```
+// Arctangent in radians, within -pi/2..pi/2.
+// @since 0.30.0 or earlier
+math.atan(x: Float) -> Float
+
+// Binomial n over k; 0 if k < 0 or k > n; overflow wraps.
+// @since 0.5.13 or earlier
+math.choose(n: Int, k: Int) -> Int
+
+// Cosine of x radians; NaN for infinite x.
+// @since 0.5.0 or earlier
+math.cos(x: Float) -> Float
+
+// Euler's number, 2.718281828459045.
+// @since 0.5.0 or earlier
+math.e() -> Float
+
+// e to the x; overflows to inf above ~709.78.
+// @since 0.5.0 or earlier
+math.exp(x: Float) -> Float
+
+// Product 1..n; 1 for n <= 0; wraps past 20, 0 from 66 on.
+// @since 0.5.13 or earlier
+math.factorial(n: Int) -> Int
+
+// Natural log; -inf at 0, NaN for negative x.
+// @since 0.5.0 or earlier
+math.log(x: Float) -> Float
+
+// Base-10 log; -inf at 0, NaN for negative x.
+// @since 0.5.13 or earlier
+math.log10(x: Float) -> Float
+
+// Base-2 log; -inf at 0, NaN for negative x.
+// @since 0.5.13 or earlier
+math.log2(x: Float) -> Float
+
+// ln|Gamma(x)| on the whole line; inf at the poles.
+// @since 0.5.13 or earlier
+math.log_gamma(x: Float) -> Float
+
+// The circle constant, 3.141592653589793.
+// @since 0.5.0 or earlier
+math.pi() -> Float
+
+// Sine of x radians; NaN for infinite x.
+// @since 0.5.0 or earlier
+math.sin(x: Float) -> Float
+
+// Square root; NaN below 0, -0.0 stays -0.0.
+// @since 0.5.0 or earlier
+math.sqrt(x: Float) -> Float
+
+// Tangent of x radians; NaN for infinite x.
+// @since 0.5.0 or earlier
+math.tan(x: Float) -> Float
+
+// Hyperbolic tangent in -1..1; inf gives 1.0.
+// @since 0.30.0 or earlier
+math.tanh(x: Float) -> Float
+
+// Arcsine in radians, within -pi/2..pi/2; NaN outside -1..1.
+// @since unreleased
+math.asin(x: Float) -> Float
+
+// Arccosine in radians, within 0..pi; NaN outside -1..1.
+// @since unreleased
+math.acos(x: Float) -> Float
+
+// Angle of the point (x, y) in radians, within -pi..pi.
+// @since unreleased
+math.atan2(y: Float, x: Float) -> Float
+
+// e to the x, minus 1, accurate near 0; -1.0 below about -38.
+// @since unreleased
+math.expm1(x: Float) -> Float
+
+// Natural log of 1 + x, accurate near 0; -inf at -1, NaN below.
+// @since unreleased
+math.log1p(x: Float) -> Float
+
+// Hyperbolic sine; overflows to +-inf past about 710.
+// @since unreleased
+math.sinh(x: Float) -> Float
+
+// Hyperbolic cosine, at least 1.0; overflows to inf past about 710.
+// @since unreleased
+math.cosh(x: Float) -> Float
+
+// sqrt(a*a + b*b) without overflow or underflow on the way.
+// @since unreleased
+math.hypot(a: Float, b: Float) -> Float
+
+// Real cube root; negative x gives a negative root.
+// @since unreleased
+math.cbrt(x: Float) -> Float
+
+// Inverse hyperbolic sine.
+// @since unreleased
+math.asinh(x: Float) -> Float
+
+// Inverse hyperbolic cosine, at least 0.0; NaN below 1.0.
+// @since unreleased
+math.acosh(x: Float) -> Float
+
+// Inverse hyperbolic tangent; +-inf at +-1, NaN outside -1..1.
+// @since unreleased
+math.atanh(x: Float) -> Float
+```
+
