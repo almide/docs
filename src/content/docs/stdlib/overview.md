@@ -26,8 +26,8 @@ redundant.
 | [int](/docs/stdlib/int/) | Integer conversion, parsing, bitwise operations |
 | [float](/docs/stdlib/float/) | Float conversion, rounding, math utilities |
 | [math](/docs/stdlib/math/) | Mathematical functions: trig, logarithms, constants |
-| [option](/docs/stdlib/option/) | `Option[T]` utilities: map, flat_map, unwrap_or |
-| [result](/docs/stdlib/result/) | `Result[T, E]` utilities: map, flat_map, unwrap_or |
+| [option](/docs/stdlib/option/) | `Option[T]` utilities: map, flat_map, unwrap_or_else |
+| [result](/docs/stdlib/result/) | `Result[T, E]` utilities: map, flat_map, map_err |
 | [value](/docs/stdlib/value/) | Generic dynamic value type shared with JSON |
 | [datetime](/docs/stdlib/datetime/) | Date/time: parse, format, arithmetic |
 | [bytes](/docs/stdlib/bytes/) | Binary data: typed little/big-endian reads and writes, slice, compare |
@@ -92,7 +92,7 @@ float.round(3.7)                       // => 4.0
 ### Container Modules
 
 ```almd
-option.unwrap_or(some(42), 0)          // => 42
+some(42) ?? 0                          // => 42
 result.map(ok(1), (x) => x + 1)       // => ok(2)
 set.union(a, b)                        // set union
 ```

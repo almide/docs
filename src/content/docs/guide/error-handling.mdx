@@ -34,7 +34,7 @@ The `result` module provides combinators:
 
 ```almide
 let doubled = result.map(int.parse("42"), (n) => n * 2)
-let fallback = result.unwrap_or(int.parse("bad"), 0)
+let fallback = int.parse("bad") ?? 0
 let chained = result.flat_map(int.parse("42"), (n) =>
   if n > 0 then ok(n) else err("must be positive")
 )
@@ -52,7 +52,7 @@ let missing: Option[Int] = none
 Common operations:
 
 ```almide
-let name = option.unwrap_or(map.get(config, "name"), "default")
+let name = map.get(config, "name") ?? "default"
 let upper = option.map(map.get(config, "name"), (s) => string.to_upper(s))
 let result = option.to_result(map.get(config, "name"), "name is required")
 ```

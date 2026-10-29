@@ -117,6 +117,8 @@ Comparison operators are **non-associative**: `a < b < c` is a compile error. Wr
 
 Deep equality works on all value types (records, variants, lists, maps). Function types do not support `==`.
 
+Both operands must have the same type: comparing two different types — `helper() == ok(0)` with a `Result` on one side only, or `Option[Int]` with `Option[String]` — is error E037. Unwrap or convert one side first.
+
 ### Logical (`and` `or`)
 
 ```almd
