@@ -70,12 +70,24 @@ test "richer assertions" {
 | `testing.assert_contains(haystack, needle)` | `(String, String) -> Unit` |
 | `testing.assert_some(opt)` | `Option[A] -> Unit` |
 | `testing.assert_ok(result)` | `Result[A, B] -> Unit` |
-| `testing.assert_throws(f, expected)` | `(() -> Unit, String) -> Unit` |
+| `testing.assert_aborts(expected, f)` | `(String, () -> T) -> Unit` |
 
-Two caveats when your tests also have to pass on the wasm target:
+`assert_aborts` runs only `f`, in a child process (native) or a fresh instance
+(wasm), so every abort counts — `panic`, an index out of bounds, a failed
+assert — and the test continues after the call. `f` must be a lambda written in
+the call that captures nothing of the test (E098), and the call must sit
+directly in a `test` block (E099):
 
-- `assert_throws` has no wasm implementation — wasm cannot catch a panic, it
-  traps. Mark such a file with `// wasm:skip` in its first three lines.
+```almide
+fn nth(xs: List[Int], i: Int) -> Int = xs[i]
+
+test "reading past the end aborts" {
+  testing.assert_aborts("index out of bounds", () => nth([1, 2, 3], 5))
+}
+```
+
+One caveat when your tests also have to pass on the wasm target:
+
 - `assert_some` and `assert_ok` are implemented on wasm for `Option[String]`
   and `Result[String, String]` only. Other instantiations refuse with a wall
   rather than silently testing the wrong thing.

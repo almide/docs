@@ -86,7 +86,7 @@ for (_, value) in map.to_list(config) {
 
 ### Iterating maps
 
-Iterating a map directly yields `(key, value)` pairs — it is the same as `map.entries(m)`:
+Iterating a map directly yields `(key, value)` pairs — it is the same as `map.to_list(m)`:
 
 ```almide
 for key in m {
