@@ -59,7 +59,6 @@ These need `import <module>`:
 | [regex](/docs/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
 | [base64](/docs/stdlib/base64-hex/) | Base64 encoding and decoding | No |
 | [hex](/docs/stdlib/base64-hex/) | Hexadecimal encoding and decoding | No |
-| [svg](/docs/stdlib/svg/) | Safe SVG construction (`SafeSvg`, served as `image/svg+xml`) | No |
 | [secret](/docs/stdlib/secret/) | `Secret[A]`: a value every renderer prints as `Secret(***)` | No |
 
 ### Networking

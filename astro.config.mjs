@@ -117,7 +117,6 @@ export default defineConfig({
 						{ label: 'env', slug: 'stdlib/env' },
 						{ label: 'secret', slug: 'stdlib/secret' },
 						{ label: 'http', slug: 'stdlib/http' },
-						{ label: 'svg', slug: 'stdlib/svg' },
 						{ label: 'regex', slug: 'stdlib/regex' },
 						{ label: 'datetime', slug: 'stdlib/datetime' },
 						{ label: 'random', slug: 'stdlib/random' },
