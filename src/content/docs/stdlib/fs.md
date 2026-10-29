@@ -59,7 +59,7 @@ let bytes = fs.read_bytes("image.png")!
 Write a string to a file, creating or overwriting it
 
 ```almd
-fs.write("output.txt", "hello")
+fs.write_text("output.txt", "hello")
 ```
 
 ### `fs.write_bytes(path: String, bytes: List[Int]) -> Result[Unit, String]`
@@ -75,7 +75,7 @@ fs.write_bytes("out.bin", [0, 1, 2])
 Append a string to a file, creating it if it doesn't exist
 
 ```almd
-fs.append("log.txt", "new line\n")
+fs.append_text("log.txt", "new line\n")
 ```
 
 ### `fs.mkdir_p(path: String) -> Result[Unit, String]`
@@ -171,7 +171,7 @@ fs.remove_all("build/")
 Get file size in bytes
 
 ```almd
-let size = fs.file_size("data.bin")!
+let size = fs.stat("data.bin")!.size
 ```
 
 ### `fs.temp_dir() -> String`
@@ -227,5 +227,5 @@ if fs.is_symlink("link") then ...
 Get file modification time as Unix timestamp (seconds)
 
 ```almd
-let ts = fs.modified_at("file.txt")!
+let ts = fs.stat("file.txt")!.modified
 ```

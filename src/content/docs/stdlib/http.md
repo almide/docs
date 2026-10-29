@@ -88,7 +88,7 @@ http.redirect("/new-path")
 Set the status code on a response
 
 ```almd
-http.status(resp, 201)
+http.set_status(resp, 201)
 ```
 
 ### `http.body(resp: Response) -> String`
@@ -112,7 +112,7 @@ http.set_header(resp, "X-Custom", "value")
 Get a header value from a response
 
 ```almd
-let ct = http.get_header(resp, "Content-Type")
+let ct = http.header(resp, "Content-Type")
 ```
 
 ### `http.req_method(req: Request) -> String`
@@ -120,7 +120,7 @@ let ct = http.get_header(resp, "Content-Type")
 Get the HTTP method of a request (GET, POST, etc.)
 
 ```almd
-let method = http.req_method(req)
+let method = http.method(req)
 ```
 
 ### `http.req_path(req: Request) -> String`
@@ -128,7 +128,7 @@ let method = http.req_method(req)
 Get the URL path of a request
 
 ```almd
-let path = http.req_path(req)
+let path = http.path(req)
 ```
 
 ### `http.req_body(req: Request) -> String`
@@ -136,7 +136,7 @@ let path = http.req_path(req)
 Get the body string of a request
 
 ```almd
-let body = http.req_body(req)
+let body = http.body(req)
 ```
 
 ### `http.req_header(req: Request, key: String) -> Option[String]`
@@ -144,7 +144,7 @@ let body = http.req_body(req)
 Get a header value from a request
 
 ```almd
-let auth = http.req_header(req, "Authorization")
+let auth = http.header(req, "Authorization")
 ```
 
 ### `http.query_params(req: Request) -> Map[String, String]`
@@ -200,7 +200,7 @@ let resp = http.delete(url)!
 Send a custom HTTP request with method, URL, body, and headers
 
 ```almd
-let resp = http.request("PUT", url, body, headers)!
+let resp = http.request("PUT", url, body, map.to_list(headers))!
 ```
 
 ## The `*_response` family — status, headers and body together
@@ -242,8 +242,8 @@ import http
 
 effect fn main() -> Unit = {
   let resp = http.get_response("https://example.com/")!
-  println("status ${int.to_string(http.status_code(resp))}")
-  println(http.get_header(resp, "content-type") ?? "no Content-Type")
+  println("status ${int.to_string(http.status(resp))}")
+  println(http.header(resp, "content-type") ?? "no Content-Type")
   for cookie in http.header_values(resp, "set-cookie") {
     println("cookie: ${cookie}")
   }
@@ -256,7 +256,7 @@ effect fn main() -> Unit = {
 Get the status code of a response. A 3xx or 4xx is still an `ok` response.
 
 ```almd
-let code = http.status_code(resp)
+let code = http.status(resp)
 ```
 
 ### `http.headers(resp: Response) -> Map[String, String]`
@@ -315,10 +315,10 @@ off the record:
 import http
 
 effect fn main() -> Unit = {
-  let resp = http.request_response("GET", "http://example.com/old", "", ["User-Agent": "checker"])!
-  let code = http.status_code(resp)
+  let resp = http.send(http.new_request("GET", "http://example.com/old", "", [("User-Agent", "checker")]))!
+  let code = http.status(resp)
   if code >= 300 and code < 400 then
-    println("redirects to ${http.get_header(resp, "location") ?? "?"}")
+    println("redirects to ${http.header(resp, "location") ?? "?"}")
   else
     println("answers ${int.to_string(code)} directly")
 }

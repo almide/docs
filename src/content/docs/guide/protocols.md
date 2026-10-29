@@ -71,7 +71,7 @@ fn show[T: Serializable](item: T) -> String =
 
 fn save_all[T: Serializable](items: List[T], path: String) -> String = {
   let lines = list.map(items, (item) => item.serialize())
-  string.join(lines, "\n")
+  list.join(lines, "\n")
 }
 ```
 

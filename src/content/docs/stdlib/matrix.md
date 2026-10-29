@@ -76,7 +76,7 @@ matrix.to_lists(m) // => [[1.0, 2.0], [3.0, 4.0]]
 Get element at (row, col).
 
 ```almd
-matrix.get(m, 0, 1) // => 2.0
+matrix.get(m, 0, 1) ?? panic("matrix.get: out of range") // => 2.0
 ```
 
 ### `matrix.rows(m: Matrix) -> Int`
@@ -100,7 +100,7 @@ matrix.cols(m) // => 4
 Element-wise addition of two matrices.
 
 ```almd
-matrix.add(a, b)
+a + b
 ```
 
 ### `matrix.mul(a: Matrix, b: Matrix) -> Matrix`
@@ -108,7 +108,7 @@ matrix.add(a, b)
 Matrix multiplication.
 
 ```almd
-matrix.mul(a, b)
+a * b
 ```
 
 ### `matrix.scale(m: Matrix, s: Float) -> Matrix`

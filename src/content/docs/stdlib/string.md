@@ -77,7 +77,7 @@ string.split("a,b,c", ",") // => ["a", "b", "c"]
 Join a list of strings with a separator.
 
 ```almd
-string.join(["a", "b", "c"], "-") // => "a-b-c"
+list.join(["a", "b", "c"], "-") // => "a-b-c"
 ```
 
 ### `string.len(s: String) -> Int`
@@ -133,7 +133,7 @@ string.pad_start("42", 5, "0") // => "00042"
 Convert a string to a list of UTF-8 byte values.
 
 ```almd
-string.to_bytes("Hi") // => [72, 105]
+bytes.to_list(bytes.from_string("Hi")) // => [72, 105]
 ```
 
 ### `string.capitalize(s: String) -> String`
@@ -189,7 +189,7 @@ string.lines("a\nb\nc") // => ["a", "b", "c"]
 Split a string into individual characters.
 
 ```almd
-string.chars("abc") // => ["a", "b", "c"]
+string.to_list("abc") // => ["a", "b", "c"]
 ```
 
 ### `string.index_of(s: String, needle: String) -> Option[Int]`
@@ -213,7 +213,7 @@ string.repeat("ab", 3) // => "ababab"
 Create a string from a list of UTF-8 byte values.
 
 ```almd
-string.from_bytes([72, 105]) // => "Hi"
+bytes.to_string_lossy(bytes.from_list([72, 105])) // => "Hi"
 ```
 
 ### `string.is_digit(s: String) -> Bool`
@@ -269,7 +269,7 @@ string.is_lower("abc") // => true
 Return the Unicode codepoint of the first character, or none for empty string.
 
 ```almd
-string.codepoint("A") // => some(65)
+string.to_codepoint("A") // => some(65)
 ```
 
 ### `string.from_codepoint(n: Int) -> String`
@@ -277,7 +277,7 @@ string.codepoint("A") // => some(65)
 Create a single-character string from a Unicode codepoint.
 
 ```almd
-string.from_codepoint(65) // => "A"
+string.from_codepoint(65) ?? "" // => "A"
 ```
 
 ### `string.pad_end(s: String, n: Int, ch: String) -> String`
@@ -309,7 +309,7 @@ string.trim_end("hello  ") // => "hello"
 Count occurrences of a substring.
 
 ```almd
-string.count("banana", "an") // => 2
+string.count_matches("banana", "an") // => 2
 ```
 
 ### `string.is_empty(s: String) -> Bool`

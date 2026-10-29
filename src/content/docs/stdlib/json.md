@@ -63,7 +63,7 @@ json.stringify(person.encode())
 Get a nested value by key. Returns none if key doesn't exist.
 
 ```almd
-json.get(j, "name")
+value.get(j, "name")
 ```
 
 ### `json.keys(j: Value) -> List[String]`
@@ -79,7 +79,7 @@ json.keys(j)
 Create a Json string value.
 
 ```almd
-json.from_string("hello")
+value.string("hello")
 ```
 
 ### `json.from_int(n: Int) -> Value`
@@ -87,7 +87,7 @@ json.from_string("hello")
 Create a Json integer value.
 
 ```almd
-json.from_int(42)
+value.int(42)
 ```
 
 ### `json.from_bool(b: Bool) -> Value`
@@ -95,7 +95,7 @@ json.from_int(42)
 Create a Json boolean value.
 
 ```almd
-json.from_bool(true)
+value.bool(true)
 ```
 
 ### `json.null() -> Value`
@@ -103,7 +103,7 @@ json.from_bool(true)
 Create a Json null value.
 
 ```almd
-json.null()
+value.null()
 ```
 
 ### `json.array(items: List[Value]) -> Value`
@@ -111,7 +111,7 @@ json.null()
 Create a Json array from a list of Json values.
 
 ```almd
-json.array([json.i(1), json.i(2)])
+value.array([json.i(1), json.i(2)])
 ```
 
 ### `json.from_float(n: Float) -> Value`
@@ -119,7 +119,7 @@ json.array([json.i(1), json.i(2)])
 Create a Json float value.
 
 ```almd
-json.from_float(3.14)
+value.float(3.14)
 ```
 
 ### `json.stringify_pretty(j: Value) -> String`
@@ -135,7 +135,7 @@ json.stringify_pretty(j)
 Create a Json object from a list of (key, value) pairs.
 
 ```almd
-json.object([("name", json.s("Alice")), ("age", json.i(30))])
+value.object([("name", json.s("Alice")), ("age", json.i(30))])
 ```
 
 ### `json.get_string(j: Value, key: String) -> Option[String]`
@@ -143,7 +143,7 @@ json.object([("name", json.s("Alice")), ("age", json.i(30))])
 Get a string value by key. Returns none if key doesn't exist or value is not a string.
 
 ```almd
-json.get_string(j, "name")
+value.get_string(j, "name")
 ```
 
 ### `json.get_int(j: Value, key: String) -> Option[Int]`
@@ -151,7 +151,7 @@ json.get_string(j, "name")
 Get an integer value by key. Returns none if key doesn't exist or value is not an integer.
 
 ```almd
-json.get_int(j, "age")
+value.get_int(j, "age")
 ```
 
 ### `json.get_float(j: Value, key: String) -> Option[Float]`
@@ -159,7 +159,7 @@ json.get_int(j, "age")
 Get a float value by key. Returns none if key doesn't exist or value is not a number.
 
 ```almd
-json.get_float(j, "price")
+value.get_float(j, "price")
 ```
 
 ### `json.get_bool(j: Value, key: String) -> Option[Bool]`
@@ -167,7 +167,7 @@ json.get_float(j, "price")
 Get a boolean value by key. Returns none if key doesn't exist or value is not a boolean.
 
 ```almd
-json.get_bool(j, "active")
+value.get_bool(j, "active")
 ```
 
 ### `json.get_array(j: Value, key: String) -> Option[List[Value]]`
@@ -175,7 +175,7 @@ json.get_bool(j, "active")
 Get an array value by key. Returns none if key doesn't exist or value is not an array.
 
 ```almd
-json.get_array(j, "items")
+value.get_array(j, "items")
 ```
 
 ### `json.as_string(j: Value) -> Option[String]`
@@ -183,7 +183,7 @@ json.get_array(j, "items")
 Extract string from a Json value (without key lookup). Returns none if not a string.
 
 ```almd
-json.as_string(j)
+value.as_string(j)?
 ```
 
 ### `json.as_int(j: Value) -> Option[Int]`
@@ -191,7 +191,7 @@ json.as_string(j)
 Extract integer from a Json value (without key lookup). Returns none if not an integer.
 
 ```almd
-json.as_int(j)
+value.as_int(j)?
 ```
 
 ### `json.as_float(j: Value) -> Option[Float]`
@@ -199,7 +199,7 @@ json.as_int(j)
 Extract float from a Json value (without key lookup). Returns none if not a number.
 
 ```almd
-json.as_float(j)
+value.as_float(j)?
 ```
 
 ### `json.as_bool(j: Value) -> Option[Bool]`
@@ -207,7 +207,7 @@ json.as_float(j)
 Extract boolean from a Json value (without key lookup). Returns none if not a boolean.
 
 ```almd
-json.as_bool(j)
+value.as_bool(j)?
 ```
 
 ### `json.as_array(j: Value) -> Option[List[Value]]`
@@ -215,7 +215,7 @@ json.as_bool(j)
 Extract array from a Json value (without key lookup). Returns none if not an array.
 
 ```almd
-json.as_array(j)
+value.as_array(j)?
 ```
 
 ### `json.root() -> JsonPath`
@@ -223,7 +223,7 @@ json.as_array(j)
 Create a root JSON path for traversal.
 
 ```almd
-json.root()
+value.root()
 ```
 
 ### `json.field(path: JsonPath, name: String) -> JsonPath`
@@ -231,7 +231,7 @@ json.root()
 Extend a JSON path with a field name.
 
 ```almd
-json.field(json.root(), "user")
+value.key(value.root(), "user")
 ```
 
 ### `json.index(path: JsonPath, i: Int) -> JsonPath`
@@ -239,7 +239,7 @@ json.field(json.root(), "user")
 Extend a JSON path with an array index.
 
 ```almd
-json.index(json.field(json.root(), "items"), 0)
+json.index(value.key(value.root(), "items"), 0)
 ```
 
 ### `json.get_path(j: Value, path: JsonPath) -> Option[Value]`
@@ -247,7 +247,7 @@ json.index(json.field(json.root(), "items"), 0)
 Get a value at a JSON path. Returns none if path doesn't exist.
 
 ```almd
-json.get_path(j, json.field(json.root(), "name"))
+value.get_path(j, value.key(value.root(), "name"))
 ```
 
 ### `json.set_path(j: Value, path: JsonPath, value: Value) -> Result[Value, String]`
@@ -255,7 +255,7 @@ json.get_path(j, json.field(json.root(), "name"))
 Set a value at a JSON path. Returns error if path is invalid.
 
 ```almd
-json.set_path(j, json.field(json.root(), "name"), json.s("Bob"))
+value.set_path(j, value.key(value.root(), "name"), json.s("Bob"))
 ```
 
 ### `json.remove_path(j: Value, path: JsonPath) -> Value`
@@ -263,7 +263,7 @@ json.set_path(j, json.field(json.root(), "name"), json.s("Bob"))
 Remove a value at a JSON path. Returns the Json with the value removed.
 
 ```almd
-json.remove_path(j, json.field(json.root(), "temp"))
+value.remove_path(j, value.key(value.root(), "temp"))
 ```
 
 ### `json.to_map(j: Value) -> Option[Map[String, String]]`

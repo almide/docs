@@ -48,7 +48,7 @@ let input = io.read_all()!
 Write raw bytes to stdout (no UTF-8 conversion)
 
 ```almd
-io.write_bytes([0x50, 0x34, 0x0A])
+io.write(io.stdout()!, bytes.from_list([0x50, 0x34, 0x0A]))
 ```
 
 ### `io.write(data: Bytes) -> Unit`
@@ -56,7 +56,7 @@ io.write_bytes([0x50, 0x34, 0x0A])
 Write a Bytes buffer to stdout (zero-copy, buffered)
 
 ```almd
-io.write(buf)
+io.write(io.stdout()!, buf)
 ```
 
 ### `io.read_byte() -> Int`
@@ -64,7 +64,7 @@ io.write(buf)
 Read a single byte from stdin (returns -1 on EOF).
 
 ```almd
-let b = io.read_byte()
+let b = io.read(io.stdin()!, 1)
 ```
 
 ### `io.read_n_bytes(n: Int) -> List[Int]`
@@ -72,5 +72,5 @@ let b = io.read_byte()
 Read N bytes from stdin (may return fewer on EOF).
 
 ```almd
-let data = io.read_n_bytes(4)
+let data = bytes.to_list(io.read(io.stdin()!, 4)!)
 ```

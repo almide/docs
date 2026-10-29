@@ -36,7 +36,7 @@ description: Mathematical functions and constants. Auto-imported — no `import`
 Return the smaller of two integers.
 
 ```almd
-math.min(3, 7) // => 3
+int.min(3, 7) // => 3
 ```
 
 ### `math.max(a: Int, b: Int) -> Int`
@@ -44,7 +44,7 @@ math.min(3, 7) // => 3
 Return the larger of two integers.
 
 ```almd
-math.max(3, 7) // => 7
+int.max(3, 7) // => 7
 ```
 
 ### `math.abs(n: Int) -> Int`
@@ -52,7 +52,7 @@ math.max(3, 7) // => 7
 Return the absolute value of an integer.
 
 ```almd
-math.abs(-5) // => 5
+int.abs(-5) // => 5
 ```
 
 ### `math.pow(base: Int, exp: Int) -> Int`
@@ -60,7 +60,7 @@ math.abs(-5) // => 5
 Raise an integer base to an integer exponent.
 
 ```almd
-math.pow(2, 10) // => 1024
+int.pow(2, 10) // => 1024
 ```
 
 ### `math.pi() -> Float`
@@ -148,7 +148,7 @@ math.log2(8.0) // => 3.0
 Return the sign of an integer: -1, 0, or 1.
 
 ```almd
-math.sign(-42) // => -1
+int.sign(-42) // => -1
 ```
 
 ### `math.fmin(a: Float, b: Float) -> Float`
@@ -156,7 +156,7 @@ math.sign(-42) // => -1
 Return the smaller of two floats.
 
 ```almd
-math.fmin(1.5, 2.5) // => 1.5
+float.min(1.5, 2.5) // => 1.5
 ```
 
 ### `math.fmax(a: Float, b: Float) -> Float`
@@ -164,7 +164,7 @@ math.fmin(1.5, 2.5) // => 1.5
 Return the larger of two floats.
 
 ```almd
-math.fmax(1.5, 2.5) // => 2.5
+float.max(1.5, 2.5) // => 2.5
 ```
 
 ### `math.fpow(base: Float, exp: Float) -> Float`
@@ -172,7 +172,7 @@ math.fmax(1.5, 2.5) // => 2.5
 Raise a float base to a float exponent.
 
 ```almd
-math.fpow(2.0, 0.5) // => 1.4142135623730951
+float.pow(2.0, 0.5) // => 1.4142135623730951
 ```
 
 ### `math.factorial(n: Int) -> Int`

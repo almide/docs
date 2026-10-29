@@ -57,7 +57,7 @@ map.get(m, "name")
 Get a value by key, returning a default if the key doesn't exist.
 
 ```almd
-map.get_or(m, "name", "unknown")
+map.get(m, "name") ?? "unknown"
 ```
 
 ### `map.set(m: Map[K, V], key: K, value: V) -> Map[K, V]`
@@ -113,7 +113,7 @@ map.len(m)
 Get all key-value pairs as a list of tuples, in insertion order.
 
 ```almd
-map.entries(m)
+map.to_list(m)
 ```
 
 ### `map.merge(a: Map[K, V], b: Map[K, V]) -> Map[K, V]`
@@ -209,7 +209,7 @@ map.update(scores, "alice", (v) => v + 10)
 Insert a key-value pair in place. Requires var binding.
 
 ```almd
-map.insert(m, "name", "Alice")
+m = map.set(m, "name", "Alice")
 ```
 
 ### `map.delete(m: Map[K, V], key: K) -> Unit`
@@ -217,7 +217,7 @@ map.insert(m, "name", "Alice")
 Remove a key in place. Requires var binding.
 
 ```almd
-map.delete(m, "temp")
+m = map.remove(m, "temp")
 ```
 
 ### `map.clear(m: Map[K, V]) -> Unit`

@@ -92,7 +92,7 @@ list.get([10, 20, 30], 1) // => some(20)
 Get the element at index i, or return a default value.
 
 ```almd
-list.get_or([1, 2], 5, 0) // => 0
+list.get([1, 2], 5) ?? 0 // => 0
 ```
 
 ### `list.set(xs: List[A], i: Int, val: A) -> List[A]`
@@ -452,7 +452,7 @@ list.intersperse([1, 2, 3], 0) // => [1, 0, 2, 0, 3]
 Return sliding windows of size n.
 
 ```almd
-list.windows([1, 2, 3, 4], 2) // => [[1, 2], [2, 3], [3, 4]]
+list.window([1, 2, 3, 4], 2) // => [[1, 2], [2, 3], [3, 4]]
 ```
 
 ### `list.dedup(xs: List[A]) -> List[A]`
@@ -508,7 +508,7 @@ list.unique_by(["aa", "ab", "ba"], (s) => string.get(s, 0))
 Return a randomly shuffled copy of the list.
 
 ```almd
-list.shuffle([1, 2, 3, 4])
+random.shuffle([1, 2, 3, 4])
 ```
 
 ### `list.window(xs: List[A], n: Int) -> List[List[A]]`

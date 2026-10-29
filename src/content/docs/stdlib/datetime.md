@@ -60,7 +60,7 @@ datetime.parse_iso("2024-01-15T12:00:00Z") // => ok(1705320000)
 Convert a Unix timestamp (identity function for documentation clarity).
 
 ```almd
-datetime.from_unix(1705320000)
+1705320000
 ```
 
 ### `datetime.format(ts: Int, pattern: String) -> String`
@@ -84,7 +84,7 @@ datetime.to_iso(1705320000) // => "2024-01-15T12:00:00Z"
 Get the Unix timestamp value (identity function).
 
 ```almd
-datetime.to_unix(ts) // => 1705320000
+ts // => 1705320000
 ```
 
 ### `datetime.year(ts: Int) -> Int`
@@ -180,7 +180,7 @@ datetime.add_seconds(ts, 90)
 Compute the difference in seconds between two timestamps.
 
 ```almd
-datetime.diff_seconds(later, earlier) // => 3600
+later - earlier // => 3600
 ```
 
 ### `datetime.is_before(a: Int, b: Int) -> Bool`
@@ -188,7 +188,7 @@ datetime.diff_seconds(later, earlier) // => 3600
 Check if timestamp a is before timestamp b.
 
 ```almd
-datetime.is_before(earlier, later) // => true
+earlier < later // => true
 ```
 
 ### `datetime.is_after(a: Int, b: Int) -> Bool`
@@ -196,5 +196,5 @@ datetime.is_before(earlier, later) // => true
 Check if timestamp a is after timestamp b.
 
 ```almd
-datetime.is_after(later, earlier) // => true
+later > earlier // => true
 ```

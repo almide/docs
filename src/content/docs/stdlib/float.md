@@ -41,7 +41,7 @@ float.to_string(3.14) // => \"3.14\
 Truncate a float to an integer (rounds toward zero).
 
 ```almd
-float.to_int(3.9) // => 3
+int.from_saturating(3.9) // => 3
 ```
 
 ### `float.round(n: Float) -> Float`
@@ -81,7 +81,7 @@ float.abs(-2.5) // => 2.5
 Return the square root of a float.
 
 ```almd
-float.sqrt(9.0) // => 3.0
+math.sqrt(9.0) // => 3.0
 ```
 
 ### `float.parse(s: String) -> Result[Float, String]`
@@ -97,7 +97,7 @@ float.parse(\"3.14\") // => ok(3.14)
 Convert an integer to a float.
 
 ```almd
-float.from_int(42) // => 42.0
+float.from(42) // => 42.0
 ```
 
 ### `float.min(a: Float, b: Float) -> Float`

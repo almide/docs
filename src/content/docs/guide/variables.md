@@ -130,7 +130,7 @@ for _ in 0..<5 {
 In tuple destructuring within `for`:
 
 ```almide
-for (_, v) in map.entries(config) {
+for (_, v) in map.to_list(config) {
   println(v)
 }
 ```

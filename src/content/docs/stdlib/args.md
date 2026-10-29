@@ -24,8 +24,8 @@ path — the first element is the user's first argument.
 import args
 
 fn main() -> Unit = {
-  let name = args.option_or("name", "world")
-  if args.flag("verbose") then println("verbose mode")
+  let name = args.option("name")! ?? "world"
+  if args.has_flag("verbose") then println("verbose mode")
   println("hello, ${name}")
 }
 ```

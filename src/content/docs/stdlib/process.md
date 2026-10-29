@@ -41,7 +41,7 @@ process.exit(1)
 Read all lines from standard input
 
 ```almd
-let lines = process.stdin_lines()
+let lines = ok(string.lines(io.read_all()))
 ```
 
 ### `process.exec_in(dir: String, cmd: String, args: List[String]) -> Result[String, String]`
@@ -49,7 +49,7 @@ let lines = process.stdin_lines()
 Execute a command in a specific working directory
 
 ```almd
-let output = process.exec_in("/tmp", "pwd", [])
+let output = process.output(process.ProcessCommand { cmd: "pwd", args: [], dir: "/tmp" })
 ```
 
 ### `process.exec_with_stdin(cmd: String, args: List[String], input: String) -> Result[String, String]`
@@ -57,7 +57,7 @@ let output = process.exec_in("/tmp", "pwd", [])
 Execute a command with input piped to its stdin
 
 ```almd
-let output = process.exec_with_stdin("cat", [], "hello")
+let output = process.output(process.ProcessCommand { cmd: "cat", args: [], stdin: "hello" })
 ```
 
 ### `process.exec_status(cmd: String, args: List[String]) -> Result[{code: Int, stdout: String, stderr: String}, String]`
@@ -65,7 +65,7 @@ let output = process.exec_with_stdin("cat", [], "hello")
 Execute a command and return exit code, stdout, and stderr
 
 ```almd
-let r = process.exec_status("ls", []) // {code, stdout, stderr}
+let r = process.output(process.ProcessCommand { cmd: "ls", args: [] }) // {code, stdout, stderr}
 ```
 
 ### `process.env(key: String) -> Option[String]`
@@ -73,7 +73,7 @@ let r = process.exec_status("ls", []) // {code, stdout, stderr}
 Get the value of an environment variable, or None if not set.
 
 ```almd
-let home = process.env("HOME") ?? "/tmp"
+let home = env.get("HOME") ?? "/tmp"
 ```
 
 ### `process.args() -> List[String]`

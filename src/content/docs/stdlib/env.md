@@ -28,7 +28,7 @@ import env
 Get the current Unix timestamp in seconds.
 
 ```almd
-let ts = env.unix_timestamp()
+let ts = datetime.now()
 ```
 
 ### `env.args() -> List[String]`
@@ -68,7 +68,7 @@ let dir = env.cwd()
 Get the current time in milliseconds since epoch.
 
 ```almd
-let ms = env.millis()
+let ms = datetime.now_ms()
 ```
 
 ### `env.sleep_ms(ms: Int) -> Unit`
@@ -84,7 +84,7 @@ env.sleep_ms(1000) // sleep 1 second
 Get the system temporary directory path.
 
 ```almd
-let tmp = env.temp_dir()
+let tmp = fs.temp_dir()
 ```
 
 ### `env.os() -> String`

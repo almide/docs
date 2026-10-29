@@ -40,7 +40,7 @@ Functions with side effects (I/O, network, randomness) must be marked `effect fn
 import fs
 
 effect fn save(path: String, content: String) -> Result[Unit, String] = {
-  fs.write(path, content)!
+  fs.write_text(path, content)!
   ok(())
 }
 ```
@@ -69,7 +69,7 @@ All parameters require type annotations:
 
 ```almide
 fn distance(x1: Float, y1: Float, x2: Float, y2: Float) -> Float =
-  float.sqrt((x2 - x1) ^ 2.0 + (y2 - y1) ^ 2.0)
+  math.sqrt((x2 - x1) ^ 2.0 + (y2 - y1) ^ 2.0)
 ```
 
 ### Default arguments

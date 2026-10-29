@@ -18,7 +18,7 @@ description: Error construction and inspection. Auto-imported — no `import` ne
 Add context message to an error result.
 
 ```almd
-error.context(result, "failed to load config")
+result.map_err(result, (e) => "failed to load config: ${e}")
 ```
 
 ### `error.message(r: Result[T, String]) -> String`
@@ -26,7 +26,7 @@ error.context(result, "failed to load config")
 Extract the error message from a Result, or empty string if ok.
 
 ```almd
-error.message(err("oops")) // => "oops"
+result.to_err_option(err("oops")) ?? "" // => "oops"
 ```
 
 ### `error.chain(outer: String, cause: String) -> String`
@@ -34,6 +34,6 @@ error.message(err("oops")) // => "oops"
 Chain two error messages with a cause separator.
 
 ```almd
-error.chain("load failed", "file not found")
+"load failed\ncaused by: file not found"
 // => "load failed\ncaused by: file not found"
 ```

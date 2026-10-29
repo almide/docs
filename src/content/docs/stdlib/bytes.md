@@ -45,7 +45,7 @@ bytes.get(b, 0) // => some(72)
 Get a byte value at an index, or a default if out of bounds.
 
 ```almd
-bytes.get_or(b, 0, 0) // => 72
+bytes.get(b, 0) ?? 0 // => 72
 ```
 
 ### `bytes.set(b: Bytes, i: Int, val: Int) -> Bytes`
@@ -93,7 +93,7 @@ bytes.is_empty([]) // => true
 Concatenate two byte buffers.
 
 ```almd
-bytes.concat(a, b)
+a + b
 ```
 
 ### `bytes.repeat(b: Bytes, n: Int) -> Bytes`
@@ -109,7 +109,7 @@ bytes.repeat(b, 3)
 Create a zero-filled byte buffer of given length.
 
 ```almd
-bytes.new(1024) // => <1024 zero bytes>
+bytes.zeros(1024) // => <1024 zero bytes>
 ```
 
 ### `bytes.push(b: Bytes, val: Int) -> Unit`
@@ -141,7 +141,7 @@ bytes.from_string("Hello") // => <72, 101, 108, 108, 111>
 Append an Int as 8 bytes big-endian.
 
 ```almd
-bytes.write_i64_be(buf, 42)
+bytes.append_i64_be(buf, 42)
 ```
 
 ### `bytes.write_f64_be(b: Bytes, val: Float) -> Unit`
@@ -149,7 +149,7 @@ bytes.write_i64_be(buf, 42)
 Append a Float as 8 bytes big-endian.
 
 ```almd
-bytes.write_f64_be(buf, 3.14)
+bytes.append_f64_be(buf, 3.14)
 ```
 
 ### `bytes.write_u32_be(b: Bytes, val: Int) -> Unit`
@@ -157,7 +157,7 @@ bytes.write_f64_be(buf, 3.14)
 Append an Int as 4 bytes big-endian (u32).
 
 ```almd
-bytes.write_u32_be(buf, 256)
+bytes.append_u32_be(buf, 256)
 ```
 
 ### `bytes.write_u8(b: Bytes, val: Int) -> Unit`
@@ -165,7 +165,7 @@ bytes.write_u32_be(buf, 256)
 Append a single byte.
 
 ```almd
-bytes.write_u8(buf, 0xFF)
+bytes.push(buf, 0xFF)
 ```
 
 ### `bytes.write_string_be(b: Bytes, s: String) -> Unit`
@@ -181,7 +181,7 @@ bytes.write_string_be(buf, "hello")
 Append a boolean as 1 byte (0 or 1).
 
 ```almd
-bytes.write_bool(buf, true)
+bytes.append_bool(buf, true)
 ```
 
 ### `bytes.read_i64_be(b: Bytes, pos: Int) -> Int`
@@ -189,7 +189,7 @@ bytes.write_bool(buf, true)
 Read an Int from 8 bytes big-endian at position.
 
 ```almd
-bytes.read_i64_be(buf, 0) // => 42
+bytes.get_i64_be(buf, 0) ?? 0 // => 42
 ```
 
 ### `bytes.read_f64_be(b: Bytes, pos: Int) -> Float`
@@ -197,7 +197,7 @@ bytes.read_i64_be(buf, 0) // => 42
 Read a Float from 8 bytes big-endian at position.
 
 ```almd
-bytes.read_f64_be(buf, 0) // => 3.14
+bytes.get_f64_be(buf, 0) ?? 0.0 // => 3.14
 ```
 
 ### `bytes.read_u32_be(b: Bytes, pos: Int) -> Int`
@@ -205,7 +205,7 @@ bytes.read_f64_be(buf, 0) // => 3.14
 Read an Int from 4 bytes big-endian (u32) at position.
 
 ```almd
-bytes.read_u32_be(buf, 0) // => 256
+bytes.get_u32_be(buf, 0) ?? 0 // => 256
 ```
 
 ### `bytes.read_u8(b: Bytes, pos: Int) -> Int`
@@ -213,7 +213,7 @@ bytes.read_u32_be(buf, 0) // => 256
 Read a single byte at position.
 
 ```almd
-bytes.read_u8(buf, 0) // => 255
+bytes.get(buf, 0) ?? 0 // => 255
 ```
 
 ### `bytes.read_bool(b: Bytes, pos: Int) -> Bool`
@@ -221,7 +221,7 @@ bytes.read_u8(buf, 0) // => 255
 Read a boolean from 1 byte at position.
 
 ```almd
-bytes.read_bool(buf, 0) // => true
+bytes.get_bool(buf, 0) ?? false // => true
 ```
 
 ### `bytes.read_string_be(b: Bytes, pos: Int) -> String`

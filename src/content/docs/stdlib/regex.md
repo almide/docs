@@ -27,7 +27,7 @@ import regex
 Check if a pattern matches anywhere in a string.
 
 ```almd
-regex.is_match("[0-9]+", "abc123") // => true
+regex.is_match(regex.new("[0-9]+"), "abc123") // => true
 ```
 
 ### `regex.full_match(pat: String, s: String) -> Bool`
@@ -35,7 +35,7 @@ regex.is_match("[0-9]+", "abc123") // => true
 Check if a pattern matches the entire string.
 
 ```almd
-regex.full_match("[0-9]+", "123") // => true
+regex.full_match(regex.new("[0-9]+"), "123") // => true
 ```
 
 ### `regex.find(pat: String, s: String) -> Option[String]`
@@ -43,7 +43,7 @@ regex.full_match("[0-9]+", "123") // => true
 Find the first match of a pattern in a string.
 
 ```almd
-regex.find("[0-9]+", "abc123def") // => some("123")
+regex.find(regex.new("[0-9]+"), "abc123def") // => some("123")
 ```
 
 ### `regex.find_all(pat: String, s: String) -> List[String]`
@@ -51,7 +51,7 @@ regex.find("[0-9]+", "abc123def") // => some("123")
 Find all non-overlapping matches of a pattern.
 
 ```almd
-regex.find_all("[0-9]+", "a1b2c3") // => ["1", "2", "3"]
+regex.find_all(regex.new("[0-9]+"), "a1b2c3") // => ["1", "2", "3"]
 ```
 
 ### `regex.replace(pat: String, s: String, rep: String) -> String`
@@ -59,7 +59,7 @@ regex.find_all("[0-9]+", "a1b2c3") // => ["1", "2", "3"]
 Replace all matches of a pattern with a replacement string.
 
 ```almd
-regex.replace("[0-9]+", "a1b2", "X") // => "aXbX"
+regex.replace(regex.new("[0-9]+"), "a1b2", "X") // => "aXbX"
 ```
 
 ### `regex.replace_first(pat: String, s: String, rep: String) -> String`
@@ -67,7 +67,7 @@ regex.replace("[0-9]+", "a1b2", "X") // => "aXbX"
 Replace the first match of a pattern.
 
 ```almd
-regex.replace_first("[0-9]+", "a1b2", "X") // => "aXb2"
+regex.replace_first(regex.new("[0-9]+"), "a1b2", "X") // => "aXb2"
 ```
 
 ### `regex.split(pat: String, s: String) -> List[String]`
@@ -75,7 +75,7 @@ regex.replace_first("[0-9]+", "a1b2", "X") // => "aXb2"
 Split a string by a regex pattern.
 
 ```almd
-regex.split("[,;]", "a,b;c") // => ["a", "b", "c"]
+regex.split(regex.new("[,;]"), "a,b;c") // => ["a", "b", "c"]
 ```
 
 ### `regex.captures(pat: String, s: String) -> Option[List[String]]`
@@ -83,5 +83,5 @@ regex.split("[,;]", "a,b;c") // => ["a", "b", "c"]
 Extract capture groups from the first match.
 
 ```almd
-regex.captures("(\\w+)@(\\w+)", "user@host") // => some(["user", "host"])
+regex.captures(regex.new("(\\w+)@(\\w+)"), "user@host") // => some(["user", "host"])
 ```

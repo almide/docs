@@ -64,7 +64,7 @@ int.parse(\"42\") // => ok(42)
 Parse a hexadecimal string into an integer. Returns err if the string is not valid hex.
 
 ```almd
-int.from_hex(\"ff\") // => ok(255)
+int.parse_radix(\"ff\") // => ok(255), 16)
 ```
 
 ### `int.abs(n: Int) -> Int`
@@ -176,7 +176,7 @@ int.rotate_left(128, 1, 8) // => 1
 Truncate an integer to an unsigned 32-bit value (mask to 0...4294967295).
 
 ```almd
-int.to_u32(300) // => 300
+int.wrap(300, 32) // => 300
 ```
 
 ### `int.to_u8(a: Int) -> Int`
@@ -184,7 +184,7 @@ int.to_u32(300) // => 300
 Truncate an integer to an unsigned 8-bit value (mask to 0...255).
 
 ```almd
-int.to_u8(300) // => 44
+int.wrap(300, 8) // => 44
 ```
 
 ### `int.clamp(n: Int, lo: Int, hi: Int) -> Int`
@@ -222,7 +222,7 @@ int.is_odd(4)  // => false
 Convert an integer to a floating-point number.
 
 ```almd
-int.to_float(42) // => 42.0
+float.from(42) // => 42.0
 ```
 
 ### `int.bits_to_float(bits: Int) -> Float`
@@ -230,5 +230,5 @@ int.to_float(42) // => 42.0
 Reinterpret an integer's bits as an IEEE 754 float (f64).
 
 ```almd
-int.bits_to_float(4607182418800017408) // => 1.0
+float.from_bits(4607182418800017408) // => 1.0
 ```

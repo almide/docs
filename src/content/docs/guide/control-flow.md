@@ -67,7 +67,7 @@ Ranges in `for` loops are optimized: no list is allocated.
 Destructure tuples directly in the loop variable:
 
 ```almide
-for (key, value) in map.entries(config) {
+for (key, value) in map.to_list(config) {
   println("${key} = ${value}")
 }
 
@@ -79,7 +79,7 @@ for (i, item) in list.enumerate(items) {
 Use `_` to ignore a component:
 
 ```almide
-for (_, value) in map.entries(config) {
+for (_, value) in map.to_list(config) {
   println(value)
 }
 ```
