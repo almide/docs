@@ -156,6 +156,8 @@ effect fn with_offset() -> Result[List[Int], String] = {
 Empty list returns `[]`:
 
 ```almide
+fn double(x: Int) -> Result[Int, String] = ok(x * 2)
+
 effect fn empty_case() -> Result[Unit, String] = {
   let results = fan.map([], (x: Int) => double(x))!
   println(int.to_string(list.len(results)))   // 0
