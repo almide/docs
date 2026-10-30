@@ -224,73 +224,24 @@ effect fn main() -> Unit = {
 - **Out of scope** — built-in logger / CORS / sessions, streaming responses
   and WebSocket are left to packages.
 
-### `http.response[B: Body](status: Int, body: B) -> HttpResponse`
+### `http.response(status: Int, body: String) -> HttpResponse`
 
-Create a response whose `Content-Type` is its body's type (ADR-0032): a
-String is `text/plain; charset=utf-8`, Bytes `application/octet-stream`, a
-`Value` `application/json`, an `html.*` page `text/html; charset=utf-8`, a
-package's safe type its own literal type (granted in `[trust] media` when it
-runs script, ADR-0032 D7), and `http.typed(t, bytes)` the literal type `t`.
-No header string can relabel a body: Content-Type is never written by name
-(E116). Owning a script-capable media type outside the stdlib needs the
-application's grant (E118).
+Create a plain text HTTP response with status code. Seeds
+`Content-Type: text/plain` — the signature gives the caller no other way to
+name one.
 
 ```almide
-import html
 import http
 
 fn main() -> Unit = {
   let resp = http.response(200, "Hello!")
   println(http.body(resp))
   println(http.header(resp, "Content-Type") ?? "none")
-  let page = http.response(200, html.escape("<b>hi</b>"))
-  println(http.body(page))
-  println(http.header(page, "Content-Type") ?? "none")
 }
 ```
 ```text
 Hello!
-text/plain; charset=utf-8
-&lt;b&gt;hi&lt;/b&gt;
-text/html; charset=utf-8
-```
-
-### `http.typed(media_type: String, body: Bytes) -> TypedBody`
-
-A body of any other media type. The type is written as a literal and read at
-check time (E117): a computed one, a malformed one, or one a browser runs
-script in — HTML and XHTML (owned by `html`), SVG (a granted package's), XML
-and `+xml` types — is refused, so a String never reaches a browser as markup
-except through a safe type. A built body is held as text today, so bytes that
-are not UTF-8 are decoded lossily (#4311).
-
-```almide
-import http
-
-fn main() -> Unit = {
-  let resp = http.response(200, http.typed("text/csv", bytes.from_string("id,name\n1,ada")))
-  println(http.header(resp, "Content-Type") ?? "none")
-}
-```
-```text
-text/csv
-```
-
-### `http.with_body[B: Body](resp: HttpResponse, body: B) -> HttpResponse`
-
-Replace a response's body and its `Content-Type` together; the status and the
-other headers stay.
-
-```almide
-import http
-
-fn main() -> Unit = {
-  let resp = http.with_body(http.response(201, "draft"), http.typed("text/markdown", bytes.from_string("# final")))
-  println("${http.status(resp)} ${http.header(resp, "Content-Type") ?? "none"} ${http.body(resp)}")
-}
-```
-```text
-201 text/markdown # final
+text/plain
 ```
 
 ### `http.json(status: Int, body: String) -> HttpResponse`
@@ -313,32 +264,31 @@ fn main() -> Unit = {
 application/json
 ```
 
-### `http.with_headers[B: Body](status: Int, body: B, headers: List[(String, String)]) -> HttpResponse`
+### `http.with_headers(status: Int, body: String, headers: List[(String, String)]) -> HttpResponse`
 
-Create a response with the body's `Content-Type` first, then EXACTLY the given
-headers, in list order (contract C-275). A name given twice, in any case,
-keeps its first spelling and its last value. `Content-Type` in the list is
-refused: it is the body's (E116, or an abort for a computed name).
+Create a response with EXACTLY the given headers, in list order. Unlike
+`response` / `json` it seeds nothing — pass `"Content-Type"` yourself when you
+want one (ALS-R7, contract C-275). A name given twice, in any case, keeps its
+first spelling and its last value.
 
 ```almide
 import http
 
 fn main() -> Unit = {
-  let body = http.typed("text/csv", bytes.from_string("id,name\n1,ada"))
-  let resp = http.with_headers(200, body, [("Cache-Control", "no-store")])
+  let body = "<h1>Hello</h1>"
+  let resp = http.with_headers(200, body, [("Content-Type", "text/html")])
   println(http.header(resp, "Content-Type") ?? "none")
   println(http.header(resp, "X-Nope") ?? "none")
 }
 ```
 ```text
-text/csv
+text/html
 none
 ```
 
 ### `http.redirect(url: String) -> HttpResponse`
 
-Create a 302 temporary redirect response: `Location`, an empty body, and the
-empty String body's `Content-Type: text/plain; charset=utf-8`.
+Create a 302 temporary redirect response
 
 ```almide
 import http
@@ -413,8 +363,8 @@ fn main() -> Unit = {
 }
 ```
 ```text
-text/plain; charset=utf-8
-text/plain; charset=utf-8
+text/plain
+text/plain
 none
 Bearer t
 ```
@@ -450,15 +400,14 @@ ignore case.
 import http
 
 fn main() -> Unit = {
-  let resp = http.with_headers(200, "", [("X-Frame-Options", "DENY"), ("X-Kind", "csv")])
+  let resp = http.with_headers(200, "", [("X-Frame-Options", "DENY"), ("Content-Type", "text/html")])
   let lines = http.headers(resp) |> list.map(((k, v)) => "${k}: ${v}")
   println(list.join(lines, "\n"))
 }
 ```
 ```text
-Content-Type: text/plain; charset=utf-8
 X-Frame-Options: DENY
-X-Kind: csv
+Content-Type: text/html
 ```
 
 ### `http.body(m) -> String`
@@ -505,31 +454,26 @@ fn main() -> Unit = {
 Set one header field. Field names are case-insensitive, so the FIRST field
 with that name, in any spelling, gets the new value in place (its spelling and
 position stay); when there is none, the field is appended. A message never
-gains a second entry this way. On a response, `Content-Type` is refused: it
-is the body's type (E116, or an abort for a computed name); a request may set
-it.
+gains a second entry this way.
 
 ```almide
 import http
 
 fn main() -> Unit = {
-  let resp = http.with_headers(200, "hi", [("X-Kind", "a")])
-  let tagged = http.set_header(http.set_header(resp, "X-Custom", "value"), "x-kind", "b")
+  let resp = http.with_headers(200, "hi", [("Content-Type", "text/plain")])
+  let tagged = http.set_header(http.set_header(resp, "X-Custom", "value"), "content-type", "text/html")
   let lines = http.headers(tagged) |> list.map(((k, v)) => "${k}: ${v}")
   println(list.join(lines, "\n"))
 }
 ```
 ```text
-Content-Type: text/plain; charset=utf-8
-X-Kind: b
+Content-Type: text/html
 X-Custom: value
 ```
 
 ### `http.set_body(m, body: String) -> M`
 
-Replace the body text. On a response the `Content-Type` becomes the String
-body's, `text/plain; charset=utf-8` (a body and its type are replaced
-together; `http.with_body` takes any `Body`); a request's headers stay.
+Replace the body text; the headers stay as they are.
 
 ```almide
 import http
@@ -1135,34 +1079,30 @@ carry them yet (there is no stock WASI host for an in-flight call), so
 them.
 
 
-## Signature index (36 functions)
+## Signature index (35 functions)
 
 ```
 // Serves 0.0.0.0:port forever; handler err is a 500.
 // @since 0.5.0 or earlier
 effect http.serve(port: Int, handler: HttpHandler) -> Unit
 
-// Reply with body; its type gives the Content-Type (String: text/plain; charset=utf-8).
+// Reply with Content-Type text/plain.
 // @since 0.5.0 or earlier
-http.response(status: Int, body: B) -> HttpResponse
+http.response(status: Int, body: String) -> HttpResponse
 
-// Reply with Content-Type application/json; body is JSON text.
+// Reply with Content-Type text/html; charset=utf-8; body is SafeHtml.
+// @since unreleased
+http.html(status: Int, body: SafeHtml) -> HttpResponse
+
+// Reply with Content-Type application/json.
 // @since 0.5.0 or earlier
 http.json(status: Int, body: String) -> HttpResponse
 
-// Reply with body and these headers in order after its Content-Type; a repeated name keeps its first spelling and last value.
+// Reply with exactly these headers in order; a name given twice, in any case, keeps its first spelling and last value.
 // @since 0.5.0 or earlier
-http.with_headers(status: Int, body: B, headers: List[(String, String)]) -> HttpResponse
+http.with_headers(status: Int, body: String, headers: List[(String, String)]) -> HttpResponse
 
-// resp with its body replaced by body and its Content-Type by body's type.
-// @since unreleased
-http.with_body(resp: HttpResponse, body: B) -> HttpResponse
-
-// A body of media type media_type; a literal, never a script-capable or stdlib-owned one.
-// @since unreleased
-http.typed(media_type: String, body: Bytes) -> TypedBody
-
-// 302 with Location url, an empty body and Content-Type text/plain; charset=utf-8.
+// 302 with Location url and empty body.
 // @since 0.6.0 or earlier
 http.redirect(url: String) -> HttpResponse
 
@@ -1194,15 +1134,15 @@ http.body(m: M) -> String
 // @since unreleased
 http.body_bytes(m: M) -> Bytes
 
-// m with header name set, any case: the first match replaced in place, else appended; a response refuses Content-Type.
+// m with header name set, any case: the first match replaced in place, else appended.
 // @since 0.6.0 or earlier
 http.set_header(m: M, name: String, value: String) -> M
 
-// m with its body replaced; a response's Content-Type becomes text/plain; charset=utf-8.
+// m with its body replaced.
 // @since unreleased
 http.set_body(m: M, body: String) -> M
 
-// m with its body replaced by body, decoded as lossy UTF-8; a response's Content-Type becomes application/octet-stream.
+// m with its body replaced by body, decoded as lossy UTF-8.
 // @since unreleased
 http.set_body_bytes(m: M, body: Bytes) -> M
 
