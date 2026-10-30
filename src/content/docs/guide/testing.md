@@ -79,6 +79,8 @@ the call that captures nothing of the test (E098), and the call must sit
 directly in a `test` block (E099):
 
 ```almide
+import testing
+
 fn nth(xs: List[Int], i: Int) -> Int = xs[i]
 
 test "reading past the end aborts" {
