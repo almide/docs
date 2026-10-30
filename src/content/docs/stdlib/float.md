@@ -3,163 +3,313 @@ title: float
 description: Floating-point arithmetic and conversion. Auto-imported.
 ---
 
-The `float` module is **auto-imported** — no `import` statement needed.
+Floating-point operations. auto-imported.
 
-## Functions
-
-| Function | Signature | Description |
-|---|---|---|
-| `to_string` | `(Float) -> String` | Convert a float to its string representation. |
-| `to_int` | `(Float) -> Int` | Truncate a float to an integer (rounds toward zero). |
-| `round` | `(Float) -> Float` | Round a float to the nearest integer value (as Float). |
-| `floor` | `(Float) -> Float` | Round a float down to the nearest integer value (as Float). |
-| `ceil` | `(Float) -> Float` | Round a float up to the nearest integer value (as Float). |
-| `abs` | `(Float) -> Float` | Return the absolute value of a float. |
-| `sqrt` | `(Float) -> Float` | Return the square root of a float. |
-| `parse` | `(String) -> Result[Float, String]` | Parse a string into a float. Returns err if the string is not a valid number. |
-| `from_int` | `(Int) -> Float` | Convert an integer to a float. |
-| `min` | `(Float, Float) -> Float` | Return the smaller of two floats. |
-| `max` | `(Float, Float) -> Float` | Return the larger of two floats. |
-| `to_fixed` | `(Float, Int) -> String` | Format a float with a fixed number of decimal places. |
-| `clamp` | `(Float, Float, Float) -> Float` | Clamp a float to the range [lo, hi]. |
-| `sign` | `(Float) -> Float` | Return the sign of a float: -1.0, 0.0, or 1.0. |
-| `is_nan` | `(Float) -> Bool` | Check if a float is NaN (not a number). |
-| `is_infinite` | `(Float) -> Bool` | Check if a float is positive or negative infinity. |
-
-## Reference
-
-### `float.to_string(n: Float) -> String`
+### `float.to_string(x: Float) -> String`
 
 Convert a float to its string representation.
 
-```almd
-float.to_string(3.14) // => \"3.14\
+```almide
+fn main() -> Unit = {
+  println(float.to_string(3.14))
+}
 ```
-
-### `float.to_int(n: Float) -> Int`
-
-Truncate a float to an integer (rounds toward zero).
-
-```almd
-float.to_int(3.9) // => 3
+```text
+3.14
 ```
 
 ### `float.round(n: Float) -> Float`
 
-Round a float to the nearest integer value (as Float).
+Round a float to the nearest integer value (as Float), halves away from zero
+(`round(2.5) = 3.0`, `round(-2.5) = -3.0`), exactly on the true value: `round(0.49999999999999994)`
+is `0.0` and an odd integer above 2^52 is unchanged. `-0.0` and values in `(-0.5, 0)` round to `-0.0`.
 
-```almd
-float.round(3.6) // => 4.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.round(3.6)))
+}
+```
+```text
+4.0
 ```
 
-### `float.floor(n: Float) -> Float`
+### `float.floor(x: Float) -> Float`
 
 Round a float down to the nearest integer value (as Float).
 
-```almd
-float.floor(3.9) // => 3.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.floor(3.9)))
+}
+```
+```text
+3.0
 ```
 
-### `float.ceil(n: Float) -> Float`
+### `float.ceil(x: Float) -> Float`
 
 Round a float up to the nearest integer value (as Float).
 
-```almd
-float.ceil(3.1) // => 4.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.ceil(3.1)))
+}
+```
+```text
+4.0
 ```
 
-### `float.abs(n: Float) -> Float`
+### `float.abs(x: Float) -> Float`
 
 Return the absolute value of a float.
 
-```almd
-float.abs(-2.5) // => 2.5
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.abs(-2.5)))
+}
 ```
-
-### `float.sqrt(n: Float) -> Float`
-
-Return the square root of a float.
-
-```almd
-float.sqrt(9.0) // => 3.0
+```text
+2.5
 ```
 
 ### `float.parse(s: String) -> Result[Float, String]`
 
-Parse a string into a float. Returns err if the string is not a valid number.
+Parse a string into a finite float. Returns err if the string is not a valid number.
 
-```almd
-float.parse(\"3.14\") // => ok(3.14)
+Only ASCII whitespace (space, tab, LF, CR, form feed) around the number is ignored; any other whitespace, such as a no-break space, is an error. The result is always finite: `"inf"`, `"Infinity"` and `"NaN"` in any case are `err("invalid float literal")`, and a number too large for a Float, such as `"1e400"`, is `err("float literal out of range")`. A number too small rounds to `0.0`. Many languages accept these spellings; Almide refuses them because a NaN makes every comparison false, so a check like `if amount > limit then reject` would let it through. Write `1.0 / 0.0` if you need an infinity.
+
+```almide
+fn show(r: Result[Float, String]) -> String = match r {
+  ok(x) => "ok(${float.to_string(x)})",
+  err(e) => "err(${e})",
+}
+
+fn main() -> Unit = {
+  println(show(float.parse("3.14")))
+  println(show(float.parse("abc")))
+}
 ```
-
-### `float.from_int(n: Int) -> Float`
-
-Convert an integer to a float.
-
-```almd
-float.from_int(42) // => 42.0
+```text
+ok(3.14)
+err(invalid float literal)
 ```
 
 ### `float.min(a: Float, b: Float) -> Float`
 
 Return the smaller of two floats.
 
-```almd
-float.min(1.5, 2.5) // => 1.5
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.min(1.5, 2.5)))
+}
+```
+```text
+1.5
 ```
 
 ### `float.max(a: Float, b: Float) -> Float`
 
 Return the larger of two floats.
 
-```almd
-float.max(1.5, 2.5) // => 2.5
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.max(1.5, 2.5)))
+}
+```
+```text
+2.5
 ```
 
-### `float.to_fixed(n: Float, decimals: Int) -> String`
+### `float.to_fixed(x: Float, decimals: Int) -> String`
 
 Format a float with a fixed number of decimal places.
 
-```almd
-float.to_fixed(3.14159, 2) // => \"3.14\
+```almide
+fn main() -> Unit = {
+  println(float.to_fixed(3.14159, 2))
+}
+```
+```text
+3.14
 ```
 
-### `float.clamp(n: Float, lo: Float, hi: Float) -> Float`
+### `float.clamp(x: Float, lo: Float, hi: Float) -> Float`
 
 Clamp a float to the range [lo, hi].
 
-```almd
-float.clamp(15.0, 0.0, 10.0) // => 10.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.clamp(15.0, 0.0, 10.0)))
+}
+```
+```text
+10.0
 ```
 
 ### `float.sign(n: Float) -> Float`
 
-Return the sign of a float: -1.0, 0.0, or 1.0.
+Return the sign of a float as 1.0 or -1.0, decided by the sign BIT (f64
+`signum`): `sign(0.0)` is 1.0 and `sign(-0.0)` is -1.0. A NaN input returns
+NaN. It never returns 0.0.
 
-```almd
-float.sign(-3.5) // => -1.0
+```almide
+fn main() -> Unit = {
+  println(float.to_string(float.sign(-3.5)))
+}
+```
+```text
+-1.0
 ```
 
-### `float.is_nan(n: Float) -> Bool`
+### `float.is_nan(x: Float) -> Bool`
 
 Check if a float is NaN (not a number).
 
-```almd
-float.is_nan(0.0 / 0.0) // => true
+```almide
+fn main() -> Unit = {
+  println("${float.is_nan(0.0 / 0.0)}")
+}
+```
+```text
+true
 ```
 
-### `float.is_infinite(n: Float) -> Bool`
+### `float.is_infinite(x: Float) -> Bool`
 
 Check if a float is positive or negative infinity.
 
-```almd
-float.is_infinite(1.0 / 0.0) // => true
+```almide
+fn main() -> Unit = {
+  println("${float.is_infinite(1.0 / 0.0)}")
+}
+```
+```text
+true
 ```
 
 ### `float.to_bits(f: Float) -> Int`
 
 Reinterpret a float as its IEEE 754 bit representation (i64).
 
-```almd
-float.to_bits(1.0) // => 4607182418800017408
+```almide
+fn main() -> Unit = {
+  println("${float.to_bits(1.0)}")
+}
 ```
+```text
+4607182418800017408
+```
+
+
+## Signature index (27 functions)
+
+```
+// Shortest round-trip digits, no exponent; 2.0 keeps .0.
+// @since 0.5.0 or earlier
+float.to_string(x: Float) -> String
+
+// Finite Float from s trimmed of ASCII space; err on junk, inf, NaN, overflow.
+// @since 0.5.0 or earlier
+float.parse(s: String) -> Result[Float, String]
+
+// Fixed-point, ties to even; decimals outside 0..4096 abort.
+// @since 0.5.0 or earlier
+float.to_fixed(x: Float, decimals: Int) -> String
+
+// IEEE-754 bits as Int; any NaN gives the canonical NaN.
+// @since 0.12.1 or earlier
+float.to_bits(f: Float) -> Int
+
+// Magnitude; -0.0 gives 0.0, NaN stays NaN.
+// @since 0.5.0 or earlier
+float.abs(x: Float) -> Float
+
+// Round toward -inf; -0.5 gives -1.0.
+// @since 0.5.0 or earlier
+float.floor(x: Float) -> Float
+
+// Round toward +inf; -0.5 gives -0.0.
+// @since 0.5.0 or earlier
+float.ceil(x: Float) -> Float
+
+// Nearest whole value; halves round away from zero.
+// @since 0.5.0 or earlier
+float.round(x: Float) -> Float
+
+// Lesser; a NaN operand is ignored; -0.0 < 0.0.
+// @since 0.5.0 or earlier
+float.min(a: Float, b: Float) -> Float
+
+// Greater; a NaN operand is ignored; 0.0 > -0.0.
+// @since 0.5.0 or earlier
+float.max(a: Float, b: Float) -> Float
+
+// x limited to lo..hi; lo > hi or a NaN bound aborts.
+// @since 0.5.0 or earlier
+float.clamp(x: Float, lo: Float, hi: Float) -> Float
+
+// 1.0 or -1.0 by sign bit (0.0 gives 1.0); NaN for NaN.
+// @since 0.5.13 or earlier
+float.sign(n: Float) -> Float   (deprecated — use float.signum)
+
+// 1.0 or -1.0 by sign bit (0.0 gives 1.0, -0.0 gives -1.0); NaN for NaN.
+// @since unreleased
+float.signum(x: Float) -> Float
+
+// True only for NaN (unequal to itself).
+// @since 0.6.0 or earlier
+float.is_nan(x: Float) -> Bool
+
+// True for inf and -inf; false for NaN.
+// @since 0.6.0 or earlier
+float.is_infinite(x: Float) -> Bool
+
+// Round toward 0; -0.5 gives -0.0.
+// @since unreleased
+float.trunc(x: Float) -> Float
+
+// True unless x is inf, -inf or NaN.
+// @since unreleased
+float.is_finite(x: Float) -> Bool
+
+// base to the exp; NaN for a negative base with a fractional exp.
+// @since unreleased
+float.pow(base: Float, exp: Float) -> Float
+
+// -1, 0 or 1 in IEEE-754 total order: -0.0 < 0.0, NaN above inf and equal to itself.
+// @since unreleased
+float.compare(a: Float, b: Float) -> Int
+
+// Float whose IEEE-754 binary64 bits are bits; any NaN gives the one NaN.
+// @since unreleased
+float.from_bits(bits: Int) -> Float
+
+// Positive infinity.
+// @since unreleased
+float.infinity() -> Float
+
+// The one quiet NaN (bits 0x7ff8000000000000).
+// @since unreleased
+float.nan() -> Float
+
+// Gap between 1.0 and the next Float: 2^-52.
+// @since unreleased
+float.epsilon() -> Float
+
+// Largest finite Float, about 1.7976931348623157e308.
+// @since unreleased
+float.max_value() -> Float
+
+// Most negative finite Float (= -max_value()), not the smallest positive.
+// @since unreleased
+float.min_value() -> Float
+
+// x as the nearest Float (ties to even); NaN stays NaN.
+// @since unreleased
+float.from(x: S) -> Float
+
+// some(x as Float) when Float holds x exactly, else none (a rounded value, NaN).
+// @since unreleased
+float.from_checked(x: S) -> Option[Float]
+```
+

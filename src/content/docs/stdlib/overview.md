@@ -26,12 +26,11 @@ redundant.
 | [int](/docs/stdlib/int/) | Integer conversion, parsing, bitwise operations |
 | [float](/docs/stdlib/float/) | Float conversion, rounding, math utilities |
 | [math](/docs/stdlib/math/) | Mathematical functions: trig, logarithms, constants |
-| [option](/docs/stdlib/option/) | `Option[T]` utilities: map, flat_map, unwrap_or |
-| [result](/docs/stdlib/result/) | `Result[T, E]` utilities: map, flat_map, unwrap_or |
+| [option](/docs/stdlib/option/) | `Option[T]` utilities: map, flat_map, unwrap_or_else |
+| [result](/docs/stdlib/result/) | `Result[T, E]` utilities: map, flat_map, map_err |
 | [value](/docs/stdlib/value/) | Generic dynamic value type shared with JSON |
-| [error](/docs/stdlib/error/) | Error construction and chaining |
 | [datetime](/docs/stdlib/datetime/) | Date/time: parse, format, arithmetic |
-| [bytes](/docs/stdlib/bytes/) | Binary data: read/write, slice, encode, decode |
+| [bytes](/docs/stdlib/bytes/) | Binary data: typed little/big-endian reads and writes, slice, compare |
 | [matrix](/docs/stdlib/matrix/) | Matrix operations: create, multiply, transpose |
 | [sized numeric types](/docs/guide/numeric-types/) | `int8`…`int32`, `uint8`…`uint64`, `float32` |
 
@@ -44,10 +43,12 @@ These need `import <module>`:
 | Module | Description | Effect |
 |---|---|---|
 | [fs](/docs/stdlib/fs/) | File system: read, write, list directories | Yes |
-| [io](/docs/stdlib/io/) | Console I/O: read_line, print (no newline), read_all | Yes |
-| [env](/docs/stdlib/env/) | Environment: args, env vars, timestamps, sleep | Yes |
-| [process](/docs/stdlib/process/) | Process execution, env vars, spawn/kill, signals | Yes |
-| [path](/docs/stdlib/path/) | Path manipulation: join, dirname, basename, extension | No |
+| [io](/docs/stdlib/io/) | Standard streams; `read` / `write` / `close` over any handle | Yes |
+| [env](/docs/stdlib/env/) | Environment: args, env vars, `env.secret`, cwd, sleep | Yes |
+| [process](/docs/stdlib/process/) | Child processes (`ProcessCommand` + `output` / `run` / `start`), exit, signals | Yes |
+| [unix](/docs/stdlib/unix/) | Unix-domain sockets, descriptor passing, shared memory | Yes |
+| [ffi](/docs/stdlib/ffi/) | Foreign memory as `Handle` and `Region` (`@memory_unsafe`) | Yes |
+| [path](/docs/stdlib/path/) | Path manipulation: join, join_within, dirname, basename, extension | No |
 | [args](/docs/stdlib/args/) | Command-line flag and option parsing | No |
 
 ### Data formats
@@ -58,6 +59,7 @@ These need `import <module>`:
 | [regex](/docs/stdlib/regex/) | Regular expressions: match, find, replace, split | No |
 | [base64](/docs/stdlib/base64-hex/) | Base64 encoding and decoding | No |
 | [hex](/docs/stdlib/base64-hex/) | Hexadecimal encoding and decoding | No |
+| [secret](/docs/stdlib/secret/) | `Secret[A]`: a value every renderer prints as `Secret(***)` | No |
 
 ### Networking
 
@@ -69,8 +71,8 @@ These need `import <module>`:
 
 | Module | Description | Effect |
 |---|---|---|
-| [testing](/docs/stdlib/testing/) | Test assertions: assert_eq, assert_approx, assert_throws | No |
-| [random](/docs/stdlib/random/) | Random number generation | Yes |
+| [testing](/docs/stdlib/testing/) | Test assertions: assert_eq, assert_approx, assert_contains | No |
+| [random](/docs/stdlib/random/) | Random number generation; for secrets use `random.bytes` | Yes |
 
 ## Module Categories
 
@@ -89,7 +91,7 @@ float.round(3.7)                       // => 4.0
 ### Container Modules
 
 ```almd
-option.unwrap_or(some(42), 0)          // => 42
+some(42) ?? 0                          // => 42
 result.map(ok(1), (x) => x + 1)       // => ok(2)
 set.union(a, b)                        // set union
 ```
@@ -97,8 +99,8 @@ set.union(a, b)                        // set union
 ### I/O Modules
 
 Most I/O is `effect fn` returning `Result`, but not all of it — `fs.exists`
-and its siblings are effectful yet return `Bool`, and `fs.temp_dir`, `env.os`,
-`process.args` and several `io` writers are pure. Check the per-module page
+and its siblings are effectful yet return `Bool`, and `env.os`, `println` and
+`eprintln` are pure. Check the per-module page
 before assuming:
 
 ```almd
@@ -119,7 +121,6 @@ Many modules share a consistent vocabulary for higher-order operations:
 | `map` | list, map, set, option, result |
 | `filter` | list, map, set, option |
 | `fold` | list, map, set |
-| `each` | list, map, set |
 | `any` / `all` | list, map, set |
 | `find` | list, map |
 | `contains` | list, map, set |

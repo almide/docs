@@ -70,22 +70,22 @@ The essence of language design for LLMs is not maximizing expressiveness, but **
 
 ## Concurrency: `fan`
 
-Almide keeps concurrency boring on purpose: explicit fork, explicit join, automatic cancellation, and fail-fast semantics. There is no `async`/`await`.
+Almide keeps concurrency boring on purpose: explicit fork, explicit join, explicit error propagation, and the same result on every target. There is no `async`/`await`.
 
 ```almd
 // Run concurrently, wait for all
-fan { fetch_users(); fetch_orders() }
+let (users, orders) = fan { fetch_users()!, fetch_orders()! }
 
 // Parallel map
-fan.map(urls, (url) => http.get(url))
+let pages = fan.map(urls, (url) => http.get(url))!
 
-// First to complete wins
-fan.race([() => fast_api(), () => slow_api()])
+// The arm that spent the least deterministic compute wins
+let w = fan.min(compute.ms(50)) { plan_a(), plan_b() } ?? fallback
 ```
 
 Rules:
 - `fan { }` is only valid inside `effect fn`
-- If any expression returns `err`, the entire `fan` fails and siblings are cancelled
+- An arm that returns `err` fails the `fan` only through `!`; the first Err in source order wins
 - No `var` capture inside `fan` (prevents data races)
 - No unstructured `spawn` -- all concurrency is scoped
 

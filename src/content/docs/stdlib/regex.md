@@ -3,85 +3,322 @@ title: regex
 description: Regular expression matching and replacement. Requires `import regex`.
 ---
 
-```almd
+Regular expressions. import regex.
+
+A pattern becomes a `Regex` once, and every operation takes the `Regex`
+first and the subject second (#3942):
+
+- `regex.new(pattern)` — for a pattern the program knows is valid. A string
+  literal is checked by `almide check` (E102); a pattern built at run time
+  that is refused aborts with `Error: invalid regex: <reason>`, exit 1.
+- `regex.compile(pattern)` — for a pattern from input: `ok(re)`, or
+  `err(reason)` when it is refused.
+
+Because the first argument is a `Regex`, piping the subject into an
+operation is a type error: `s |> regex.find("[0-9]+")` used to search the
+pattern for the subject without a word, and now points at
+`regex.find(regex.new("[0-9]+"), s)`. Make the `Regex` once and reuse it in a
+loop.
+
+### `regex.new(pattern: String) -> Regex` and `regex.compile(pattern: String) -> Result[Regex, String]`
+
+```almide
 import regex
+
+fn reason(p: String) -> String = match regex.compile(p) {
+  ok(_) => "ok",
+  err(e) => e,
+}
+
+fn main() -> Unit = {
+  let digits = regex.new("[0-9]+")
+  println("${regex.is_match(digits, "abc123")}")
+  println(reason("[0-9]+"))
+  println(reason("(a|b"))
+  println(reason("a{"))
+  println(reason("(?P<year>\\d{4})"))
+  println(reason("((a){200}){200}"))
+}
+```
+```text
+true
+ok
+unclosed group
+malformed repetition
+named groups are not supported
+pattern too large: more than 20000 states
 ```
 
-## Functions
+The reasons, first violation from the left: `unclosed group`, `unmatched )`,
+`unclosed character class`, `nothing to repeat`, `malformed repetition`,
+`repetition minimum exceeds maximum`, `invalid class range`,
+`trailing backslash`, `unsupported escape \X` (and `… in a class`),
+`named groups are not supported`, `lookaround is not supported`,
+`flags are only supported at the start of the pattern`,
+`unsupported group syntax`, `groups nested deeper than 250`,
+`pattern too large: more than 20000 states` (C-395).
 
-| Function | Signature | Description |
-|---|---|---|
-| `is_match` | `(String, String) -> Bool` | Check if a pattern matches anywhere in a string. |
-| `full_match` | `(String, String) -> Bool` | Check if a pattern matches the entire string. |
-| `find` | `(String, String) -> Option[String]` | Find the first match of a pattern in a string. |
-| `find_all` | `(String, String) -> List[String]` | Find all non-overlapping matches of a pattern. |
-| `replace` | `(String, String, String) -> String` | Replace all matches of a pattern with a replacement string. |
-| `replace_first` | `(String, String, String) -> String` | Replace the first match of a pattern. |
-| `split` | `(String, String) -> List[String]` | Split a string by a regex pattern. |
-| `captures` | `(String, String) -> Option[List[String]]` | Extract capture groups from the first match. |
+### `regex.is_match(re: Regex, s: String) -> Bool` and `regex.is_full_match(re: Regex, s: String) -> Bool`
 
-## Reference
+`is_match`: re matches somewhere in s. `is_full_match`: re matches the whole
+of s (`regex.full_match` is its deprecated old name, removed at epoch 16).
 
-### `regex.is_match(pat: String, s: String) -> Bool`
+```almide
+import regex
 
-Check if a pattern matches anywhere in a string.
-
-```almd
-regex.is_match("[0-9]+", "abc123") // => true
+fn main() -> Unit = {
+  let digits = regex.new("[0-9]+")
+  println("${regex.is_match(digits, "abc123")}")
+  println("${regex.is_full_match(digits, "123")}")
+  println("${regex.is_full_match(digits, "abc123")}")
+}
+```
+```text
+true
+true
+false
 ```
 
-### `regex.full_match(pat: String, s: String) -> Bool`
+### `regex.find(re: Regex, s: String) -> Option[String]` and `regex.index_of(re: Regex, s: String) -> Option[Int]`
 
-Check if a pattern matches the entire string.
+The first match, and where it starts — a code-point index, the unit
+`string.index_of` uses.
 
-```almd
-regex.full_match("[0-9]+", "123") // => true
+```almide
+import regex
+
+fn main() -> Unit = {
+  let digits = regex.new("[0-9]+")
+  println("${regex.find(digits, "abc123def")} ${regex.find(digits, "abcdef")}")
+  println("${regex.index_of(digits, "日本123")} ${regex.index_of(digits, "abc")}")
+}
+```
+```text
+some("123") none
+some(2) none
 ```
 
-### `regex.find(pat: String, s: String) -> Option[String]`
+### `regex.find_all(re: Regex, s: String) -> List[String]`
 
-Find the first match of a pattern in a string.
+All non-overlapping matches, in order.
 
-```almd
-regex.find("[0-9]+", "abc123def") // => some("123")
+```almide
+import regex
+
+fn main() -> Unit = {
+  println("${regex.find_all(regex.new("[0-9]+"), "a1b22c333")}")
+}
+```
+```text
+["1", "22", "333"]
 ```
 
-### `regex.find_all(pat: String, s: String) -> List[String]`
+### `regex.replace` / `replace_first` / `replace_with` / `replace_first_with`
 
-Find all non-overlapping matches of a pattern.
+Replacement is {all, first} × {literal text, a function of the match}. The
+literal text is inserted as written — `$1` is not read. A function receives
+`[whole, group 1, ...]`, a group that took no part being `none`.
 
-```almd
-regex.find_all("[0-9]+", "a1b2c3") // => ["1", "2", "3"]
+```almide
+import regex
+
+fn main() -> Unit = {
+  let num = regex.new("([0-9])([0-9])?")
+  println(regex.replace(num, "a1b22", "#"))
+  println(regex.replace_first(num, "a1b22", "$1"))
+  println(regex.replace_with(num, "a1b22", (g) => "<" + ((list.get(g, 2) ?? none) ?? "-") + ">"))
+  println(regex.replace_first_with(num, "a1b22", (g) => "[" + ((list.get(g, 0) ?? none) ?? "") + "]"))
+}
+```
+```text
+a#b#
+a$1b22
+a<->b<2>
+a[1]b22
 ```
 
-### `regex.replace(pat: String, s: String, rep: String) -> String`
+### `regex.split(re: Regex, s: String) -> List[String]`
 
-Replace all matches of a pattern with a replacement string.
+The text between matches; `[s]` when there is no match.
 
-```almd
-regex.replace("[0-9]+", "a1b2", "X") // => "aXbX"
+```almide
+import regex
+
+fn main() -> Unit = {
+  println("${regex.split(regex.new("[,;]"), "a,b;c")}")
+}
+```
+```text
+["a", "b", "c"]
 ```
 
-### `regex.replace_first(pat: String, s: String, rep: String) -> String`
+### `regex.captures(re: Regex, s: String) -> Option[List[Option[String]]]` and `regex.captures_all`
 
-Replace the first match of a pattern.
+The first match's `[whole, group 1, ...]`, or `none` when nothing matched.
+Index 0 is the whole match and is always `some`; a group that took no part is
+`none` (R-regex-08), which an empty match of a group is not.
+`captures_all` answers the same list for every match, in order.
 
-```almd
-regex.replace_first("[0-9]+", "a1b2", "X") // => "aXb2"
+```almide
+import regex
+
+fn show(cs: List[String?]) -> String = "[" + (cs |> list.map((c) => c ?? "none") |> list.join(",")) + "]"
+
+fn main() -> Unit = {
+  println("${regex.captures(regex.new("(\\w+)@(\\w+)"), "user@host") |> option.map((cs) => show(cs))}")
+  println("${regex.captures(regex.new("(x)?(y)"), "y") |> option.map((cs) => show(cs))}")
+  println("${regex.captures(regex.new("(a*)b"), "b") |> option.map((cs) => show(cs))}")
+  println("${regex.captures(regex.new("(z)"), "abc") |> option.map((cs) => show(cs))}")
+  println("${regex.captures_all(regex.new("(\\d)(\\d)?"), "1 23") |> list.map((cs) => show(cs))}")
+}
+```
+```text
+some("[user@host,user,host]")
+some("[y,none,y]")
+some("[b,]")
+none
+["[1,1,none]", "[23,2,3]"]
 ```
 
-### `regex.split(pat: String, s: String) -> List[String]`
+### `regex.escape(s: String) -> String`
 
-Split a string by a regex pattern.
+`s` with every metacharacter escaped, so a pattern built from text matches
+that text.
 
-```almd
-regex.split("[,;]", "a,b;c") // => ["a", "b", "c"]
+```almide
+import regex
+
+fn main() -> Unit = {
+  let user = "1+1=2?"
+  println(regex.escape(user))
+  println("${regex.is_match(regex.new(regex.escape(user)), "is 1+1=2?")}")
+}
+```
+```text
+1\+1=2\?
+true
 ```
 
-### `regex.captures(pat: String, s: String) -> Option[List[String]]`
+## Supported syntax
 
-Extract capture groups from the first match.
+A match is the leftmost one, and among those starting there the first in this
+order: alternatives left to right, greedy quantifiers longest-first, lazy
+quantifiers shortest-first, a group or quantifier that leads the rest of the
+pattern to fail retried with its next choice. A repeated group's capture is its
+last instance; an instance that matched nothing counts but ends the
+repetition. Native and wasm agree byte for byte.
 
-```almd
-regex.captures("(\\w+)@(\\w+)", "user@host") // => some(["user", "host"])
+Matching takes time proportional to the pattern's states times the subject's
+length, whatever the pattern (#4019, #4083), and an accepted pattern has at
+most 20,000 states, so no call takes longer than 20,000 × the subject's
+length steps: `(a+)+$` or `(a|aa)*b` on 100,000 characters answers at once,
+and the worst case — every state live at every character, `a{0,9000}b` on
+100,000 `a`s — takes about 8 s native and a minute on wasm. Each call first
+runs a backtracking matcher under a step budget of 4 × (pattern length + 1)
+× (subject length + 1) — it is the faster engine on ordinary patterns — and,
+if the budget runs out, a Pike VM (Thompson's NFA with the same preferences,
+at most one thread per state) gives the same answer. A pattern's states are
+its VM program's instructions — about its length, with each counted
+repetition contributing one copy of what it repeats per count — times one
+more than the deepest nesting of repeated groups that can match empty:
+`a{0,9999}b` has exactly 20,000, and nested counts multiply, so
+`((a){200}){200}` has about 120,000 and is refused. They are counted over the
+pattern without expanding it.
+
+| Syntax | Meaning |
+|---|---|
+| `a`, `\.`, `\\` | literal characters (escape a metacharacter with `\`) |
+| `.` | any character except `\n` |
+| `[abc]`, `[a-z]`, `[^0-9]` | character class, range, negated class (a leading `]` is a member) |
+| `\d` `\w` `\s` and `\D` `\W` `\S` | digit, word (`[A-Za-z0-9_]`), whitespace (`[ \t\n\v\f\r]`, the ASCII set every mainstream engine uses), and their negations; inside a class `\d` `\w` `\s` `\n` `\t` |
+| `\n` `\t` `\r` | control characters |
+| `^`, `$` | start / end of the string |
+| `\b`, `\B` | word boundary / non-boundary (ASCII word characters) |
+| `x|y` | alternation |
+| `(x)`, `(?:x)` | capturing / non-capturing group, nested at most 250 deep |
+| `x*` `x+` `x?` `x{n}` `x{n,}` `x{n,m}` | greedy quantifiers |
+| `x*?` `x+?` `x??` `x{n,m}?` | lazy quantifiers |
+| `(?i)`, `(?m)`, `(?im)` at the start of the pattern | `i`: an ASCII letter matches in either case; `m`: `^` and `$` also match after / before a `\n` |
+
+Refused (C-395): lookaround, backreferences and other escapes of a letter or
+digit not listed above, named groups, flags anywhere but the start, a `{` that
+is not a whole quantifier, a quantifier with nothing to repeat, and more than
+20,000 states.
+
+
+## Signature index (16 functions)
+
 ```
+// The Regex for `pattern`; aborts with `Error: invalid regex: <reason>` when it is refused.
+// @since unreleased
+regex.new(pattern: String) -> Regex
+
+// The Regex for `pattern`, or err(reason) when it is refused.
+// @since unreleased
+regex.compile(pattern: String) -> Result[Regex, String]
+
+// re matches somewhere in s.
+// @since 0.6.0 or earlier
+regex.is_match(re: Regex, s: String) -> Bool
+
+// re matches the whole of s.
+// @since unreleased
+regex.is_full_match(re: Regex, s: String) -> Bool
+
+// re matches the whole of s (renamed regex.is_full_match).
+// @since 0.6.0 or earlier
+regex.full_match(re: Regex, s: String) -> Bool   (deprecated — use regex.is_full_match)
+
+// Leftmost match of re in s, or none.
+// @since 0.5.0 or earlier
+regex.find(re: Regex, s: String) -> Option[String]
+
+// All non-overlapping matches, in order.
+// @since 0.5.0 or earlier
+regex.find_all(re: Regex, s: String) -> List[String]
+
+// Code-point index where the leftmost match starts, or none.
+// @since unreleased
+regex.index_of(re: Regex, s: String) -> Option[Int]
+
+// All matches replaced by literal rep (`$1` is not read).
+// @since 0.5.0 or earlier
+regex.replace(re: Regex, s: String, rep: String) -> String
+
+// First match replaced by literal rep.
+// @since 0.5.0 or earlier
+regex.replace_first(re: Regex, s: String, rep: String) -> String
+
+// All matches replaced by f([whole, group1, ...]).
+// @since unreleased
+regex.replace_with(re: Regex, s: String, f: (List[Option[String]]) -> String) -> String
+
+// First match replaced by f([whole, group1, ...]).
+// @since unreleased
+regex.replace_first_with(re: Regex, s: String, f: (List[Option[String]]) -> String) -> String
+
+// Text between matches; [s] if no match.
+// @since 0.5.0 or earlier
+regex.split(re: Regex, s: String) -> List[String]
+
+// [whole, group1, ...] of the first match, or none; a group that took no part is none.
+// @since 0.5.0 or earlier
+regex.captures(re: Regex, s: String) -> Option[List[Option[String]]]
+
+// [whole, group1, ...] of every match, in order.
+// @since unreleased
+regex.captures_all(re: Regex, s: String) -> List[List[Option[String]]]
+
+// s with every regex metacharacter escaped, so it matches itself.
+// @since unreleased
+regex.escape(s: String) -> String
+```
+
+## Type index (1 types)
+
+```
+// A pattern accepted by `regex.new` or `regex.compile`.
+// @since unreleased
+type regex.Regex = { pattern: String }
+```
+

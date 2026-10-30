@@ -5,14 +5,14 @@ description: Int and Float, the sized integer and float types, explicit conversi
 
 import Playground from '../../../components/Playground.astro';
 
-Almide has two default numeric types and nine sized ones:
+Almide has two default numeric types and ten sized ones:
 
 | | Types |
 |---|---|
 | Default | `Int` (64-bit signed), `Float` (64-bit IEEE 754) |
-| Sized signed | `Int8`, `Int16`, `Int32` |
+| Sized signed | `Int8`, `Int16`, `Int32`, `Int64` |
 | Sized unsigned | `UInt8`, `UInt16`, `UInt32`, `UInt64` |
-| Sized float | `Float32` |
+| Sized float | `Float32`, `Float64` |
 
 `Int` and `Float` are what you want almost always. The sized types exist for
 the places where width is part of the problem rather than an optimization:
@@ -48,60 +48,61 @@ Almide has no implicit numeric widening. Mixing widths in one expression is an
 error that tells you what to write:
 
 ```
-error: operator '+' mixes sized numeric types Int32 and Int64 — explicit conversion required (e.g. `.to_int32()`)
+error: operator '+' mixes sized numeric types Int32 and Int64 — explicit conversion required (e.g. `int32.from(x)`)
 ```
 
-Three families of conversion cover everything:
+A conversion is named after the type it builds. Every numeric module (`int`,
+`float`, `int8`…`int64`, `uint8`…`uint64`, `float32`, `float64`) has a `from`
+that takes any numeric source — `Int`, `Float` or a sized type:
 
 | From | To | Call |
 |---|---|---|
-| `Int` | sized | `int.to_int8(n)`, `int.to_uint32(n)`, `int.to_float32(n)`, … |
-| sized | `Int` | `int.from_int8(x)`, `int.from_uint32(x)`, … |
-| sized | sized | `x.to_int32()`, `x.to_uint8()`, `x.to_float32()`, … |
-| `Float` | sized | `float.to_int8(f)`, `float.to_uint32(f)`, `float.to_float32(f)` |
-| `Float32` | `Float` | `float.from_float32(x)` |
+| `Int` or `Float` | sized | `int8.from(n)`, `uint32.from(n)`, `float32.from(f)`, … |
+| sized | `Int` | `int.from(x)` |
+| sized | `Float` | `float.from(x)` |
+| sized | sized | `int32.from(x)`, `uint8.from(x)`, `float32.from(x)`, … |
 
-Each sized module carries a `to_*` for every other numeric type plus
-`to_string`. They hold no arithmetic: `x.abs()` on an `Int8` is not a thing.
+`T.from(x)` aborts when the value is not a `T` (a float is truncated toward
+zero first). Each sized module also carries its own bounds (`min_value()`,
+`max_value()`), arithmetic and bit operations, and `to_string`.
 
-## Narrowing: wrap, checked, or saturating
+## Narrowing: abort, wrap, checked, or saturating
 
-Plain narrowing **wraps**, in two's complement, without trapping. When silence
-is not acceptable, two variants say so explicitly:
+`T.from(x)` refuses a value that does not fit by aborting. When a narrowing
+should not abort, three variants say what happens instead:
 
 | Form | Returns | Behaviour |
 |---|---|---|
-| `int.to_int8(n)` | `Int8` | wraps |
-| `int.to_int8_checked(n)` | `Option[Int8]` | `none` if the value would not survive the round trip |
-| `int.to_int8_saturating(n)` | `Int8` | clamps to `Int8`'s range |
+| `int8.from(n)` | `Int8` | aborts outside `Int8`'s range |
+| `int8.from_wrapping(n)` | `Int8` | keeps the low bits, two's complement (integer sources only) |
+| `int8.from_checked(n)` | `Option[Int8]` | `none` unless `Int8` holds the value exactly |
+| `int8.from_saturating(n)` | `Int8` | clamps to `Int8`'s range |
 
-`_checked` follows Swift's `Int(exactly:)`: it is `some` only when the
+`from_checked` follows Swift's `Int(exactly:)`: it is `some` only when the
 conversion is exact. From a float that means NaN, infinity, a fractional part
 and out-of-range all give `none`.
 
-`_saturating` clamps to the nearest bound, and from a float NaN becomes `0`.
+`from_saturating` clamps to the nearest bound, and from a float NaN becomes `0`.
 
 <Playground sample="numeric-conversions" />
 
 Float-to-integer conversion truncates toward zero and saturates at the type's
 bounds; integer-to-float rounds to nearest, ties to even.
 
-Availability is not perfectly symmetric, for a reason: `int` has no
-`to_int64_checked`, because `Int` *is* 64-bit and that conversion cannot fail.
-`float` does have `to_int64_checked` and `to_uint64_checked`, because a float
-genuinely can fall outside those ranges.
-
 ## Reading and writing binary
 
-`bytes` is where sized types earn their keep, with explicit endianness:
+`bytes` reads and writes fixed-width values with the endianness in the name:
 
 ```almide
-bytes.write_uint32(b, value, endian)   // takes a UInt32
-bytes.set_float32(b, offset, value, endian)
+bytes.append_u32_le(b, value)          // grows `var b` by four bytes
+bytes.put_f32_be(b, pos, x)            // overwrites four bytes at pos
 
-bytes.read_uint32(b, offset, endian)   // note: returns UInt, not UInt32
-bytes.read_float32(b, offset, endian)  // returns Float
+bytes.get_u32_le(b, pos)               // Int?: none when out of range
+bytes.get_f32_be(b, pos)               // Float?
 ```
+
+The writers take a `var` binding (`mut` parameter); the readers return `none`
+for a position past the end instead of aborting.
 
 ## Known rough edges
 
@@ -117,9 +118,9 @@ Two rough edges remain:
   or produces a wrong value on wasm ([#902](https://github.com/almide/almide/issues/902)).
   Convert explicitly.
 
-Also note that `Int64` and `Float64` are accepted as spellings of `Int` and
-`Float` in type positions, but they have no method modules — use
-`int.to_string(x)` rather than `x.to_string()` on a value typed that way.
+Also note that `Int64` and `Float64` share a representation with `Int` and
+`Float` but are distinct types, each with its own auto-imported module
+(`int64`, `float64`); convert with `int.from(x)` / `int64.from(n)`.
 
 ## Next steps
 
