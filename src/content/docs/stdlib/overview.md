@@ -65,7 +65,7 @@ These need `import <module>`:
 
 | Module | Description | Effect |
 |---|---|---|
-| [http](/docs/stdlib/http/) | HTTP client and server; a response's Content-Type is its body type | Yes |
+| [http](/docs/stdlib/http/) | HTTP client and server | Yes |
 
 ### Development
 
