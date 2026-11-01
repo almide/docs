@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import starlightLlmsTxt from 'starlight-llms-txt';
 import astroMermaid from 'astro-mermaid';
 import { rehypeMermaidNoTranslate } from './src/plugins/rehype-mermaid-notranslate.mjs';
 import fs from 'node:fs';
@@ -39,9 +40,19 @@ export default defineConfig({
 				Head: './src/components/Head.astro',
 			},
 			customCss: ['./src/styles/custom.css'],
+			// The docs live in almide/docs; the old almide/almide docs-site/ path no longer exists.
 			editLink: {
-				baseUrl: 'https://github.com/almide/almide/edit/develop/docs-site/',
+				baseUrl: 'https://github.com/almide/docs/edit/main/',
 			},
+			// llms.txt / llms-full.txt / llms-small.txt for AI crawlers and agents (LLMO).
+			// 0.10.x is the last release that supports Astro 6 / Starlight 0.38.
+			plugins: [
+				starlightLlmsTxt({
+					projectName: 'Almide',
+					description:
+						'A statically-typed language built for LLMs to write correctly. When the model is wrong, the compiler names the fix. Builds native binaries and WebAssembly from one source.',
+				}),
+			],
 			head: [
 				// Open Graph reads `property` and wants an absolute URL.
 				{ tag: 'meta', attrs: { property: 'og:image', content: 'https://almide.github.io/docs/og.png' } },
